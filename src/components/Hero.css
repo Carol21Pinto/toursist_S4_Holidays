@@ -1,0 +1,51 @@
+.hero {
+  height: 100vh;
+  background: url("https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0") no-repeat center center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.overlay {
+  text-align: center;
+  color: white;
+  max-width: 600px;
+}
+
+.welcome-text {
+  font-size: 20px;
+  font-style: italic;
+  color: orange;
+}
+
+h1 {
+  font-size: 40px;
+  font-weight: bold;
+}
+
+.tagline {
+  font-size: 16px;
+  margin-top: 10px;
+}
+
+.play-btn {
+  margin-top: 20px;
+  background: white;
+  color: orange;
+  border: none;
+  font-size: 24px;
+  border-radius: 50%;
+  padding: 15px;
+  cursor: pointer;
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 28px;
+  }
+  .tagline {
+    font-size: 14px;
+  }
+}
