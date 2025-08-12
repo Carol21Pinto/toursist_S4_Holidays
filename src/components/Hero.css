@@ -1,10 +1,14 @@
 .hero {
-  min-height: 100vh;
-  background: url("https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0") no-repeat center center/cover;
+  height: 100vh; /* One scroll height */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 2rem;
+  position: relative;
+  transition: background-image 1s ease-in-out;
 }
 
 .overlay {
@@ -16,7 +20,7 @@
 .welcome-text {
   font-size: clamp(1rem, 2vw, 1.5rem);
   font-style: italic;
-  color: orange;
+  color: rgb(237, 235, 231);
 }
 
 h1 {
@@ -44,6 +48,34 @@ h1 {
 
 .play-btn:hover {
   transform: scale(1.1);
+}
+
+/* Arrow Styles */
+.arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: clamp(2rem, 3vw, 2.5rem);
+  background: rgba(0, 0, 0, 0.4);
+  color: white;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  z-index: 10;
+  transition: background 0.3s ease;
+}
+
+.arrow:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.arrow.left {
+  left: 20px;
+}
+
+.arrow.right {
+  right: 20px;
 }
 
 /* Tablet styles */

@@ -1,47 +1,37 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Navbar.css";
 
-function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false);
+export default function Navbar() {
+  const [scrollY, setScrollY] = useState(0);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Calculate background opacity based on scroll position (0 to 1)
+  const opacity = Math.min(scrollY / 200, 1);
 
   return (
-    <nav className="navbar">
-      <div className="logo">
-        <span className="logo-main">Pacific</span>
-        <span className="logo-sub">TRAVEL AGENCY</span>
-      </div>
-
-      {/* Desktop Menu */}
-      <ul className="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Destination</a></li>
-        <li><a href="#">Hotel</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
-
-      {/* Hamburger Icon */}
-      <div className="hamburger" onClick={toggleMenu}>
-        ☰
-      </div>
-
-      {/* Mobile Overlay Menu */}
-      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
-        <span className="close-btn" onClick={toggleMenu}>×</span>
-        <a href="#">Home</a>
-        <a href="#">About</a>
-        <a href="#">Destination</a>
-        <a href="#">Hotel</a>
-        <a href="#">Blog</a>
-        <a href="#">Contact</a>
+    <nav
+      className={`navbar`}
+      style={{
+        backgroundColor: `rgba(0, 0, 0, ${opacity * 0.7})`,
+        backdropFilter: opacity > 0 ? "blur(8px)" : "none",
+      }}
+    >
+      <div className="navbar-container">
+        <div className="logo">Pacific TRAVEL AGENCY</div>
+        <ul className="nav-links">
+          <li>Home</li>
+          <li>About</li>
+          <li>Destination</li>
+          <li>Hotel</li>
+          <li>Blog</li>
+          <li>Contact</li>
+        </ul>
       </div>
     </nav>
   );
 }
-
-export default Navbar;
