@@ -1,31 +1,32 @@
 .hero {
-  height: 100vh;
+  min-height: 100vh;
   background: url("https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0") no-repeat center center/cover;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
+  padding: 2rem;
 }
 
 .overlay {
   text-align: center;
   color: white;
-  max-width: 600px;
+  max-width: 90%;
 }
 
 .welcome-text {
-  font-size: 20px;
+  font-size: clamp(1rem, 2vw, 1.5rem);
   font-style: italic;
   color: orange;
 }
 
 h1 {
-  font-size: 40px;
+  font-size: clamp(2rem, 5vw, 3rem);
   font-weight: bold;
+  line-height: 1.2;
 }
 
 .tagline {
-  font-size: 16px;
+  font-size: clamp(0.9rem, 1.8vw, 1.1rem);
   margin-top: 10px;
 }
 
@@ -34,18 +35,27 @@ h1 {
   background: white;
   color: orange;
   border: none;
-  font-size: 24px;
+  font-size: clamp(1.2rem, 2.5vw, 1.5rem);
   border-radius: 50%;
-  padding: 15px;
+  padding: clamp(10px, 2vw, 15px);
   cursor: pointer;
+  transition: transform 0.3s ease;
 }
 
-/* Mobile Styles */
-@media (max-width: 768px) {
-  h1 {
-    font-size: 28px;
+.play-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Tablet styles */
+@media (min-width: 769px) and (max-width: 1200px) {
+  .overlay {
+    max-width: 80%;
   }
-  .tagline {
-    font-size: 14px;
+}
+
+/* Desktop styles */
+@media (min-width: 1201px) {
+  .overlay {
+    max-width: 60%;
   }
 }

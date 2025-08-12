@@ -6,7 +6,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 15px 40px;
+  padding: clamp(0.5rem, 1vw + 0.5rem, 1rem) clamp(1rem, 3vw, 2.5rem);
   z-index: 100;
 }
 
@@ -17,24 +17,30 @@
 }
 
 .logo-main {
-  font-size: 20px;
+  font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: bold;
 }
 
 .logo-sub {
-  font-size: 12px;
+  font-size: clamp(0.7rem, 1.5vw, 0.9rem);
   color: orange;
 }
 
 .nav-links {
   display: flex;
   list-style: none;
-  gap: 20px;
+  gap: clamp(0.8rem, 2vw, 1.5rem);
+}
+
+.nav-links a {
+  font-size: clamp(0.85rem, 1.5vw, 1rem);
+  color: white;
+  text-decoration: none;
 }
 
 .hamburger {
   display: none;
-  font-size: 26px;
+  font-size: clamp(1.5rem, 3vw, 1.8rem);
   color: white;
   cursor: pointer;
 }
@@ -44,9 +50,9 @@
   position: fixed;
   top: 0;
   left: -100%;
-  width: 70%;
+  width: clamp(70%, 80vw, 90%);
   height: 100%;
-  background-color: rgba(0,0,0,0.95);
+  background-color: rgba(0, 0, 0, 0.95);
   display: flex;
   flex-direction: column;
   padding: 20px;
@@ -59,18 +65,26 @@
 
 .mobile-menu a {
   margin: 15px 0;
-  font-size: 18px;
+  font-size: clamp(1rem, 3vw, 1.2rem);
   color: white;
+  text-decoration: none;
 }
 
 .close-btn {
-  font-size: 28px;
+  font-size: clamp(1.5rem, 4vw, 1.8rem);
   color: white;
   cursor: pointer;
   align-self: flex-end;
 }
 
-/* Responsive */
+/* Tablet adjustments */
+@media (max-width: 1024px) and (min-width: 769px) {
+  .nav-links {
+    gap: 1rem;
+  }
+}
+
+/* Mobile view */
 @media (max-width: 768px) {
   .nav-links {
     display: none;
