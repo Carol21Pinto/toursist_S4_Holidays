@@ -1,5 +1,5 @@
 .hero {
-  height: 100vh; /* One scroll height */
+  height: 80vh; /* One scroll height */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -51,7 +51,7 @@ h1 {
 }
 
 /* Arrow Styles */
-.arrow {
+/* .arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -76,7 +76,7 @@ h1 {
 
 .arrow.right {
   right: 20px;
-}
+} */
 
 /* Tablet styles */
 @media (min-width: 769px) and (max-width: 1200px) {

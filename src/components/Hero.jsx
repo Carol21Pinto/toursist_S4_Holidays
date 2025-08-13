@@ -43,16 +43,17 @@ function Hero() {
         <p className="tagline">
           Discover breathtaking destinations and unique travel experiences.
         </p>
+        
         <button className="play-btn">▶</button>
       </div>
 
       {/* Arrows */}
-      <button className="arrow left" onClick={prevSlide}>
+      {/* <button className="arrow left" onClick={prevSlide}>
         ❮
       </button>
       <button className="arrow right" onClick={nextSlide}>
         ❯
-      </button>
+      </button> */}
     </section>
   );
 }
