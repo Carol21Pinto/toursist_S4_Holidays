@@ -1,47 +1,49 @@
-import React, { useState } from "react";
+import { useState, useEffect } from "react";
 import "./Navbar.css";
 
-function Navbar() {
+export default function Navbar() {
+  const [scrollY, setScrollY] = useState(0);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
-  };
+  useEffect(() => {
+    const handleScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const opacity = Math.min(scrollY / 200, 1);
 
   return (
-    <nav className="navbar">
-      <div className="logo">
-        <span className="logo-main">Pacific</span>
-        <span className="logo-sub">TRAVEL AGENCY</span>
-      </div>
+    <nav
+      className="navbar"
+      style={{
+        backgroundColor: `rgba(0, 0, 0, ${opacity * 0.7})`,
+        backdropFilter: opacity > 0 ? "blur(8px)" : "none",
+      }}
+    >
+      <div className="navbar-container">
+        <div className="logo">Pacific TRAVEL AGENCY</div>
 
-      {/* Desktop Menu */}
-      <ul className="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="#">About</a></li>
-        <li><a href="#">Destination</a></li>
-        <li><a href="#">Hotel</a></li>
-        <li><a href="#">Blog</a></li>
-        <li><a href="#">Contact</a></li>
-      </ul>
+        {/* Hamburger menu icon */}
+        <div
+          className={`menu-icon ${menuOpen ? "open" : ""}`}
+          onClick={() => setMenuOpen(!menuOpen)}
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
 
-      {/* Hamburger Icon */}
-      <div className="hamburger" onClick={toggleMenu}>
-        ☰
-      </div>
-
-      {/* Mobile Overlay Menu */}
-      <div className={`mobile-menu ${menuOpen ? "open" : ""}`}>
-        <span className="close-btn" onClick={toggleMenu}>×</span>
-        <a href="#">Home</a>
-        <a href="#">About</a>
-        <a href="#">Destination</a>
-        <a href="#">Hotel</a>
-        <a href="#">Blog</a>
-        <a href="#">Contact</a>
+        {/* Nav links */}
+        <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
+          <li onClick={() => setMenuOpen(false)}>Home</li>
+          <li onClick={() => setMenuOpen(false)}>About</li>
+          <li onClick={() => setMenuOpen(false)}>Destination</li>
+          <li onClick={() => setMenuOpen(false)}>Hotel</li>
+          <li onClick={() => setMenuOpen(false)}>Blog</li>
+          <li onClick={() => setMenuOpen(false)}>Contact</li>
+        </ul>
       </div>
     </nav>
   );
 }
-
-export default Navbar;

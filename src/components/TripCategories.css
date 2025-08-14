@@ -1,0 +1,83 @@
+.trip-categories {
+  padding: 40px 20px;
+  background: #fafafa;
+}
+
+.trip-intro {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.category-box {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.category-box:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  background-color: #ff9800; /* yellow-orange hover */
+  color: white; /* make all text white on hover */
+}
+
+.category-box:hover h3,
+.category-box:hover p {
+  color: white; /* ensure both title & description stay visible */
+}
+
+
+.category-image {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease, opacity 0.4s ease;
+  opacity: 0;
+}
+
+.category-box.active .category-image {
+  max-height: 200px;
+  opacity: 1;
+  margin-top: 15px;
+}
+
+.category-image img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  transition: filter 0.3s ease;
+}
+
+/* Image hover dim effect */
+.category-box:hover .category-image img {
+  filter: brightness(0.9);
+}
+
+/* Hidden state for intersection observer */
+.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+}
+
+.pop-up {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.4s ease;
+}
+
+/* Mobile view */
+@media (max-width: 768px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+}
