@@ -1,36 +1,79 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./TripCategories.css";
+import { Link } from "react-router-dom";
 
 function TripCategories() {
-  const [activeIndex, setActiveIndex] = useState(null);
+  // Only visibility for animation; no toggle/enlarge state needed
   const [visibleBoxes, setVisibleBoxes] = useState([]);
 
-  const categories = [
-    { 
-      title: "Domestic", 
+  // Local default categories (fallback if API not available)
+  const defaultCategories = [
+    {
+      title: "Domestic",
       description: "Explore beautiful destinations within the country.",
-      image: "/images/domestic.jpg"
+      image: "/images/domestic.jpg",
+      path: "/domestic",
     },
-    { 
-      title: "International", 
+    {
+      title: "International",
       description: "Travel across the globe with our curated packages.",
-      image: "/images/international.jpg"
+      image: "/images/international.jpg",
+      path: "/international",
     },
-    { 
-      title: "Pilgrimage", 
+    {
+      title: "Pilgrimage",
       description: "Sacred journeys for spiritual fulfillment.",
-      image: "/images/pilgrimage.jpg"
+      image: "/images/pilgrimage.jpg",
+      path: "/pilgrimage",
     },
-    { 
-      title: "Group Trip", 
+    {
+      title: "Group Trip",
       description: "Enjoy travel with friends, family, or like-minded explorers.",
-      image: "/images/group-trip.jpg"
-    }
+      image: "/images/group-trip.jpg",
+      path: "/group-trip",
+    },
   ];
+
+  // State that will hold either API categories or fallback
+  const [categories, setCategories] = useState(defaultCategories);
 
   const introRef = useRef(null);
   const boxRefs = useRef([]);
 
+  // OPTIONAL: Load images/content from API (replace URL and mapping as needed)
+  useEffect(() => {
+    async function loadBanners() {
+      try {
+        // Example shape expected from API (adjust to your API):
+        // [{ title, description, imageUrl, slugPath }, ...]
+        const res = await fetch("https://your-api.example.com/banners");
+        if (!res.ok) throw new Error("Failed to load banners");
+        const data = await res.json();
+
+        // Map API fields into our structure; adjust keys as per your response
+        const mapped = data.map((item) => ({
+          title: item.title ?? "Untitled",
+          description: item.description ?? "",
+          image: item.imageUrl ?? "/images/fallback.jpg",
+          path: item.slugPath ?? "/",
+        }));
+
+        // Only set if we received valid items
+        if (Array.isArray(mapped) && mapped.length > 0) {
+          setCategories(mapped);
+        }
+      } catch (e) {
+        // Keep defaults on error
+        // console.warn("Using default categories due to API error:", e);
+      }
+    }
+
+    // Call only if you want API-driven images.
+    // Comment out if you don’t have an API yet.
+    // loadBanners();
+  }, []);
+
+  // Reveal-on-scroll animation
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -59,10 +102,6 @@ function TripCategories() {
     return () => observer.disconnect();
   }, []);
 
-  const handleClick = (index) => {
-    setActiveIndex((prev) => (prev === index ? null : index));
-  };
-
   return (
     <section className="trip-categories">
       <div className="trip-intro hidden" ref={introRef}>
@@ -75,20 +114,32 @@ function TripCategories() {
 
       <div className="categories-grid">
         {categories.map((cat, index) => (
-          <div
-            key={index}
-            className={`category-box ${!visibleBoxes.includes(index) ? "hidden" : ""} ${activeIndex === index ? "active" : ""}`}
+          <Link
+            to={cat.path}
+            key={`${cat.title}-${index}`}
+            className={`category-box ${!visibleBoxes.includes(index) ? "hidden" : ""}`}
             ref={(el) => (boxRefs.current[index] = el)}
             style={{ transitionDelay: `${index * 0.2}s` }}
-            onClick={() => handleClick(index)}
           >
-            <h3>{cat.title}</h3>
-            <p>{cat.description}</p>
+            {/* Background image as cover for full-bleed banner */}
+            <div
+              className="category-bg"
+              style={{
+                // Fallback dummy image so banners look correct before API/local images
+                backgroundImage: `url(${
+                  cat.image ||
+                  "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop"
+                })`,
+              }}
+              aria-hidden="true"
+            />
 
-            <div className="category-image">
-              <img src={cat.image} alt={cat.title} />
+            {/* Foreground content overlay */}
+            <div className="category-content">
+              <h3>{cat.title}</h3>
+              <p>{cat.description}</p>
             </div>
-          </div>
+          </Link>
         ))}
       </div>
     </section>
