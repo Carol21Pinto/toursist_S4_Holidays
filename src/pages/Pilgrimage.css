@@ -1,0 +1,1090 @@
+/* Sacred Fonts - Include spiritual typography */
+@import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600;700&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap');
+
+/* Pilgrimage Tours Page - Sacred Universal Theme */
+.pilgrimage-tours {
+  font-family: 'Inter', sans-serif;
+  line-height: 1.6;
+  color: #2c3e50;
+  overflow-x: hidden;
+  background: #fafafa;
+}
+
+/* Sacred Hero Section */
+.sacred-hero {
+  height: 100vh;
+  background: linear-gradient(135deg, 
+    rgba(212, 175, 55, 0.95) 0%,     /* Sacred Gold */
+    rgba(255, 255, 255, 0.92) 40%,   /* Pure White */
+    rgba(139, 69, 19, 0.90) 70%,     /* Spiritual Brown */
+    rgba(70, 130, 180, 0.95) 100%),  /* Peaceful Blue */
+    url('https://images.unsplash.com/photo-1544427920-c49ccfb85579?ixlib=rb-4.0.3&auto=format&fit=crop&w=2062&q=80') center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: #2c3e50;
+  text-align: center;
+}
+
+/* Sacred Geometric Pattern Overlay */
+.sacred-pattern-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(212, 175, 55, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(139, 69, 19, 0.06) 0%, transparent 60%);
+  background-size: 300px 300px, 400px 400px, 200px 200px;
+  animation: sacredFloat 30s ease-in-out infinite;
+}
+
+@keyframes sacredFloat {
+  0%, 100% { 
+    background-position: 0% 0%, 100% 100%, 50% 50%; 
+    opacity: 0.8;
+  }
+  50% { 
+    background-position: 100% 100%, 0% 0%, 25% 75%; 
+    opacity: 0.6;
+  }
+}
+
+.hero-content {
+  z-index: 10;
+  max-width: 900px;
+  padding: 2rem;
+}
+
+.universal-symbols {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.sacred-symbol {
+  font-size: 2.5rem;
+  opacity: 0.8;
+  transition: all 0.3s ease;
+  animation: gentleGlow 4s ease-in-out infinite;
+}
+
+.sacred-symbol:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+@keyframes gentleGlow {
+  0%, 100% { opacity: 0.8; }
+  50% { opacity: 1; }
+}
+
+.hero-title {
+  margin-bottom: 2rem;
+}
+
+.spiritual-greeting {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 500;
+  color: #D4AF37;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.main-title {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #2c3e50;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  opacity: 0.9;
+  line-height: 1.8;
+  color: #4a5568;
+  font-weight: 400;
+}
+
+.spiritual-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-sacred {
+  background: rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(10px);
+  padding: 1.8rem;
+  border-radius: 20px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  text-align: center;
+  min-width: 130px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.stat-sacred:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stat-symbol {
+  font-size: 2.2rem;
+  margin-bottom: 0.8rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #D4AF37;
+  font-family: 'Playfair Display', serif;
+}
+
+.stat-label {
+  font-size: 0.95rem;
+  opacity: 0.8;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Sacred Section Titles */
+.section-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title-sacred {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  color: #2c3e50;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  position: relative;
+}
+
+.title-sacred::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: linear-gradient(90deg, #D4AF37, #8B4513, #4682B4);
+  border-radius: 2px;
+}
+
+.title-subtitle {
+  display: block;
+  font-size: 1.1rem;
+  color: #718096;
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* Religious Categories Selector */
+.religion-selector {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #fff 0%, #f7fafc 100%);
+}
+
+.religions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.religion-card {
+  background: white;
+  padding: 2.5rem 1.5rem;
+  border-radius: 25px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  position: relative;
+  overflow: hidden;
+}
+
+.religion-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--religion-color);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.religion-card:hover::before,
+.religion-card.active::before {
+  transform: scaleX(1);
+}
+
+.religion-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+}
+
+.religion-card.active {
+  border-color: var(--religion-color);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #fff 0%, rgba(255, 255, 255, 0.95) 100%);
+}
+
+.religion-symbol {
+  font-size: 4rem;
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+  filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.religion-card:hover .religion-symbol {
+  transform: scale(1.1);
+}
+
+.religion-card h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.sacred-greeting {
+  margin-top: 1rem;
+}
+
+.greeting-text {
+  display: block;
+  font-size: 1rem;
+  color: var(--religion-color);
+  font-weight: 600;
+  margin-bottom: 0.3rem;
+}
+
+.original-text {
+  display: block;
+  font-size: 0.9rem;
+  color: #718096;
+  font-style: italic;
+  font-family: 'Crimson Text', serif;
+}
+
+.mandala-pattern {
+  position: absolute;
+  bottom: -20px;
+  right: -20px;
+  width: 60px;
+  height: 60px;
+  border: 2px solid var(--religion-color);
+  border-radius: 50%;
+  opacity: 0.1;
+  border-style: dashed;
+}
+
+/* Sacred Experiences */
+.sacred-experiences {
+  padding: 5rem 0;
+  background: white;
+}
+
+.experiences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+}
+
+.experience-card {
+  background: linear-gradient(135deg, #fff 0%, #f7fafc 100%);
+  padding: 2.5rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  border-left: 4px solid #D4AF37;
+}
+
+.experience-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.experience-symbol {
+  font-size: 3.5rem;
+  margin-bottom: 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.experience-card:hover .experience-symbol {
+  transform: scale(1.08);
+}
+
+.experience-card h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.experience-card p {
+  color: #4a5568;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.languages-supported {
+  font-size: 0.9rem;
+  color: #D4AF37;
+  font-style: italic;
+  font-weight: 500;
+}
+
+/* Destinations Section */
+.destinations-section {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+}
+
+.destinations-info {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.destinations-info p {
+  color: #718096;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.destinations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2.5rem;
+  margin-bottom: 3rem;
+}
+
+.destination-card {
+  background: white;
+  border-radius: 25px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.destination-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.12);
+  border-color: #D4AF37;
+}
+
+.card-image {
+  position: relative;
+  height: 260px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+  filter: brightness(1.05) contrast(1.1);
+}
+
+.destination-card:hover .card-image img {
+  transform: scale(1.03);
+}
+
+.faith-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(212, 175, 55, 0.95);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  backdrop-filter: blur(10px);
+}
+
+.rating-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: #2c3e50;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  backdrop-filter: blur(10px);
+}
+
+.card-content {
+  padding: 2rem;
+}
+
+.destination-card h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.sacred-name {
+  font-size: 1rem;
+  color: #D4AF37;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-family: 'Crimson Text', serif;
+}
+
+.destination-country {
+  font-size: 0.95rem;
+  color: #718096;
+  margin-bottom: 0.8rem;
+  font-weight: 500;
+}
+
+.description {
+  color: #4a5568;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 1.2rem;
+  font-style: italic;
+}
+
+.card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.2rem;
+}
+
+.price {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #38a169;
+  font-family: 'Playfair Display', serif;
+}
+
+.duration {
+  background: #f7fafc;
+  padding: 0.4rem 1rem;
+  border-radius: 15px;
+  font-size: 0.9rem;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.2rem;
+}
+
+.highlight-tag {
+  background: linear-gradient(45deg, #D4AF37, #B8860B);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.best-time {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #718096;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.time-icon {
+  font-size: 1rem;
+}
+
+.pilgrimage-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #D4AF37, #8B4513);
+  color: white;
+  border: none;
+  padding: 14px 20px;
+  border-radius: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.pilgrimage-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.3);
+}
+
+.btn-blessing {
+  transition: transform 0.3s ease;
+}
+
+.pilgrimage-btn:hover .btn-blessing {
+  transform: scale(1.2);
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding: 2rem 0;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 12px 18px;
+  border: 2px solid #D4AF37;
+  background: white;
+  color: #D4AF37;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background: #D4AF37;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f7fafc;
+  border-color: #e2e8f0;
+  color: #a0aec0;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+.pagination-number {
+  width: 42px;
+  height: 42px;
+  border: 2px solid #D4AF37;
+  background: white;
+  color: #D4AF37;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-number:hover {
+  background: #D4AF37;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.pagination-number.active {
+  background: linear-gradient(135deg, #D4AF37, #8B4513);
+  color: white;
+  border-color: #D4AF37;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(212, 175, 55, 0.4);
+}
+
+.pagination-dots {
+  padding: 0 8px;
+  color: #a0aec0;
+  font-weight: bold;
+}
+
+/* Universal Message Section */
+.universal-message {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, #fff5e6 0%, #f0f8f0 50%, #e6f3ff 100%);
+  text-align: center;
+}
+
+.unity-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+}
+
+.unity-message {
+  font-size: 1.2rem;
+  color: #4a5568;
+  line-height: 1.8;
+  max-width: 700px;
+  margin: 0 auto 2rem auto;
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+}
+
+.faith-unity {
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+  padding: 2rem;
+  border-radius: 20px;
+  max-width: 500px;
+  margin: 0 auto;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.unity-symbols {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  letter-spacing: 0.5rem;
+}
+
+.unity-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #D4AF37;
+  font-family: 'Playfair Display', serif;
+}
+
+/* Sacred CTA Section */
+.sacred-cta {
+  padding: 5rem 0;
+  background: linear-gradient(135deg, 
+    rgba(212, 175, 55, 0.95) 0%, 
+    rgba(139, 69, 19, 0.90) 50%, 
+    rgba(70, 130, 180, 0.95) 100%);
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.sacred-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 255, 255, 0.08) 0%, transparent 50%);
+  background-size: 400px 400px;
+  animation: sacredFloat 25s ease-in-out infinite;
+}
+
+.cta-content {
+  position: relative;
+  z-index: 10;
+}
+
+.cta-blessing {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 0.8rem;
+  color: #fff;
+}
+
+.cta-main {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.8rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.cta-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2.5rem;
+  opacity: 0.95;
+  line-height: 1.8;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 16px 32px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  min-width: 180px;
+}
+
+.btn-primary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+  background: rgba(255, 255, 255, 0.95);
+  color: #D4AF37;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #D4AF37;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .sacred-hero {
+    height: 85vh;
+  }
+
+  .hero-content {
+    padding: 1.5rem;
+  }
+
+  .universal-symbols {
+    gap: 1rem;
+  }
+
+  .sacred-symbol {
+    font-size: 2rem;
+  }
+
+  .spiritual-greeting {
+    font-size: 1.4rem;
+  }
+  
+  .main-title {
+    font-size: 2.2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .spiritual-stats {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .stat-sacred {
+    padding: 1.2rem;
+    min-width: 110px;
+  }
+
+  .stat-number {
+    font-size: 1.6rem;
+  }
+
+  .stat-label {
+    font-size: 0.85rem;
+  }
+  
+  .title-sacred {
+    font-size: 2.2rem;
+  }
+
+  .title-subtitle {
+    font-size: 1rem;
+  }
+  
+  .religions-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .religion-card {
+    padding: 2rem 1rem;
+  }
+
+  .religion-symbol {
+    font-size: 3rem;
+  }
+
+  .religion-card h3 {
+    font-size: 1.2rem;
+  }
+  
+  .experiences-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+
+  .experience-card {
+    padding: 1.8rem;
+  }
+
+  .experience-symbol {
+    font-size: 3rem;
+  }
+
+  .experience-card h3 {
+    font-size: 1.2rem;
+  }
+  
+  .destinations-grid {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+
+  .card-content {
+    padding: 1.5rem;
+  }
+
+  .destination-card h3 {
+    font-size: 1.3rem;
+  }
+  
+  .unity-title {
+    font-size: 2rem;
+  }
+
+  .unity-message {
+    font-size: 1.1rem;
+  }
+
+  .faith-unity {
+    padding: 1.5rem;
+  }
+
+  .unity-symbols {
+    font-size: 2rem;
+    letter-spacing: 0.3rem;
+  }
+  
+  .cta-blessing {
+    font-size: 1.6rem;
+  }
+
+  .cta-main {
+    font-size: 2.2rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    max-width: 280px;
+  }
+
+  /* Mobile Pagination */
+  .pagination {
+    gap: 0.4rem;
+  }
+  
+  .pagination-btn {
+    padding: 10px 14px;
+    font-size: 0.85rem;
+  }
+  
+  .pagination-number {
+    width: 38px;
+    height: 38px;
+    font-size: 0.85rem;
+  }
+  
+  .page-numbers {
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .sacred-hero {
+    height: 80vh;
+  }
+
+  .hero-content {
+    padding: 1rem;
+  }
+
+  .universal-symbols {
+    gap: 0.8rem;
+  }
+
+  .sacred-symbol {
+    font-size: 1.8rem;
+  }
+  
+  .spiritual-greeting {
+    font-size: 1.2rem;
+  }
+  
+  .main-title {
+    font-size: 1.8rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.95rem;
+  }
+
+  .spiritual-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .stat-sacred {
+    padding: 1rem;
+  }
+
+  .experiences-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .faith-unity {
+    padding: 1rem;
+  }
+
+  .unity-symbols {
+    font-size: 1.8rem;
+    letter-spacing: 0.2rem;
+  }
+
+  /* Extra Small Mobile Pagination */
+  .pagination {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  
+  .page-numbers {
+    margin: 0;
+    order: 1;
+  }
+  
+  .prev-btn {
+    order: 2;
+  }
+  
+  .next-btn {
+    order: 3;
+  }
+  
+  .pagination-btn {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+  }
+}
+
+/* Custom scrollbar with sacred colors */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f7fafc;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #D4AF37, #8B4513);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #8B4513, #D4AF37);
+}
+
+/* Accessibility and Sacred Focus States */
+.religion-card:focus,
+.experience-card:focus,
+.destination-card:focus,
+.pagination-btn:focus,
+.pagination-number:focus {
+  outline: 2px solid #D4AF37;
+  outline-offset: 2px;
+}
+
+/* Print Styles for Sacred Content */
+@media print {
+  .sacred-hero,
+  .sacred-cta,
+  .pagination-container {
+    display: none;
+  }
+  
+  .pilgrimage-tours {
+    font-size: 12pt;
+    line-height: 1.4;
+  }
+}
