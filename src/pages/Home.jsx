@@ -1,7 +1,7 @@
 import Hero from "../components/Hero.jsx";
 import Description from "../components/Description.jsx";
 import TripCategories from "../components/TripCategories.jsx";
-import ContactIcons from "../components/ContactIcons.jsx"; // fixed import
+import ContactIcons from "../components/ContactIcons.jsx";
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
       <Hero />
       <Description />
       <TripCategories />
-      <ContactIcons />  {/* fixed usage */}
+      <ContactIcons />
     </>
   );
 }

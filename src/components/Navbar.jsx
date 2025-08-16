@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -22,7 +23,9 @@ export default function Navbar() {
       }}
     >
       <div className="navbar-container">
-        <div className="logo">Pacific TRAVEL AGENCY</div>
+        <Link to="/" className="logo">
+          Pacific TRAVEL AGENCY
+        </Link>
 
         {/* Hamburger menu icon */}
         <div
@@ -36,12 +39,24 @@ export default function Navbar() {
 
         {/* Nav links */}
         <ul className={`nav-links ${menuOpen ? "open" : ""}`}>
-          <li onClick={() => setMenuOpen(false)}>Home</li>
-          <li onClick={() => setMenuOpen(false)}>About</li>
-          <li onClick={() => setMenuOpen(false)}>Destination</li>
-          <li onClick={() => setMenuOpen(false)}>Hotel</li>
-          <li onClick={() => setMenuOpen(false)}>Blog</li>
-          <li onClick={() => setMenuOpen(false)}>Contact</li>
+          <li onClick={() => setMenuOpen(false)}>
+            <Link to="/">Home</Link>
+          </li>
+          <li onClick={() => setMenuOpen(false)}>
+            <Link to="/about">About</Link>
+          </li>
+          <li onClick={() => setMenuOpen(false)}>
+            <Link to="/destination">Destination</Link>
+          </li>
+          <li onClick={() => setMenuOpen(false)}>
+            <Link to="/hotel">Hotel</Link>
+          </li>
+          <li onClick={() => setMenuOpen(false)}>
+            <Link to="/blog">Blog</Link>
+          </li>
+          <li onClick={() => setMenuOpen(false)}>
+            <Link to="/contact">Contact</Link>
+          </li>
         </ul>
       </div>
     </nav>

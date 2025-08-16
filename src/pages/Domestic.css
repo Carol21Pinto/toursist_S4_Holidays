@@ -1,0 +1,1007 @@
+/* Indian Traditional Fonts - You can add Google Fonts link in your HTML */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Kalam:wght@300;400;700&display=swap');
+
+/* Domestic Tours Page - Indian Theme */
+.domestic-tours {
+  font-family: 'Poppins', sans-serif;
+  line-height: 1.6;
+  color: #2c3e50;
+  overflow-x: hidden;
+}
+
+/* Indian Hero Section */
+.indian-hero {
+  height: 100vh;
+  background: linear-gradient(135deg, 
+    rgba(255, 153, 51, 0.95) 0%,    /* Saffron */
+    rgba(19, 136, 8, 0.90) 50%,     /* Green */  
+    rgba(0, 0, 128, 0.95) 100%),    /* Blue */
+    url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80') center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  color: white;
+  text-align: center;
+}
+
+/* Traditional Indian Pattern Overlay */
+.hero-pattern-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(255, 153, 51, 0.1) 0%, transparent 50%);
+  background-size: 200px 200px;
+  animation: patternFloat 20s ease-in-out infinite;
+}
+
+@keyframes patternFloat {
+  0%, 100% { background-position: 0% 0%, 100% 100%; }
+  50% { background-position: 100% 100%, 0% 0%; }
+}
+
+.hero-content {
+  z-index: 10;
+  max-width: 900px;
+  padding: 2rem;
+}
+
+.namaste-greeting {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+  font-family: 'Kalam', cursive;
+  animation: gentlePulse 3s ease-in-out infinite;
+}
+
+@keyframes gentlePulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05); opacity: 0.9; }
+}
+
+.hero-title {
+  margin-bottom: 2rem;
+}
+
+.hindi-text {
+  display: block;
+  font-family: 'Kalam', cursive;
+  font-size: 3rem;
+  font-weight: 700;
+  color: #FFD700;
+  margin-bottom: 0.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.english-text {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 600;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.hero-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 3rem;
+  opacity: 0.95;
+  line-height: 1.8;
+}
+
+.india-stats {
+  display: flex;
+  gap: 2rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  padding: 1.5rem;
+  border-radius: 15px;
+  border: 2px solid rgba(255, 215, 0, 0.3);
+  text-align: center;
+  min-width: 120px;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: translateY(-5px);
+}
+
+.stat-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Container */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Section Titles with Hindi-English */
+.section-title {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title-hindi {
+  display: block;
+  font-family: 'Kalam', cursive;
+  font-size: 1.8rem;
+  color: #FF9933;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.title-english {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+  position: relative;
+}
+
+.title-english::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #FF9933, #138808, #000080);
+  border-radius: 2px;
+}
+
+/* Regional Selector */
+.region-selector {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #fff5f0 0%, #f0f8f0 100%);
+}
+
+.regions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 2rem;
+}
+
+.region-card {
+  background: white;
+  padding: 2rem 1rem;
+  border-radius: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 3px solid transparent;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.region-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: var(--region-color);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.region-card:hover::before,
+.region-card.active::before {
+  transform: scaleX(1);
+}
+
+.region-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.region-card.active {
+  border-color: var(--region-color);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+}
+
+.region-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.region-card:hover .region-icon {
+  transform: scale(1.1);
+}
+
+.region-card h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.region-pattern {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--region-color);
+  opacity: 0.1;
+  border-radius: 50% 0 20px 0;
+}
+
+/* Seasonal Tours */
+.seasonal-tours {
+  padding: 4rem 0;
+  background: white;
+}
+
+.seasons-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.season-card {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(248, 249, 250, 0.95));
+  padding: 2rem;
+  border-radius: 20px;
+  border-left: 5px solid var(--season-color);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.season-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.season-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.season-icon {
+  font-size: 2.5rem;
+}
+
+.season-card h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.2rem;
+}
+
+.season-months {
+  color: var(--season-color);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.season-destinations {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.destination-tag {
+  background: var(--season-color);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+/* Festival Tours */
+.festival-tours {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #fff8e1 0%, #f3e5f5 100%);
+}
+
+.festivals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.festival-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.festival-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--festival-color);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.festival-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.festival-card:hover .festival-icon {
+  transform: scale(1.2) rotate(10deg);
+}
+
+.festival-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.festival-destination {
+  color: var(--festival-color);
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+/* Destinations Section */
+.destinations-section {
+  padding: 4rem 0;
+  background: white;
+}
+
+.destinations-info {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.destinations-info p {
+  color: #666;
+  font-size: 1rem;
+}
+
+.destinations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.destination-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.destination-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  border-color: #FF9933;
+}
+
+.card-image {
+  position: relative;
+  height: 250px;
+  overflow: hidden;
+}
+
+.card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.destination-card:hover .card-image img {
+  transform: scale(1.05);
+}
+
+.region-badge {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  background: rgba(255, 153, 51, 0.9);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.rating-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(255, 255, 255, 0.95);
+  color: #333;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+}
+
+.card-content {
+  padding: 1.5rem;
+}
+
+.destination-card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.card-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.price {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #138808;
+}
+
+.duration {
+  background: #f8f9fa;
+  padding: 0.3rem 0.8rem;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  color: #666;
+  font-weight: 500;
+}
+
+.highlights {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+}
+
+.highlight-tag {
+  background: linear-gradient(45deg, #FF9933, #FFD700);
+  color: white;
+  padding: 0.3rem 0.7rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.best-time {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1.5rem;
+}
+
+.time-icon {
+  font-size: 1rem;
+}
+
+.explore-btn {
+  width: 100%;
+  background: linear-gradient(135deg, #FF9933, #138808);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+}
+
+.explore-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(255, 153, 51, 0.3);
+}
+
+.btn-arrow {
+  transition: transform 0.3s ease;
+}
+
+.explore-btn:hover .btn-arrow {
+  transform: translateX(5px);
+}
+
+/* Pagination Styles */
+.pagination-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 3rem;
+  padding: 2rem 0;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 10px 16px;
+  border: 2px solid #FF9933;
+  background: white;
+  color: #FF9933;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pagination-btn:hover:not(.disabled) {
+  background: #FF9933;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.pagination-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f8f9fa;
+  border-color: #dee2e6;
+  color: #6c757d;
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+  margin: 0 1rem;
+}
+
+.pagination-number {
+  width: 40px;
+  height: 40px;
+  border: 2px solid #FF9933;
+  background: white;
+  color: #FF9933;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination-number:hover {
+  background: #FF9933;
+  color: white;
+  transform: translateY(-2px);
+}
+
+.pagination-number.active {
+  background: linear-gradient(135deg, #FF9933, #138808);
+  color: white;
+  border-color: #FF9933;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 153, 51, 0.3);
+}
+
+.pagination-dots {
+  padding: 0 8px;
+  color: #999;
+  font-weight: bold;
+}
+
+/* Cultural Experiences */
+.cultural-experiences {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #f8f9ff 0%, #fff0f5 100%);
+}
+
+.experiences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.experience-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 20px;
+  text-align: center;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border-top: 4px solid #FF9933;
+}
+
+.experience-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.experience-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.experience-card:hover .experience-icon {
+  transform: scale(1.1) rotate(5deg);
+}
+
+.experience-card h3 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 1rem;
+}
+
+.experience-card p {
+  color: #666;
+  line-height: 1.6;
+}
+
+/* Indian CTA Section */
+.indian-cta {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #FF9933 0%, #138808 50%, #000080 100%);
+  color: white;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.indian-cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 20%, rgba(255, 215, 0, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background-size: 300px 300px;
+  animation: patternFloat 15s ease-in-out infinite;
+}
+
+.cta-content {
+  position: relative;
+  z-index: 10;
+}
+
+.cta-hindi {
+  display: block;
+  font-family: 'Kalam', cursive;
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: #FFD700;
+}
+
+.cta-english {
+  display: block;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.cta-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  opacity: 0.95;
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 15px 30px;
+  border: none;
+  border-radius: 50px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.btn-primary {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.btn-primary:hover, .btn-secondary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:hover {
+  background: rgba(255, 255, 255, 0.9);
+  color: #FF9933;
+}
+
+.btn-secondary:hover {
+  background: white;
+  color: #FF9933;
+}
+
+/* Mobile Responsive Design */
+@media (max-width: 768px) {
+  .indian-hero {
+    height: 90vh;
+  }
+
+  .hero-content {
+    padding: 1rem;
+  }
+
+  .hindi-text {
+    font-size: 2.2rem;
+  }
+  
+  .english-text {
+    font-size: 1.8rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .india-stats {
+    flex-direction: row;
+    gap: 1rem;
+  }
+
+  .stat-card {
+    padding: 1rem;
+    min-width: 100px;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+  }
+
+  .stat-label {
+    font-size: 0.8rem;
+  }
+  
+  .title-hindi {
+    font-size: 1.4rem;
+  }
+
+  .title-english {
+    font-size: 2rem;
+  }
+  
+  .regions-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .region-card {
+    padding: 1.5rem 0.5rem;
+  }
+
+  .region-icon {
+    font-size: 2.5rem;
+  }
+
+  .region-card h3 {
+    font-size: 1rem;
+  }
+  
+  .seasons-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .season-header {
+    flex-direction: column;
+    text-align: center;
+    gap: 0.5rem;
+  }
+  
+  .festivals-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .festival-card {
+    padding: 1.5rem;
+  }
+
+  .festival-icon {
+    font-size: 2.5rem;
+  }
+
+  .festival-card h3 {
+    font-size: 1.1rem;
+  }
+  
+  .destinations-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .experiences-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+
+  .experience-card {
+    padding: 1.5rem;
+  }
+
+  .experience-icon {
+    font-size: 2.5rem;
+  }
+  
+  .cta-hindi {
+    font-size: 1.5rem;
+  }
+
+  .cta-english {
+    font-size: 2rem;
+  }
+  
+  .cta-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn-primary, .btn-secondary {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  /* Mobile Pagination */
+  .pagination {
+    gap: 0.3rem;
+  }
+  
+  .pagination-btn {
+    padding: 8px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .pagination-number {
+    width: 35px;
+    height: 35px;
+    font-size: 0.8rem;
+  }
+  
+  .page-numbers {
+    margin: 0 0.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .indian-hero {
+    height: 80vh;
+  }
+
+  .hero-content {
+    padding: 1rem;
+  }
+  
+  .hindi-text {
+    font-size: 1.8rem;
+  }
+  
+  .english-text {
+    font-size: 1.5rem;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .india-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .regions-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .festivals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .experiences-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Extra Small Mobile Pagination */
+  .pagination {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .page-numbers {
+    margin: 0;
+    order: 1;
+  }
+  
+  .prev-btn {
+    order: 2;
+  }
+  
+  .next-btn {
+    order: 3;
+  }
+  
+  .pagination-btn {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+  }
+}
+
+/* Custom scrollbar with Indian colors */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #FF9933, #138808);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #138808, #FF9933);
+}
