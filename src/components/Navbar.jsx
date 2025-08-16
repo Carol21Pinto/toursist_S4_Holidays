@@ -24,7 +24,7 @@ export default function Navbar() {
     >
       <div className="navbar-container">
         <Link to="/" className="logo">
-          Pacific TRAVEL AGENCY
+        S4 HOLIDAYS
         </Link>
 
         {/* Hamburger menu icon */}

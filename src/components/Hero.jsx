@@ -42,7 +42,7 @@ function Hero() {
           Discover breathtaking destinations and unique travel experiences.
         </p>
         
-        <button className="play-btn">▶</button>
+        {/* <button className="play-btn">▶</button> */}
       </div>
 
       {/* Arrows */}
