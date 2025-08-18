@@ -196,3 +196,11 @@
   .category-box { min-height: 420px; border-radius: 16px; }
   .category-content { padding: 22px; }
 }
+
+.category-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7);
+}

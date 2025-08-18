@@ -26,7 +26,7 @@
 }
 
 /* Traditional Indian Pattern Overlay */
-.hero-pattern-overlay {
+/* .hero-pattern-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -37,7 +37,7 @@
     radial-gradient(circle at 75% 75%, rgba(255, 153, 51, 0.1) 0%, transparent 50%);
   background-size: 200px 200px;
   animation: patternFloat 20s ease-in-out infinite;
-}
+} */
 
 @keyframes patternFloat {
   0%, 100% { background-position: 0% 0%, 100% 100%; }
