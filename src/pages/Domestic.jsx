@@ -274,7 +274,7 @@ export default function Domestic() {
             From the Himalayas to the backwaters - Experience भारत like never before!
           </p>
           
-          <div className="india-stats">
+           {/* <div className="india-stats">
             <div className="stat-card">
               <div className="stat-icon">🏛️</div>
               <div className="stat-number">28</div>
@@ -290,8 +290,8 @@ export default function Domestic() {
               <div className="stat-number">5</div>
               <div className="stat-label">Diverse Regions</div>
             </div>
-          </div>
-        </div>
+          </div> */}
+        </div> 
       </section>
 
       {/* Regional Selector */}

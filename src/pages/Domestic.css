@@ -11,12 +11,9 @@
 
 /* Indian Hero Section */
 .indian-hero {
-  height: 100vh;
-  background: linear-gradient(135deg, 
-    rgba(255, 153, 51, 0.95) 0%,    /* Saffron */
-    rgba(19, 136, 8, 0.90) 50%,     /* Green */  
-    rgba(0, 0, 128, 0.95) 100%),    /* Blue */
-    url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80') center/cover;
+  height: 80vh; 
+  background: 
+    url('https://images.unsplash.com/photo-1524492412937-b28074a5d7da?ixlib=rb-4.0.3&auto=format&fit=crop&w=2071&q=80') top/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
