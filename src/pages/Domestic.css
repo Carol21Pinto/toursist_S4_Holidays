@@ -41,17 +41,22 @@
   50% { background-position: 100% 100%, 0% 0%; }
 }
 
+/* Hero Content Enhancements */
 .hero-content {
   z-index: 10;
   max-width: 900px;
   padding: 2rem;
+  text-align: center;
 }
 
+/* Greeting (Namaste) */
 .namaste-greeting {
-  font-size: 1.5rem;
+  font-size: 1.6rem;
   margin-bottom: 1rem;
   font-family: 'Kalam', cursive;
   animation: gentlePulse 3s ease-in-out infinite;
+  color: #FFD700;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.8);
 }
 
 @keyframes gentlePulse {
@@ -63,28 +68,42 @@
   margin-bottom: 2rem;
 }
 
+/* Hindi Title */
 .hindi-text {
   display: block;
   font-family: 'Kalam', cursive;
-  font-size: 3rem;
-  font-weight: 700;
-  color: #FFD700;
-  margin-bottom: 0.5rem;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 3.2rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #FFD700, #FF9933);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.6rem;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.7);
+  letter-spacing: 1px;
 }
 
+/* English Title */
 .english-text {
   display: block;
-  font-size: 2.5rem;
-  font-weight: 600;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 2.8rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, #ffffff, #ddd);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 3px 3px 10px rgba(0,0,0,0.9);
+  margin-bottom: 1rem;
 }
 
+/* Subtitle */
 .hero-subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 3rem;
-  opacity: 0.95;
+  font-size: 1.3rem;
   line-height: 1.8;
+  color: #f1f1f1;
+  background: rgba(0, 0, 0, 0.4);
+  padding: 12px 20px;
+  border-radius: 12px;
+  display: inline-block;
+  text-shadow: 1px 1px 5px rgba(0,0,0,0.7);
 }
 
 .india-stats {
