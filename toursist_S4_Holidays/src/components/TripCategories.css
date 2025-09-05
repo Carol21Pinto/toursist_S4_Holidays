@@ -1,0 +1,206 @@
+.trip-categories {
+  padding: 48px 20px;
+  background: #f6f7fb;
+  position: relative;
+  isolation: isolate; /* prevents banner overlays from affecting other sections */
+  z-index: 0;
+}
+
+.trip-intro {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.trip-intro h2 {
+  margin: 0 0 8px;
+  font-size: 28px;
+  letter-spacing: 0.2px;
+  color: #1f2937;
+}
+
+.trip-intro p {
+  margin: 0 auto;
+  max-width: 820px;
+  color: #4b5563;
+  line-height: 1.6;
+}
+
+/* Grid: desktop/tablet/mobile */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 22px;
+}
+
+/* GLOBAL banner card base styles (apply at ALL widths) */
+.category-box {
+  position: relative;
+  display: block; /* Link wrapper */
+  overflow: hidden;
+  border-radius: 18px;
+  min-height: 480px; /* long by default so image + text breathe */
+  text-decoration: none;
+  color: inherit;
+
+  /* Default gradient even before images load */
+  background: linear-gradient(135deg, #ffe7c2 0%, #ffd1c9 100%);
+
+  box-shadow:
+    0 8px 18px rgba(17, 24, 39, 0.08),
+    0 2px 6px rgba(17, 24, 39, 0.06);
+
+  /* Smooth, modern motion */
+  transform: translateZ(0);
+  will-change: transform, filter;
+  contain: paint; /* isolates paint to the card */
+  backface-visibility: hidden;
+  transition:
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 180ms ease-out;
+}
+
+/* Hover: slightly larger, smooth and responsive */
+.category-box:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow:
+    0 16px 38px rgba(17, 24, 39, 0.14),
+    0 6px 14px rgba(17, 24, 39, 0.10);
+  filter: saturate(1.04);
+}
+
+/* Full-bleed background image (inline style sets the URL) */
+.category-bg {
+  position: absolute;
+  inset: 0;
+  background-image: var(--bg-image, linear-gradient(135deg, #c7d2fe 0%, #fbcfe8 100%)); /* fallback if no image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* Slight dim for text readability */
+  filter: brightness(0.86) saturate(1.02);
+
+  /* Subtle pre-zoom so hover feels extra smooth */
+  transform: scale(1.01);
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    filter 220ms ease-out;
+  will-change: transform, filter;
+  z-index: 0;
+}
+
+/* Hover: gentle image zoom + slight brighten */
+.category-box:hover .category-bg {
+  transform: scale(1.045);
+  filter: brightness(0.92) saturate(1.06);
+}
+
+/* Safe color overlay (no blend mode) for richer visuals; avoids bleed */
+.category-box::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1; /* above bg, below text */
+  background:
+    radial-gradient(100% 100% at 0% 0%, rgba(255, 152, 0, 0.26) 0%, rgba(255, 152, 0, 0.06) 38%, rgba(0,0,0,0) 70%),
+    linear-gradient(135deg, rgba(255, 152, 0, 0.12) 0%, rgba(255, 87, 34, 0.14) 100%);
+  opacity: 0.78;
+  pointer-events: none;
+  transition: opacity 160ms ease-out;
+}
+
+.category-box:hover::before {
+  opacity: 0.92;
+}
+
+/* Content overlay pinned to bottom with gradient for readability */
+.category-content {
+  position: relative;
+  z-index: 2; /* above overlay and bg */
+  height: 100%;
+  padding: 26px 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  color: #fff;
+  background: linear-gradient(
+    to top,
+    rgba(6, 8, 14, 0.62) 0%,
+    rgba(6, 8, 14, 0.38) 42%,
+    rgba(6, 8, 14, 0.08) 72%,
+    rgba(6, 8, 14, 0.00) 100%
+  );
+  pointer-events: none; /* makes the entire card area clickable via Link */
+}
+
+/* Title and description */
+.category-content h3 {
+  margin: 0 0 10px 0;
+  font-size: 26px;
+  line-height: 1.2;
+  letter-spacing: 0.2px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.35);
+}
+
+.category-content p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  opacity: 0.98;
+  max-width: 62ch;
+  text-shadow: 0 1.5px 4px rgba(0,0,0,0.35);
+}
+
+/* Scroll-in animation (kept) */
+.hidden {
+  opacity: 0;
+  transform: translateY(20px);
+  filter: blur(1px);
+}
+
+.pop-up {
+  opacity: 1;
+  transform: translateY(0);
+  filter: blur(0);
+  transition:
+    opacity 320ms ease-out,
+    transform 320ms ease-out,
+    filter 320ms ease-out;
+}
+
+/* Inner definition line for crisp edges */
+.category-box::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.12),
+    inset 0 0 0 1px rgba(0,0,0,0.04);
+  pointer-events: none;
+}
+
+/* Responsive columns and heights (layout only) */
+@media (max-width: 1280px) {
+  .categories-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 1024px) {
+  .categories-grid { grid-template-columns: repeat(2, 1fr); }
+  .category-box { min-height: 460px; }
+}
+
+@media (max-width: 768px) {
+  .categories-grid { grid-template-columns: 1fr; gap: 18px; }
+  .category-box { min-height: 420px; border-radius: 16px; }
+  .category-content { padding: 22px; }
+}
+
+.category-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7);
+}

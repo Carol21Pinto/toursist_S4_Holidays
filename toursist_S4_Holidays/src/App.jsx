@@ -1,0 +1,65 @@
+// src/App.jsx
+import { Routes, Route } from "react-router-dom";
+
+// Public site
+import Navbar from "./components/Navbar.jsx";
+import Home from "./pages/Home.jsx";
+import International from "./pages/International.jsx";
+import GroupTrip from "./pages/GroupTrip.jsx";
+import Domestic from "./pages/Domestic.jsx";
+import Pilgrimage from "./pages/Pilgrimage.jsx";
+
+// Admin
+import ProtectedRoute from "./components/admin/ProtectedRoute";
+import AdminLayout from "./layouts/AdminLayout";
+import AdminLogin from "./pages/admin/AdminLogin";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import AddPackage from "./pages/admin/AddPackage";
+import PackagesList from "./pages/admin/PackagesList";
+import PackageDetail from './pages/PackageDetail';
+
+
+const About = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>About Page - Coming Soon</h1></div>;
+const Destination = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Destination Page - Coming Soon</h1></div>;
+const Hotel = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Hotel Page - Coming Soon</h1></div>;
+const Blog = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Blog Page - Coming Soon</h1></div>;
+const Contact = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Contact Page - Coming Soon</h1></div>;
+
+function PublicLayout({ children }) {
+  return (
+    <>
+      <Navbar />
+      {children}
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
+      <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
+      <Route path="/package/:id" element={<PackageDetail />} />
+      <Route path="/destination" element={<PublicLayout><Destination /></PublicLayout>} />
+      <Route path="/international" element={<PublicLayout><International /></PublicLayout>} />
+      <Route path="/domestic" element={<PublicLayout><Domestic /></PublicLayout>} />
+      <Route path="/pilgrimage" element={<PublicLayout><Pilgrimage /></PublicLayout>} />
+      <Route path="/group-trip" element={<PublicLayout><GroupTrip /></PublicLayout>} />
+      <Route path="/hotel" element={<PublicLayout><Hotel /></PublicLayout>} />
+      <Route path="/blog" element={<PublicLayout><Blog /></PublicLayout>} />
+      <Route path="/contact" element={<PublicLayout><Contact /></PublicLayout>} />
+
+      {/* Admin auth */}
+      <Route path="/admin/login" element={<AdminLayout><AdminLogin /></AdminLayout>} />
+
+      {/* Admin protected */}
+      <Route element={<ProtectedRoute />}>
+        <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
+        <Route path="/admin/packages" element={<AdminLayout><PackagesList /></AdminLayout>} />
+        <Route path="/admin/add" element={<AdminLayout><AddPackage /></AdminLayout>} />
+        {/* Future: <Route path="/admin/edit/:id" element={<AdminLayout><EditPackage /></AdminLayout>} /> */}
+      </Route>
+    </Routes>
+  );
+}
