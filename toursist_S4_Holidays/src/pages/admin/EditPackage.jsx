@@ -1,12 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-toastify';
+// src/pages/admin/EditPackage.jsx
 import { useParams, useNavigate } from 'react-router-dom';
-import './AddPackage.css'; // Reuse the same CSS
+import { useEffect, useState } from 'react';
+import { Snackbar, Alert } from '@mui/material';
+import './AddPackage.css';
+
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const EditPackage = () => {
-  const { id } = useParams(); // Get package ID from URL
+  const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Form state
   const [formData, setFormData] = useState({
     name: '',
     category: 'Domestic',
@@ -26,17 +32,50 @@ const EditPackage = () => {
   const [exclusions, setExclusions] = useState(['']);
   const [cardImage, setCardImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
-  const [existingCardImage, setExistingCardImage] = useState('');
+  const [existingImage, setExistingImage] = useState('');
 
-  // Load existing package data
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success'
+  });
+
+  // Handle snackbar close
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  // Show success snackbar
+  const showSuccess = (message) => {
+    setSnackbar({
+      open: true,
+      message: message,
+      severity: 'success'
+    });
+  };
+
+  // Show error snackbar
+  const showError = (message) => {
+    setSnackbar({
+      open: true,
+      message: message,
+      severity: 'error'
+    });
+  };
+
+  // Fetch package data
   useEffect(() => {
-    const loadPackage = async () => {
+    const fetchPackage = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/packages/${id}`);
+        setLoading(true);
+        const response = await fetch(`${API_URL}/packages/${id}`);
         if (response.ok) {
           const packageData = await response.json();
           
-          // Populate form with existing data
           setFormData({
             name: packageData.title || '',
             category: packageData.category || 'Domestic',
@@ -48,43 +87,28 @@ const EditPackage = () => {
           });
 
           setPricingMode(packageData.pricingMode || 'Structured');
-          setItinerary(packageData.itinerary && packageData.itinerary.length > 0 
-            ? packageData.itinerary 
-            : [{ day: 1, title: '', activities: [''] }]
-          );
-          setInclusions(packageData.inclusions && packageData.inclusions.length > 0 
-            ? packageData.inclusions 
-            : ['']
-          );
-          setExclusions(packageData.exclusions && packageData.exclusions.length > 0 
-            ? packageData.exclusions 
-            : ['']
-          );
-          
-          // Set existing image
-          if (packageData.cardImage) {
-            setExistingCardImage(packageData.cardImage);
-            setImagePreview(`http://localhost:5000/${packageData.cardImage}`);
-          }
-          
+          setItinerary(packageData.itinerary?.length ? packageData.itinerary : [{ day: 1, title: '', activities: [''] }]);
+          setInclusions(packageData.inclusions?.length ? packageData.inclusions : ['']);
+          setExclusions(packageData.exclusions?.length ? packageData.exclusions : ['']);
+          setExistingImage(packageData.cardImage || '');
         } else {
-          toast.error('Package not found');
-          navigate('/admin');
+          showError('❌ Package not found. Redirecting to packages list...');
+          setTimeout(() => navigate('/admin/packages'), 2000);
         }
       } catch (error) {
-        toast.error('Error loading package');
-        console.error('Error loading package:', error);
+        console.error('Error fetching package:', error);
+        showError('❌ Error loading package data. Please try again.');
+        setTimeout(() => navigate('/admin/packages'), 2000);
       } finally {
         setLoading(false);
       }
     };
 
     if (id) {
-      loadPackage();
+      fetchPackage();
     }
   }, [id, navigate]);
 
-  // Handle basic form fields
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -93,12 +117,10 @@ const EditPackage = () => {
     }));
   };
 
-  // Handle pricing mode change
   const handlePricingModeChange = (mode) => {
     setPricingMode(mode);
   };
 
-  // Handle card image upload and preview
   const handleCardImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -108,7 +130,6 @@ const EditPackage = () => {
     }
   };
 
-  // Handle itinerary changes
   const handleItineraryChange = (dayIndex, field, value) => {
     const newItinerary = [...itinerary];
     newItinerary[dayIndex][field] = value;
@@ -135,7 +156,6 @@ const EditPackage = () => {
     }]);
   };
 
-  // Handle inclusions/exclusions
   const handleArrayChange = (index, value, type) => {
     if (type === 'inclusions') {
       const newInclusions = [...inclusions];
@@ -156,38 +176,49 @@ const EditPackage = () => {
     }
   };
 
-  // Update package
   const updatePackage = async (packageData, cardImage) => {
     try {
+      setIsSubmitting(true);
       const formDataToSend = new FormData();
       
-      // Only append image if new one is selected
       if (cardImage) {
         formDataToSend.append("card_image", cardImage);
       }
 
       formDataToSend.append("data", JSON.stringify(packageData));
 
-      const response = await fetch(`http://localhost:5000/api/packages/${id}`, {
+      const response = await fetch(`${API_URL}/packages/${id}`, {
         method: "PUT",
         body: formDataToSend,
       });
 
       if (response.ok) {
         const updatedPackage = await response.json();
-        toast.success("Package updated successfully!");
+        console.log('Package updated successfully:', updatedPackage);
         
-        // Signal dashboard to refresh
+        // Show success snackbar
+        showSuccess("✅ Package updated successfully! Redirecting to packages list...");
+        
+        // Trigger dashboard refresh
         localStorage.setItem('dashboardRefresh', Date.now().toString());
+        window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+        
+        // Navigate back to packages list after showing success message
+        setTimeout(() => {
+          navigate('/admin/packages');
+        }, 2000);
         
         return updatedPackage;
       } else {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+        const errorData = await response.json();
+        const errorMessage = errorData.message || `HTTP ${response.status}: Server Error`;
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error("Error updating package:", error);
-      toast.error(`Failed to update package: ${error.message}`);
+      showError(`❌ Failed to update package: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -207,10 +238,8 @@ const EditPackage = () => {
 
   if (loading) {
     return (
-      <div className="add-package-container">
-        <div className="add-package-header">
-          <h1>Loading Package...</h1>
-        </div>
+      <div className="add-package-container" style={{ textAlign: 'center', padding: '50px' }}>
+        <h2>Loading package data...</h2>
       </div>
     );
   }
@@ -219,7 +248,7 @@ const EditPackage = () => {
     <div className="add-package-container">
       <div className="add-package-header">
         <h1>Edit Package</h1>
-        <p>Update package details and save changes.</p>
+        <p>Update your travel package details</p>
       </div>
 
       <form onSubmit={handleSubmit} className="add-package-form">
@@ -235,7 +264,7 @@ const EditPackage = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder="India gate"
+                placeholder="Package name"
                 required
               />
             </div>
@@ -247,10 +276,10 @@ const EditPackage = () => {
                 value={formData.category}
                 onChange={handleInputChange}
               >
-                <option value="domestic">Domestic</option>
-                <option value="international">International</option>
-                <option value="pilgrimage">Pilgrimage</option>
-                <option value="group">Group</option>
+                <option value="Domestic">Domestic</option>
+                <option value="International">International</option>
+                <option value="Pilgrimage">Pilgrimage</option>
+                <option value="Group">Group</option>
               </select>
             </div>
           </div>
@@ -300,6 +329,7 @@ const EditPackage = () => {
                     value={formData.pricePerPerson}
                     onChange={handleInputChange}
                     placeholder="2000"
+                    required
                   />
                 </div>
                 
@@ -350,6 +380,21 @@ const EditPackage = () => {
           <div className="image-upload-section">
             <div className="form-group">
               <label>Card image</label>
+              
+              {existingImage && !imagePreview && (
+                <div className="image-preview">
+                  <img src={existingImage} alt="Current package" />
+                  <p>Current image (upload new image to replace)</p>
+                </div>
+              )}
+              
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="New package" />
+                  <p>New image (will replace current image)</p>
+                </div>
+              )}
+              
               <div className="file-input-container">
                 <input
                   type="file"
@@ -359,18 +404,9 @@ const EditPackage = () => {
                   className="file-input"
                 />
                 <label htmlFor="cardImage" className="file-input-label">
-                  Choose New File
+                  Choose New Image
                 </label>
               </div>
-              
-              {imagePreview && (
-                <div className="image-preview">
-                  <img src={imagePreview} alt="Card preview" />
-                  <p className="image-note">
-                    {cardImage ? 'New image selected' : 'Current image'}
-                  </p>
-                </div>
-              )}
             </div>
           </div>
         </div>
@@ -473,13 +509,50 @@ const EditPackage = () => {
           </button>
         </div>
 
-        {/* Submit Button */}
+        {/* Submit Buttons */}
         <div className="submit-section">
-          <button type="submit" className="save-btn">
-            💾 Update Package
+          <button 
+            type="button" 
+            className="cancel-btn"
+            onClick={() => navigate('/admin/packages')}
+            disabled={isSubmitting}
+          >
+            
+          </button>
+          <button 
+            type="submit" 
+            className="save-btn"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? '⏳ Updating Package...' : '💾 Update Package'}
           </button>
         </div>
       </form>
+
+      {/* Beautiful Snackbar for Success/Error Messages */}
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={4000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{ zIndex: 9999 }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity} 
+          sx={{ 
+            width: '100%',
+            fontSize: '1rem',
+            fontWeight: 500,
+            '& .MuiAlert-icon': { fontSize: '1.2rem' },
+            boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px'
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

@@ -23,6 +23,32 @@ exports.login = async (req, res) => {
   }
 };
 
+// LOGOUT - NEW FUNCTION
+exports.logout = async (req, res) => {
+  try {
+    // For JWT tokens, we can't invalidate them server-side without a blacklist
+    // But we can perform cleanup operations here
+    
+    console.log('Admin logout request received');
+    
+    // Optional: Add token to blacklist (if you implement one)
+    // const token = req.headers['authorization']?.split(' ')[1];
+    // await addToTokenBlacklist(token);
+    
+    // Optional: Log logout activity
+    const adminId = req.admin; // From auth middleware
+    console.log(`Admin ${adminId} logged out at ${new Date()}`);
+    
+    // Send success response
+    return res.status(200).json({ 
+      message: 'Logout successful' 
+    });
+  } catch (err) {
+    console.error('Logout error:', err);
+    return res.status(500).json({ message: 'Logout failed' });
+  }
+};
+
 // FIRST-TIME ONLY — Admin Registration
 exports.register = async (req, res) => {
   try {
