@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { toast } from 'react-toastify';
+import { Snackbar, Alert } from '@mui/material';
 import './AddPackage.css';
 
 const AddPackage = () => {
+  // Form state
   const [formData, setFormData] = useState({
     name: '',
     category: 'Domestic',
@@ -14,7 +15,6 @@ const AddPackage = () => {
   });
 
   const [pricingMode, setPricingMode] = useState('Structured');
-
   const [itinerary, setItinerary] = useState([
     { day: 1, title: '', activities: [''] }
   ]);
@@ -23,6 +23,40 @@ const AddPackage = () => {
   const [exclusions, setExclusions] = useState(['']);
   const [cardImage, setCardImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success' // 'success', 'error', 'warning', 'info'
+  });
+
+  // Handle snackbar close
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setSnackbar(prev => ({ ...prev, open: false }));
+  };
+
+  // Show success snackbar
+  const showSuccess = (message) => {
+    setSnackbar({
+      open: true,
+      message: message,
+      severity: 'success'
+    });
+  };
+
+  // Show error snackbar
+  const showError = (message) => {
+    setSnackbar({
+      open: true,
+      message: message,
+      severity: 'error'
+    });
+  };
 
   // Handle basic form fields
   const handleInputChange = (e) => {
@@ -98,15 +132,11 @@ const AddPackage = () => {
 
   // Enhanced dashboard refresh function
   const triggerDashboardRefresh = () => {
-    console.log('Triggering dashboard refresh...'); // Debug log
+    console.log('Triggering dashboard refresh for real-time chart update...');
     
-    // Method 1: localStorage signal
     localStorage.setItem('dashboardRefresh', Date.now().toString());
-    
-    // Method 2: Custom event
     window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     
-    // Method 3: Multiple localStorage signals with delay
     setTimeout(() => {
       localStorage.setItem('dashboardRefresh', (Date.now() + 1).toString());
     }, 100);
@@ -119,6 +149,7 @@ const AddPackage = () => {
   // Submit form
   const addPackage = async (packageData, cardImage) => {
     try {
+      setIsSubmitting(true);
       const formDataToSend = new FormData();
       
       if (cardImage) {
@@ -127,7 +158,7 @@ const AddPackage = () => {
 
       formDataToSend.append("data", JSON.stringify(packageData));
 
-      console.log('Sending package data:', packageData); // Debug log
+      console.log('Sending package data:', packageData);
 
       const response = await fetch("http://localhost:5000/api/packages", {
         method: "POST",
@@ -136,38 +167,46 @@ const AddPackage = () => {
 
       if (response.ok) {
         const newPackage = await response.json();
-        console.log('Package created successfully:', newPackage); // Debug log
+        console.log('Package created successfully:', newPackage);
         
-        toast.success("Package added successfully!");
+        // Show success snackbar
+        showSuccess("🎉 Package added successfully! Your dashboard will update automatically.");
         
-        // Trigger dashboard refresh with multiple methods
+        // Trigger dashboard refresh
         triggerDashboardRefresh();
         
-        // Reset form
-        setFormData({
-          name: '',
-          category: 'Domestic',
-          duration: '',
-          pricePerPerson: '',
-          currency: 'INR',
-          priceNote: '',
-          priceText: ''
-        });
-        setItinerary([{ day: 1, title: '', activities: [''] }]);
-        setInclusions(['']);
-        setExclusions(['']);
-        setCardImage(null);
-        setImagePreview(null);
-        setPricingMode('Structured');
+        // Reset form after small delay to show success message
+        setTimeout(() => {
+          setFormData({
+            name: '',
+            category: 'Domestic',
+            duration: '',
+            pricePerPerson: '',
+            currency: 'INR',
+            priceNote: '',
+            priceText: ''
+          });
+          setItinerary([{ day: 1, title: '', activities: [''] }]);
+          setInclusions(['']);
+          setExclusions(['']);
+          setCardImage(null);
+          setImagePreview(null);
+          setPricingMode('Structured');
+        }, 1500);
         
         return newPackage;
       } else {
-        const errorText = await response.text();
-        throw new Error(`HTTP ${response.status}: ${errorText}`);
+        const errorData = await response.json();
+        const errorMessage = errorData.message || `HTTP ${response.status}: Server Error`;
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error("Error adding package:", error);
-      toast.error(`Failed to add package: ${error.message}`);
+      
+      // Show error snackbar with specific error message
+      showError(`❌ Failed to add package: ${error.message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -189,7 +228,7 @@ const AddPackage = () => {
     <div className="add-package-container">
       <div className="add-package-header">
         <h1>Travel Admin Panel</h1>
-        <p>Add a new package with images and full details.</p>
+        <p>Add a new package - your chart will update in real-time!</p>
       </div>
 
       <form onSubmit={handleSubmit} className="add-package-form">
@@ -444,25 +483,40 @@ const AddPackage = () => {
 
         {/* Submit Button */}
         <div className="submit-section">
-          <button type="submit" className="save-btn">
-            💾 Save Package
-          </button>
-        </div>
-
-        {/* Debug button - Remove this after testing */}
-        <div style={{ marginTop: '20px', padding: '10px', background: '#f0f0f0' }}>
           <button 
-            type="button"
-            onClick={triggerDashboardRefresh}
-            style={{ padding: '5px 10px', background: '#007bff', color: 'white', border: 'none' }}
+            type="submit" 
+            className="save-btn"
+            disabled={isSubmitting}
           >
-            🔄 Force Dashboard Refresh (Debug)
+            {isSubmitting ? '⏳ Saving Package...' : '💾 Save Package & Update Chart'}
           </button>
-          <p style={{ fontSize: '12px', margin: '5px 0 0 0' }}>
-            Use this button to manually trigger dashboard refresh after adding packages
-          </p>
         </div>
       </form>
+
+      {/* Beautiful Snackbar for Success/Error Messages */}
+      <Snackbar 
+        open={snackbar.open} 
+        autoHideDuration={4000} 
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{ zIndex: 9999 }}
+      >
+        <Alert 
+          onClose={handleCloseSnackbar} 
+          severity={snackbar.severity} 
+          sx={{ 
+            width: '100%',
+            fontSize: '1rem',
+            fontWeight: 500,
+            '& .MuiAlert-icon': { fontSize: '1.2rem' },
+            boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px'
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </div>
   );
 };

@@ -17,7 +17,7 @@ import AdminDashboard from "./pages/admin/AdminDashboard";
 import AddPackage from "./pages/admin/AddPackage";
 import PackagesList from "./pages/admin/PackagesList";
 import PackageDetail from './pages/PackageDetail';
-import EditPackage from './pages/admin/EditPackage'; // Fixed import path
+import EditPackage from './pages/admin/EditPackage';
 
 const About = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>About Page - Coming Soon</h1></div>;
 const Destination = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Destination Page - Coming Soon</h1></div>;
@@ -58,7 +58,7 @@ export default function App() {
         <Route path="/admin" element={<AdminLayout><AdminDashboard /></AdminLayout>} />
         <Route path="/admin/packages" element={<AdminLayout><PackagesList /></AdminLayout>} />
         <Route path="/admin/add" element={<AdminLayout><AddPackage /></AdminLayout>} />
-        <Route path="/admin/edit/:id" element={<AdminLayout><EditPackage /></AdminLayout>} />
+        <Route path="/admin/packages/edit/:id" element={<AdminLayout><EditPackage /></AdminLayout>} />
       </Route>
     </Routes>
   );
