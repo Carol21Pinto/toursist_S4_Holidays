@@ -49,10 +49,12 @@ export default function International() {
   };
 
   return (
+    
     <div className="international-tours">
       {/* Hero Section: Simple, Static, No Glass Effect */}
       <section className="hero-section">
         <div className="hero-content">
+          <h2 className="hero-subtitle">S4 HOLIDAYS</h2>
           <h1 className="hero-title">International Tours</h1>
         </div>
       </section>
