@@ -9,15 +9,55 @@ export default function Pilgrimage() {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-  // Helper function to get correct image URL with backslash fix
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return 'https://via.placeholder.com/350x240/cccccc/666666?text=No+Image';
-    const fixedPath = imagePath.replace(/\\/g, '/');
-    if (fixedPath.startsWith('http')) return fixedPath;
-    return `http://localhost:5000/${fixedPath}`;
+  // Constants
+  const SERVER_BASE = 'http://localhost:5000';
+  const FALLBACK = '/images/placeholder-card.jpg';
+
+  // Enhanced picker that handles strings AND objects
+  const pickPrimaryImagePath = (pkg) => {
+    const extractPath = (p) => {
+      if (typeof p === 'string' && p.trim()) return p.trim();
+      if (typeof p === 'object' && p) return p.url || p.path || null;
+      return null;
+    };
+
+    const cardImage = pkg?.cardImage;
+    if (Array.isArray(cardImage)) {
+      for (const p of cardImage) {
+        const path = extractPath(p);
+        if (path) return path;
+      }
+    } else {
+      const path = extractPath(cardImage);
+      if (path) return path;
+    }
+
+    const imgs = pkg?.images;
+    if (Array.isArray(imgs)) {
+      for (const p of imgs) {
+        const path = extractPath(p);
+        if (path) return path;
+      }
+    } else {
+      const path = extractPath(imgs);
+      if (path) return path;
+    }
+
+    return null;
   };
 
-  // Scroll to top when component loads
+  const getImageUrl = (path) => {
+    if (typeof path !== 'string' || !path.trim()) return FALLBACK;
+    const fixed = path.replace(/\\/g, '/');
+    if (/^https?:\/\//i.test(fixed)) return fixed;
+    return `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
+  };
+
+  const applyFallback = (e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = FALLBACK;
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchPackages();
@@ -67,14 +107,12 @@ export default function Pilgrimage() {
 
   return (
     <div className="pilgrimage-tours">
-      {/* Hero Section */}
       <section className="sacred-hero">
         <div className="hero-content">
           <h1 className="hero-title">Worldwide Pilgrimage Tours</h1>
         </div>
       </section>
 
-      {/* Sacred Experiences */}
       <section className="sacred-experiences">
         <div className="container">
           <h2 className="section-title">Spiritual Experiences</h2>
@@ -90,7 +128,6 @@ export default function Pilgrimage() {
         </div>
       </section>
 
-      {/* Sacred Destinations */}
       <section className="destinations-section">
         <div className="container">
           <h2 className="section-title">Sacred Destinations</h2>
@@ -102,44 +139,49 @@ export default function Pilgrimage() {
             </div>
           ) : (
             <div className="destinations-grid">
-              {packages.map((pkg) => (
-                <div key={pkg._id} className="destination-card">
-                  <div className="card-image">
-                    <img 
-                      src={getImageUrl(pkg.cardImage || (pkg.images && pkg.images[0]))}
-                      alt={pkg.title}
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/350x240/D4AF37/FFFFFF?text=Sacred+Site'; }}
-                    />
-                    <div className="faith-badge">🕉️</div>
-                    <div className="rating-badge">⭐ 4.8</div>
-                  </div>
-                  <div className="card-content">
-                    <h3>{pkg.title}</h3>
-                    <div className="sacred-name">{pkg.title}</div>
-                    <div className="card-details">
-                      <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
-                      <div className="duration">{formatDuration(pkg)}</div>
+              {packages.map((pkg) => {
+                const primaryPath = pickPrimaryImagePath(pkg);
+                const imgUrl = getImageUrl(primaryPath);
+                console.log('[IMG DEBUG]', pkg.title, { primaryPath, imgUrl });
+                
+                return (
+                  <div key={pkg._id} className="destination-card">
+                    <div className="card-image">
+                      <img 
+                        src={imgUrl}
+                        alt={pkg.title}
+                        onError={applyFallback}
+                      />
+                      <div className="faith-badge">🕉️</div>
+                      <div className="rating-badge">⭐ 4.8</div>
                     </div>
-                    <div className="highlights">
-                      {pkg.inclusions && pkg.inclusions.slice(0, 3).map((inclusion, index) => (
-                        <span key={index} className="highlight-tag">{inclusion}</span>
-                      ))}
+                    <div className="card-content">
+                      <h3>{pkg.title}</h3>
+                      <div className="sacred-name">{pkg.title}</div>
+                      <div className="card-details">
+                        <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
+                        <div className="duration">{formatDuration(pkg)}</div>
+                      </div>
+                      <div className="highlights">
+                        {pkg.inclusions && pkg.inclusions.slice(0, 3).map((inclusion, index) => (
+                          <span key={index} className="highlight-tag">{inclusion}</span>
+                        ))}
+                      </div>
+                      <button 
+                        className="pilgrimage-btn"
+                        onClick={() => navigate(`/package/${pkg._id}`)}
+                      >
+                        Begin Sacred Journey
+                      </button>
                     </div>
-                    <button 
-                      className="pilgrimage-btn"
-                      onClick={() => navigate(`/package/${pkg._id}`)}
-                    >
-                      Begin Sacred Journey
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
       </section>
 
-      {/* CTA Section */}
       <section className="sacred-cta">
         <div className="container">
           <h2>Begin Your Sacred Journey</h2>

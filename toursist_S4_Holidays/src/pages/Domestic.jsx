@@ -5,37 +5,57 @@ import { useNavigate } from 'react-router-dom';
 export default function Domestic() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate(); 
-  
+  const navigate = useNavigate();
+
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-  // Helper function to get correct image URL with backslash fix
-  const getImageUrl = (imagePath) => {
-    console.log('Original imagePath:', imagePath);
-    
-    if (!imagePath) {
-      console.log('No image path, using placeholder');
-      return 'https://via.placeholder.com/350x240/cccccc/666666?text=No+Image';
+  // Constants
+  const SERVER_BASE = 'http://localhost:5000';
+  const FALLBACK = '/images/placeholder-card.jpg'; // file in frontend/public/images [public path]
+
+  // Safely pick a primary image path from a package (string only)
+  const pickPrimaryImagePath = (pkg) => {
+    // cardImage can be string or array
+    const fromCard = Array.isArray(pkg?.cardImage)
+      ? pkg.cardImage.find(p => typeof p === 'string' && p.trim())
+      : (typeof pkg?.cardImage === 'string' && pkg.cardImage.trim() ? pkg.cardImage : null);
+
+    if (fromCard) return fromCard;
+
+    // images can be string or array
+    const imgs = pkg?.images;
+    if (Array.isArray(imgs)) {
+      const first = imgs.find(p => typeof p === 'string' && p.trim());
+      if (first) return first;
+    } else if (typeof imgs === 'string' && imgs.trim()) {
+      return imgs;
     }
-    
-    // Fix Windows backslashes to forward slashes
-    const fixedPath = imagePath.replace(/\\/g, '/');
-    console.log('Fixed path:', fixedPath);
-    
-    // If it's already a full URL, return as is
-    if (fixedPath.startsWith('http')) {
-      return fixedPath;
-    }
-    
-    // Build full URL with server base
-    const serverBase = 'http://localhost:5000';
-    const fullUrl = `${serverBase}/${fixedPath}`;
-    console.log('Built full URL:', fullUrl);
-    return fullUrl;
+
+    return null; // none found
   };
 
-  useEffect(() => { 
-    window.scrollTo(0, 0); 
+  // Build a usable URL only from string paths; otherwise return local fallback
+  const getImageUrl = (path) => {
+    if (typeof path !== 'string' || !path.trim()) return FALLBACK; // guard + fallback
+
+    // Fix Windows backslashes safely (string only)
+    const fixed = path.replace(/\\/g, '/');
+
+    // If absolute URL, return as is
+    if (/^https?:\/\//i.test(fixed)) return fixed;
+
+    // If relative path from backend (e.g., uploads/abc.jpg)
+    return `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
+  };
+
+  // Reusable local-fallback handler (never calls external DNS)
+  const applyFallback = (e) => {
+    e.currentTarget.onerror = null;       // prevent loop
+    e.currentTarget.src = FALLBACK;       // local placeholder
+  };
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
     fetchPackages();
   }, []);
 
@@ -80,77 +100,80 @@ export default function Domestic() {
 
           <div className="destinations-grid">
             {loading ? (
-              <div className="loading-spinner" style={{ 
-                textAlign: 'center', 
-                padding: '50px', 
+              <div className="loading-spinner" style={{
+                textAlign: 'center',
+                padding: '50px',
                 fontSize: '18px',
-                gridColumn: '1 / -1' 
+                gridColumn: '1 / -1'
               }}>
                 Loading domestic packages...
               </div>
             ) : packages.length === 0 ? (
-              <div className="no-packages" style={{ 
-                textAlign: 'center', 
-                padding: '50px', 
+              <div className="no-packages" style={{
+                textAlign: 'center',
+                padding: '50px',
                 fontSize: '18px',
-                gridColumn: '1 / -1' 
+                gridColumn: '1 / -1'
               }}>
                 No domestic packages found. Add some packages in the admin panel!
               </div>
             ) : (
-              packages.map((pkg) => (
-                <div key={pkg._id} className="destination-card">
-                  <div className="card-image">
-                    <img
-                      src={getImageUrl(pkg.cardImage || (pkg.images && pkg.images[0]))}
-                      alt={pkg.title}
-                      onError={(e) => {
-                        console.log('Image failed to load:', e.target.src);
-                        e.target.src = 'https://via.placeholder.com/350x240/cccccc/666666?text=Package+Image';
-                      }}
-                    />
-                    <div className="region-badge">{pkg.category}</div>
-                    <div className="rating-badge">
-                      <span className="stars">⭐</span>
-                      <span>4.8</span>
-                    </div>
-                  </div>
+              packages.map((pkg) => {
+                const primaryPath = pickPrimaryImagePath(pkg);
+                const imgUrl = getImageUrl(primaryPath);
 
-                  <div className="card-content">
-                    <h3>{pkg.title}</h3>
-                    <div className="card-details">
-                      <div className="price">From {pkg.currency}{pkg.pricePerPerson.toLocaleString()}</div>
-                      <div className="duration">
-                        {pkg.itinerary && pkg.itinerary.length > 0 
-                          ? `${pkg.itinerary.length} Days` 
-                          : '7 Days'
-                        }
+                return (
+                  <div key={pkg._id} className="destination-card">
+                    <div className="card-image">
+                      <img
+                        src={imgUrl}
+                        alt={pkg.title}
+                        onError={applyFallback}
+                      />
+                      <div className="region-badge">{pkg.category}</div>
+                      <div className="rating-badge">
+                        <span className="stars">⭐</span>
+                        <span>4.8</span>
                       </div>
                     </div>
 
-                    {pkg.inclusions && pkg.inclusions.length > 0 && (
-                      <div className="highlights">
-                        {pkg.inclusions.slice(0, 3).map((inclusion, i) => (
-                          <span key={i} className="highlight-tag">{inclusion}</span>
-                        ))}
+                    <div className="card-content">
+                      <h3>{pkg.title}</h3>
+                      <div className="card-details">
+                        <div className="price">
+                          From {pkg.currency}{pkg.pricePerPerson.toLocaleString()}
+                        </div>
+                        <div className="duration">
+                          {pkg.itinerary && pkg.itinerary.length > 0
+                            ? `${pkg.itinerary.length} Days`
+                            : '7 Days'
+                          }
+                        </div>
                       </div>
-                    )}
 
-                    <div className="best-time">
-                      <span className="time-icon">🗓️</span>
-                      Best Time: Oct-Mar
+                      {pkg.inclusions && pkg.inclusions.length > 0 && (
+                        <div className="highlights">
+                          {pkg.inclusions.slice(0, 3).map((inclusion, i) => (
+                            <span key={i} className="highlight-tag">{inclusion}</span>
+                          ))}
+                        </div>
+                      )}
+
+                      <div className="best-time">
+                        <span className="time-icon">🗓️</span>
+                        Best Time: Oct-Mar
+                      </div>
+
+                      <button
+                        className="explore-btn"
+                        onClick={() => navigate(`/package/${pkg._id}`)}
+                      >
+                        Explore Tour
+                      </button>
                     </div>
-
-                        <button 
-                          className="explore-btn"
-                          onClick={() => navigate(`/package/${pkg._id}`)}
-                        >
-                          Explore Tour
-                        </button>
-
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
