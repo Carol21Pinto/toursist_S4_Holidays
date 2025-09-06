@@ -1,3 +1,44 @@
+/* Brand container */
+.logo {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: white; /* existing */
+}
+/* brand container already .logo */
+.logo-img {
+  height: 40px;          /* increase from 32px */
+  width: auto;           /* keep aspect ratio */
+  object-fit: contain;   /* avoid distortion */
+  display: block;
+}
+
+/* Optional: scale with viewport but cap the extremes */
+.logo-img {
+  height: clamp(20px, 5vw, 48px);
+}
+
+/* Slightly smaller on narrow screens if needed */
+@media (max-width: 768px) {
+  .logo-img {
+    height: 32px;        /* or clamp(28px, 6vw, 36px) */
+  }
+}
+
+
+/* SVG component case */
+.logo-svg {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+.logo:hover .logo-img,
+.logo:hover .logo-svg {
+  opacity: 0.9; /* subtle affordance */
+}
+
+
+
 .navbar {
   position: fixed;
   top: 0;

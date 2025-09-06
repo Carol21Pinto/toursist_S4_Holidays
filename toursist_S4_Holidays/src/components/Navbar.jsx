@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "./Navbar.css";
+import logo from "../assets/logo.png";
 
 export default function Navbar() {
   const [scrollY, setScrollY] = useState(0);
@@ -23,9 +24,15 @@ export default function Navbar() {
       }}
     >
       <div className="navbar-container">
-        <Link to="/" className="logo">
-        S4 HOLIDAYS
-        </Link>
+      <Link to="/" className="logo" aria-label="S4 Holidays Home">
+        <img
+        src={logo}            // use the imported asset
+        alt="S4 Holidays"
+        className="logo-img"
+        />
+
+      </Link>
+
 
         {/* Hamburger menu icon */}
         <div
