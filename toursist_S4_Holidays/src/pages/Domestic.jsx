@@ -82,7 +82,7 @@ export default function Domestic() {
       {/* Hero Section */}
       <section className="indian-hero contain-hero">
         <div className="hero-content hero-chip">
-          <div className="namaste-greeting">🙏 नमस्ते</div>
+          <div className="namaste-greeting">S4 HOLIDAYS</div>
           <h1 className="hero-title">
             <span className="hindi-text">भारत भ्रमण</span>
             <span className="english-text">Incredible India Tours</span>
@@ -180,20 +180,18 @@ export default function Domestic() {
       </section>
 
       {/* CTA */}
-      <section className="indian-cta simple-cta">
-        <div className="container">
-          <div className="cta-content">
-            <h2>
-              <span className="cta-hindi">अपनी भारत यात्रा शुरू करें</span>
-              <span className="cta-english">Start Your India Journey</span>
-            </h2>
-            <div className="cta-buttons">
-              <button className="btn-primary">Plan India Tour</button>
-              <button className="btn-secondary">Call Expert</button>
-            </div>
-          </div>
-        </div>
-      </section>
+<section className="indian-cta simple-cta">
+  <div className="container">
+    <div className="cta-content">
+      <h2>
+        <span className="cta-hindi">अपनी भारत यात्रा शुरू करें</span>
+        <br />
+        <span className="cta-english">Start Your India Journey Now</span>
+      </h2>
+    </div>
+  </div>
+</section>
+
     </div>
   );
 }
