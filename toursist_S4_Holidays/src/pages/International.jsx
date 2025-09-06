@@ -94,7 +94,7 @@ export default function International() {
     <div className="international-tours">
       <section className="hero-section">
         <div className="hero-content">
-          <h2 className="hero-subtitle">S4 HOLIDAYS</h2>
+          <h1 className="hero-subtitle">S4 HOLIDAYS</h1>
           <h1 className="hero-title">International Tours</h1>
         </div>
       </section>
@@ -177,10 +177,10 @@ export default function International() {
           <div className="cta-content">
             <h2>Ready to Explore the World?</h2>
             <p>Let us create unforgettable memories for you across continents</p>
-            <div className="cta-buttons">
+            {/*<div className="cta-buttons">
               <button className="btn-primary">Plan My Trip</button>
               <button className="btn-secondary">Contact Expert</button>
-            </div>
+            </div>*/}
           </div>
         </div>
       </section>

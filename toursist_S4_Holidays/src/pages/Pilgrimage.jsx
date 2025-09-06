@@ -109,6 +109,7 @@ export default function Pilgrimage() {
     <div className="pilgrimage-tours">
       <section className="sacred-hero">
         <div className="hero-content">
+          <h2 className="hero-subtitle">S4 HOLIDAYS</h2>
           <h1 className="hero-title">Worldwide Pilgrimage Tours</h1>
         </div>
       </section>
@@ -186,10 +187,10 @@ export default function Pilgrimage() {
         <div className="container">
           <h2>Begin Your Sacred Journey</h2>
           <p>Experience divine blessings, inner peace, and spiritual awakening</p>
-          <div className="cta-buttons">
+          {/* <div className="cta-buttons">
             <button className="btn-primary">Plan Pilgrimage</button>
             <button className="btn-secondary">Contact Expert</button>
-          </div>
+          </div> */}
         </div>
       </section>
     </div>

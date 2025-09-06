@@ -135,6 +135,17 @@
   overflow: hidden;
 }
 
+.hero-subtitle {
+  font-size: 2rem;         /* adjust size */
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+  letter-spacing: 1px;
+}
+
+
 .hero-background {
   position: absolute;
   top: 0;

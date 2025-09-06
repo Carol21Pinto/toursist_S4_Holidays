@@ -84,7 +84,10 @@ export default function GroupTrip() {
   ];
 
   const formatPrice = (price, currency) => `From ${currency}${price.toLocaleString()}/person`;
-  const formatDuration = (pkg) => (pkg.itinerary && pkg.itinerary.length > 0) ? `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}` : '4 Days';
+  const formatDuration = (pkg) =>
+    (pkg.itinerary && pkg.itinerary.length > 0)
+      ? `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}`
+      : '4 Days';
 
   const calculatePrice = () => {
     const selectedType = groupTypes.find(type => type.id === selectedGroupType);
@@ -103,278 +106,92 @@ export default function GroupTrip() {
   }, []);
 
   return (
-    <div className="group-trip">
-      {/* Hero Section */}
-      <section className="group-hero">
-        <div className="hero-background">
-          <div className="floating-elements">
-            <div className="float-element">👥</div>
-            <div className="float-element">🎉</div>
-            <div className="float-element">🌟</div>
-            <div className="float-element">🎒</div>
-            <div className="float-element">📸</div>
+    <>
+      <div className="group-trip">
+        {/* Hero Section */}
+        <section className="group-hero">
+          <div className="hero-background"></div>
+          <div className="hero-content">
+            <h1 className="hero-title">
+              <span className="title-part">Group</span>
+              <span className="title-part highlight">Adventures</span>
+              <span className="title-part">Await!</span>
+            </h1>
           </div>
-        </div>
-        
-        <div className="hero-content">
-          <h1 className="hero-title">
-            <span className="title-part">Group</span>
-            <span className="title-part highlight">Adventures</span>
-            <span className="title-part">Await!</span>
-          </h1>
-          <p className="hero-subtitle">
-            Create unforgettable memories with your favorite people.
-            <br />
-            From family bonding to corporate retreats - we've got you covered!
-          </p>
-          
-          <div className="hero-stats">
-            <div className="stat-bubble">
-              <div className="stat-number">500+</div>
-              <div className="stat-label">Happy Groups</div>
-            </div>
-            <div className="stat-bubble">
-              <div className="stat-number">50+</div>
-              <div className="stat-label">Destinations</div>
-            </div>
-            <div className="stat-bubble">
-              <div className="stat-number">24/7</div>
-              <div className="stat-label">Support</div>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Group Type Selector */}
-      <section className="group-selector">
-        <div className="container">
-          <h2 className="section-title">Choose Your Group Type</h2>
-          <div className="group-types">
-            {groupTypes.map((type) => (
-              <div 
-                key={type.id}
-                className={`group-type-card ${selectedGroupType === type.id ? 'active' : ''}`}
-                onClick={() => setSelectedGroupType(type.id)}
-                style={{ '--accent-color': type.color }}
-              >
-                <div className="type-icon">{type.icon}</div>
-                <h3>{type.name}</h3>
-                <p>{type.description}</p>
-                <div className="base-price">From ₹{type.basePrice.toLocaleString()}/person</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+        {/* Popular Group Destinations */}
+        <section className="group-destinations">
+          <div className="container">
+            <h2 className="section-title">Popular Group Destinations</h2>
 
-      {/* Group Size Calculator */}
-      <section className="group-calculator">
-        <div className="container">
-          <div className="calculator-card">
-            <h2>Group Size & Pricing Calculator</h2>
-            <div className="calculator-content">
-              <div className="size-selector">
-                <label>Number of People:</label>
-                <div className="size-controls">
-                  <button 
-                    onClick={() => setGroupSize(Math.max(2, groupSize - 1))}
-                    className="size-btn"
-                  >
-                    -
-                  </button>
-                  <span className="size-display">{groupSize}</span>
-                  <button 
-                    onClick={() => setGroupSize(Math.min(50, groupSize + 1))}
-                    className="size-btn"
-                  >
-                    +
-                  </button>
-                </div>
+            {loading ? (
+              <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
+                Loading group packages...
               </div>
-              
-              <div className="price-display">
-                <div className="price-per-person">
-                  <span className="price-label">Price per person:</span>
-                  <span className="price-amount">₹{calculatePrice().toLocaleString()}</span>
-                </div>
-                <div className="total-price">
-                  <span className="total-label">Total for {groupSize} people:</span>
-                  <span className="total-amount">₹{(calculatePrice() * groupSize).toLocaleString()}</span>
-                </div>
-                
-                {groupSize >= 4 && (
-                  <div className="discount-badge">
-                    🎉 {groupSize >= 10 ? '15%' : groupSize >= 6 ? '10%' : '5%'} Group Discount Applied!
-                  </div>
-                )}
+            ) : packages.length === 0 ? (
+              <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
+                No group packages found. Add some packages in the admin panel!
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            ) : (
+              <div className="destinations-grid">
+                {packages.map((pkg) => {
+                  // FIXED: Safe image extraction
+                  const primaryPath = pickPrimaryImagePath(pkg);
+                  const imgUrl = getImageUrl(primaryPath);
+                  console.log('[IMG DEBUG]', pkg.title, { primaryPath, imgUrl });
 
-      {/* Group Activities Showcase */}
-      <section className="activities-showcase">
-        <div className="container">
-          <h2 className="section-title">Group Activities & Experiences</h2>
-          <div className="activities-container">
-            <div className="activity-tabs">
-              {groupActivities.map((activity, index) => (
-                <div 
-                  key={activity.id}
-                  className={`activity-tab ${activeActivity === index ? 'active' : ''}`}
-                  onClick={() => setActiveActivity(index)}
-                >
-                  <span className="tab-icon">{activity.icon}</span>
-                  <span className="tab-name">{activity.title}</span>
-                </div>
-              ))}
-            </div>
-            
-            <div className="activity-content">
-              <div className="activity-info">
-                <h3>{groupActivities[activeActivity].title}</h3>
-                <p>{groupActivities[activeActivity].description}</p>
-              </div>
-              <div className="activity-visual">
-                <div className="activity-icon-large">
-                  {groupActivities[activeActivity].icon}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Popular Group Destinations */}
-      <section className="group-destinations">
-        <div className="container">
-          <h2 className="section-title">Popular Group Destinations</h2>
-          
-          {loading ? (
-            <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
-              Loading group packages...
-            </div>
-          ) : packages.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
-              No group packages found. Add some packages in the admin panel!
-            </div>
-          ) : (
-            <div className="destinations-grid">
-              {packages.map((pkg) => {
-                // FIXED: Safe image extraction
-                const primaryPath = pickPrimaryImagePath(pkg);
-                const imgUrl = getImageUrl(primaryPath);
-                console.log('[IMG DEBUG]', pkg.title, { primaryPath, imgUrl });
-                
-                return (
-                  <div key={pkg._id} className="destination-card">
-                    <div className="card-image">
-                      <img 
-                        src={imgUrl}
-                        alt={pkg.title}
-                        onError={applyFallback}
-                      />
-                      <div className="group-size-badge">6-15 people</div>
-                    </div>
-                    
-                    <div className="card-content">
-                      <h3>{pkg.title}</h3>
-                      <div className="card-details">
-                        <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
-                        <div className="duration">{formatDuration(pkg)}</div>
+                  return (
+                    <div key={pkg._id} className="destination-card">
+                      <div className="card-image">
+                        <img
+                          src={imgUrl}
+                          alt={pkg.title}
+                          onError={applyFallback}
+                        />
+                        <div className="group-size-badge">6-15 people</div>
                       </div>
-                      
-                      <div className="activities-list">
-                        {pkg.inclusions && pkg.inclusions.slice(0, 3).map((inclusion, index) => (
-                          <span key={index} className="activity-tag">{inclusion}</span>
-                        ))}
+
+                      <div className="card-content">
+                        <h3>{pkg.title}</h3>
+                        <div className="card-details">
+                          <div className="price">
+                            {formatPrice(pkg.pricePerPerson, pkg.currency)}
+                          </div>
+                          <div className="duration">{formatDuration(pkg)}</div>
+                        </div>
+
+                        <div className="activities-list">
+                          {pkg.inclusions &&
+                            pkg.inclusions.slice(0, 3).map((inclusion, index) => (
+                              <span key={index} className="activity-tag">
+                                {inclusion}
+                              </span>
+                            ))}
+                        </div>
+
+                        <button
+                          className="book-group-btn"
+                          onClick={() => navigate(`/package/${pkg._id}`)}
+                        >
+                          Book for Group
+                        </button>
                       </div>
-                      
-                      <button 
-                        className="book-group-btn"
-                        onClick={() => navigate(`/package/${pkg._id}`)}
-                      >
-                        Book for Group
-                      </button>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Special Packages */}
-      <section className="special-packages">
-        <div className="container">
-          <h2 className="section-title">Special Group Packages</h2>
-          <div className="packages-grid">
-            <div className="package-card premium">
-              <div className="package-header">
-                <h3>College Trip Special</h3>
-                <div className="package-icon">🎓</div>
+                  );
+                })}
               </div>
-              <div className="package-features">
-                <ul>
-                  <li>✨ Student-friendly pricing</li>
-                  <li>🏨 Budget accommodations</li>
-                  <li>🎉 Fun group activities</li>
-                  <li>📸 Photography sessions</li>
-                </ul>
-              </div>
-              <div className="package-price">Starting ₹8,000/person</div>
-            </div>
-
-            <div className="package-card premium">
-              <div className="package-header">
-                <h3>Corporate Retreat</h3>
-                <div className="package-icon">🏢</div>
-              </div>
-              <div className="package-features">
-                <ul>
-                  <li>💼 Business facilities</li>
-                  <li>🤝 Team building activities</li>
-                  <li>🍽️ Conference dining</li>
-                  <li>📊 Meeting arrangements</li>
-                </ul>
-              </div>
-              <div className="package-price">Starting ₹20,000/person</div>
-            </div>
-
-            <div className="package-card premium">
-              <div className="package-header">
-                <h3>Wedding Group</h3>
-                <div className="package-icon">👰‍♀️</div>
-              </div>
-              <div className="package-features">
-                <ul>
-                  <li>💒 Wedding venues</li>
-                  <li>📷 Professional photography</li>
-                  <li>🎊 Celebration arrangements</li>
-                  <li>🚐 Group transportation</li>
-                </ul>
-              </div>
-              <div className="package-price">Starting ₹35,000/person</div>
-            </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      </div> {/* ✅ close wrapper */}
 
-      {/* CTA Section */}
-      <section className="group-cta">
+      {/* Footer */}
+      <footer className="footer">
         <div className="container">
-          <div className="cta-content">
-            <h2>Ready to Plan Your Group Adventure?</h2>
-            <p>Let's create memories that will last a lifetime!</p>
-            <div className="cta-buttons">
-              <button className="btn-primary">Get Group Quote</button>
-              <button className="btn-secondary">Call Group Expert</button>
-            </div>
-          </div>
+          <p>© 2025 S4 Holidays. All rights reserved.</p>
         </div>
-      </section>
-    </div>
+      </footer>
+    </>
   );
 }
