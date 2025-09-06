@@ -21,8 +21,11 @@ export default function AdminDashboard() {
   const location = useLocation();
   const [stats, setStats] = useState({ domestic:0, international:0, pilgrimage:0, group:0, total:0 });
   const [chartData, setChartData] = useState([]);
+  const [refreshTrigger, setRefreshTrigger] = useState(0); // Add refresh trigger
 
   const load = () => {
+    console.log('Dashboard loading data...'); // Debug log
+    
     const token = localStorage.getItem("adminToken");
     fetch(`${API_URL}/packages/stats`, { headers: { Authorization: "Bearer " + token }})
       .then(r => r.ok ? r.json() : Promise.reject())
@@ -38,9 +41,52 @@ export default function AdminDashboard() {
       .catch(() => setChartData([]));
   };
 
+  // Initial load and URL change
   useEffect(() => {
     load();
-  }, [location.search]);
+  }, [location.search, refreshTrigger]); // Add refreshTrigger dependency
+
+  // Enhanced refresh system
+  useEffect(() => {
+    // Check for localStorage refresh signal more frequently
+    const checkForRefresh = () => {
+      const refreshSignal = localStorage.getItem('dashboardRefresh');
+      if (refreshSignal) {
+        console.log('Dashboard refresh signal received'); // Debug log
+        load();
+        localStorage.removeItem('dashboardRefresh');
+        setRefreshTrigger(prev => prev + 1); // Force re-render
+      }
+    };
+
+    // Check immediately
+    checkForRefresh();
+
+    // Set up polling to check for refresh signals
+    const refreshInterval = setInterval(checkForRefresh, 1000); // Check every second
+
+    // Listen for custom event
+    const handleCustomRefresh = () => {
+      console.log('Custom refresh event received'); // Debug log
+      load();
+      setRefreshTrigger(prev => prev + 1);
+    };
+
+    window.addEventListener('dashboardRefresh', handleCustomRefresh);
+    
+    // Listen for focus events
+    const handleFocus = () => {
+      checkForRefresh();
+    };
+    
+    window.addEventListener('focus', handleFocus);
+
+    return () => {
+      clearInterval(refreshInterval);
+      window.removeEventListener('dashboardRefresh', handleCustomRefresh);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, []);
 
   return (
     <Stack spacing={2}>
