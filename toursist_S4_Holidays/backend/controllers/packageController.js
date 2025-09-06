@@ -12,32 +12,89 @@ function parseMaybeJSON(value, fallback) {
 // Create new package
 exports.createPackage = async (req, res) => {
   try {
-    const body = { ...req.body };
-
-    body.itinerary = parseMaybeJSON(body.itinerary, []);
-    body.inclusions = parseMaybeJSON(body.inclusions, []);
-    body.exclusions = parseMaybeJSON(body.exclusions, []);
-    body.contactNumbers = parseMaybeJSON(body.contactNumbers, []);
-
-    if (body.pricePerPerson !== undefined && body.pricePerPerson !== null) {
-      const n = Number(body.pricePerPerson);
-      if (!Number.isNaN(n)) body.pricePerPerson = n;
-    }
-
-    // Multer fields -> arrays
-    const cardImage = req.files?.cardImage?.[0]?.path || '';
-    const images = req.files?.images ? req.files.images.map(f => f.path) : [];
-
+    // Parse the JSON data from FormData (your frontend sends it as 'data')
+    const packageData = JSON.parse(req.body.data);
+    
+    // Handle single file upload (req.file, not req.files because route uses upload.single)
+    const cardImage = req.file ? req.file.path : '';
+    
     const newPackage = new Package({
-      ...body,
-      cardImage,
-      images,
+      title: packageData.name,  // Map frontend 'name' to database 'title'
+      category: packageData.category.toLowerCase(), // Ensure lowercase to match enum
+      pricePerPerson: Number(packageData.pricePerPerson),
+      currency: packageData.currency,
+      priceNote: packageData.priceNote || '',
+      duration: packageData.duration,
+      pricingMode: packageData.pricingMode,
+      priceText: packageData.priceText || '',
+      cardImage: cardImage,
+      images: [], // Start with empty array
+      description: packageData.description || '', // Add description field
+      itinerary: packageData.itinerary || [],
+      inclusions: packageData.inclusions || [],
+      exclusions: packageData.exclusions || [],
+      contactNumbers: [], // Default empty
     });
 
     await newPackage.save();
     return res.status(201).json(newPackage);
   } catch (err) {
     console.error('CREATE_ERR:', err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+// Update package - FIXED VERSION
+exports.updatePackage = async (req, res) => {
+  try {
+    console.log('UPDATE REQUEST - Package ID:', req.params.id); // Debug log
+    console.log('UPDATE REQUEST - Body:', req.body); // Debug log
+    console.log('UPDATE REQUEST - File:', req.file); // Debug log
+
+    // Parse the JSON data from FormData
+    const packageData = JSON.parse(req.body.data);
+    console.log('Parsed package data:', packageData); // Debug log
+
+    const updates = {
+      title: packageData.name,
+      category: packageData.category.toLowerCase(),
+      duration: packageData.duration,
+      pricingMode: packageData.pricingMode,
+      pricePerPerson: packageData.pricePerPerson ? Number(packageData.pricePerPerson) : undefined,
+      currency: packageData.currency,
+      priceNote: packageData.priceNote || '',
+      priceText: packageData.priceText || '',
+      itinerary: packageData.itinerary || [],
+      inclusions: packageData.inclusions || [],
+      exclusions: packageData.exclusions || [],
+    };
+
+    // Only update image if new one is provided
+    if (req.file) {
+      updates.cardImage = req.file.path;
+      console.log('New image uploaded:', req.file.path); // Debug log
+    }
+
+    // Remove undefined fields
+    Object.keys(updates).forEach(key => {
+      if (updates[key] === undefined) {
+        delete updates[key];
+      }
+    });
+
+    console.log('Final updates object:', updates); // Debug log
+
+    const pkg = await Package.findByIdAndUpdate(req.params.id, updates, { new: true });
+    
+    if (!pkg) {
+      console.log('Package not found with ID:', req.params.id); // Debug log
+      return res.status(404).json({ message: 'Package not found' });
+    }
+
+    console.log('Package updated successfully:', pkg._id); // Debug log
+    return res.json(pkg);
+  } catch (err) {
+    console.error('UPDATE_ERR:', err);
     return res.status(500).json({ message: err.message });
   }
 };
@@ -62,37 +119,6 @@ exports.getPackage = async (req, res) => {
     return res.json(pkg);
   } catch (err) {
     console.error('GET_ERR:', err);
-    return res.status(500).json({ message: err.message });
-  }
-};
-
-// Update
-exports.updatePackage = async (req, res) => {
-  try {
-    const updates = { ...req.body };
-
-    if (updates.itinerary !== undefined) updates.itinerary = parseMaybeJSON(updates.itinerary, []);
-    if (updates.inclusions !== undefined) updates.inclusions = parseMaybeJSON(updates.inclusions, []);
-    if (updates.exclusions !== undefined) updates.exclusions = parseMaybeJSON(updates.exclusions, []);
-    if (updates.contactNumbers !== undefined) updates.contactNumbers = parseMaybeJSON(updates.contactNumbers, []);
-
-    if (updates.pricePerPerson !== undefined && updates.pricePerPerson !== null) {
-      const n = Number(updates.pricePerPerson);
-      if (!Number.isNaN(n)) updates.pricePerPerson = n;
-    }
-
-    if (req.files?.cardImage?.[0]) {
-      updates.cardImage = req.files.cardImage[0].path;
-    }
-    if (req.files?.images) {
-      updates.images = req.files.images.map(file => file.path);
-    }
-
-    const pkg = await Package.findByIdAndUpdate(req.params.id, updates, { new: true });
-    if (!pkg) return res.status(404).json({ message: 'Package not found' });
-    return res.json(pkg);
-  } catch (err) {
-    console.error('UPDATE_ERR:', err);
     return res.status(500).json({ message: err.message });
   }
 };

@@ -11,23 +11,17 @@ router.get('/weekly', pkg.getWeeklyCounts);
 // Dynamic id route AFTER specifics
 router.get('/:id', pkg.getPackage);
 
-// Create (multipart form-data: fields + files)
+// Create (single card image + JSON data)
 router.post(
   '/',
-  upload.fields([
-    { name: 'cardImage', maxCount: 1 },
-    { name: 'images', maxCount: 10 },
-  ]),
+  upload.single('card_image'), // Changed from upload.fields to upload.single
   pkg.createPackage
 );
 
-// Update (allow replacing images)
+// Update (allow replacing single card image)
 router.put(
   '/:id',
-  upload.fields([
-    { name: 'cardImage', maxCount: 1 },
-    { name: 'images', maxCount: 10 },
-  ]),
+  upload.single('card_image'), // Changed from upload.fields to upload.single
   pkg.updatePackage
 );
 

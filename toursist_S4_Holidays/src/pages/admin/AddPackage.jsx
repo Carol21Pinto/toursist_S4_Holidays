@@ -1,324 +1,470 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import "prosemirror-view/style/prosemirror.css";
-import { EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Grid from "@mui/material/Grid";
-import {
-  Box, Card, CardContent, CardHeader, Stack, TextField, MenuItem, Button, Typography,
-} from "@mui/material";
+import React, { useState } from 'react';
+import { toast } from 'react-toastify';
+import './AddPackage.css';
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
-function RichText({ value, onChange }) {
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: value || "",
-    onUpdate({ editor }) {
-      onChange(editor.getHTML());
-    },
+const AddPackage = () => {
+  const [formData, setFormData] = useState({
+    name: '',
+    category: 'Domestic',
+    duration: '',
+    pricePerPerson: '',
+    currency: 'INR',
+    priceNote: '',
+    priceText: ''
   });
-  if (!editor) return null;
 
-  return (
-    <Box sx={{ width: "100%" }}>
-      <EditorContent editor={editor} style={{ width: "100%" }} />
-      <style>{`
-        .ProseMirror {
-          width: 100%;
-          height: 72px;
-          max-height: 72px;
-          overflow-y: auto;
-          outline: none;
-          white-space: pre-wrap;
-        }
-      `}</style>
-    </Box>
-  );
-}
+  const [pricingMode, setPricingMode] = useState('Structured');
 
-export default function AddPackage() {
-  const navigate = useNavigate();
-
-  const [title, setTitle] = useState("");
-  const [category, setCategory] = useState("domestic");
-  const [pricePerPerson, setPricePerPerson] = useState("");
-  const [currency, setCurrency] = useState("INR");
-  const [priceNote, setPriceNote] = useState("");
-  const [description, setDescription] = useState("");
-  const [itinerary, setItinerary] = useState([]);
-  const [inclusions, setInclusions] = useState([]);
-  const [exclusions, setExclusions] = useState([]);
-  const [contactNumbers, setContactNumbers] = useState([]);
+  const [itinerary, setItinerary] = useState([
+    { day: 1, title: '', activities: [''] }
+  ]);
+  
+  const [inclusions, setInclusions] = useState(['']);
+  const [exclusions, setExclusions] = useState(['']);
   const [cardImage, setCardImage] = useState(null);
-  const [images, setImages] = useState([]);
-  const [saving, setSaving] = useState(false);
-  const [msg, setMsg] = useState("");
+  const [imagePreview, setImagePreview] = useState(null);
 
-  function addItineraryDay() {
-    setItinerary([...itinerary, { day: itinerary.length + 1, title: "", activities: [] }]);
-  }
+  // Handle basic form fields
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
 
-  async function handleSubmit(e) {
-    e.preventDefault();
-    setSaving(true);
-    setMsg("");
+  // Handle pricing mode change
+  const handlePricingModeChange = (mode) => {
+    setPricingMode(mode);
+  };
 
-    const fd = new FormData();
-    fd.append("title", title);
-    fd.append("category", category);
-    fd.append("pricePerPerson", String(pricePerPerson));
-    fd.append("currency", currency);
-    fd.append("priceNote", priceNote);
-    fd.append("description", description);
-    fd.append("inclusions", JSON.stringify(inclusions));
-    fd.append("exclusions", JSON.stringify(exclusions));
-    fd.append("contactNumbers", JSON.stringify(contactNumbers));
-    fd.append("itinerary", JSON.stringify(itinerary));
-    if (cardImage) fd.append("cardImage", cardImage);
-    images.forEach((img) => fd.append("images", img));
-
-    const token = localStorage.getItem("adminToken");
-    const res = await fetch(`${API_URL}/packages`, {
-      method: "POST",
-      headers: { Authorization: "Bearer " + token },
-      body: fd,
-    });
-    const data = await res.json();
-
-    if (res.ok) {
-      setMsg("Package created successfully!");
-      const ts = Date.now();
-      // Force immediate dashboard refresh via query param (remounts route)
-      setTimeout(() => navigate(`/admin?refresh=${ts}`), 150);
-    } else {
-      setMsg(data.message || "Failed to create package");
+  // Handle card image upload and preview
+  const handleCardImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCardImage(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
     }
-    setSaving(false);
-  }
+  };
+
+  // Handle itinerary changes
+  const handleItineraryChange = (dayIndex, field, value) => {
+    const newItinerary = [...itinerary];
+    newItinerary[dayIndex][field] = value;
+    setItinerary(newItinerary);
+  };
+
+  const handleActivityChange = (dayIndex, activityIndex, value) => {
+    const newItinerary = [...itinerary];
+    newItinerary[dayIndex].activities[activityIndex] = value;
+    setItinerary(newItinerary);
+  };
+
+  const addActivity = (dayIndex) => {
+    const newItinerary = [...itinerary];
+    newItinerary[dayIndex].activities.push('');
+    setItinerary(newItinerary);
+  };
+
+  const addDay = () => {
+    setItinerary([...itinerary, {
+      day: itinerary.length + 1,
+      title: '',
+      activities: ['']
+    }]);
+  };
+
+  // Handle inclusions/exclusions
+  const handleArrayChange = (index, value, type) => {
+    if (type === 'inclusions') {
+      const newInclusions = [...inclusions];
+      newInclusions[index] = value;
+      setInclusions(newInclusions);
+    } else if (type === 'exclusions') {
+      const newExclusions = [...exclusions];
+      newExclusions[index] = value;
+      setExclusions(newExclusions);
+    }
+  };
+
+  const addArrayItem = (type) => {
+    if (type === 'inclusions') {
+      setInclusions([...inclusions, '']);
+    } else if (type === 'exclusions') {
+      setExclusions([...exclusions, '']);
+    }
+  };
+
+  // Enhanced dashboard refresh function
+  const triggerDashboardRefresh = () => {
+    console.log('Triggering dashboard refresh...'); // Debug log
+    
+    // Method 1: localStorage signal
+    localStorage.setItem('dashboardRefresh', Date.now().toString());
+    
+    // Method 2: Custom event
+    window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+    
+    // Method 3: Multiple localStorage signals with delay
+    setTimeout(() => {
+      localStorage.setItem('dashboardRefresh', (Date.now() + 1).toString());
+    }, 100);
+    
+    setTimeout(() => {
+      localStorage.setItem('dashboardRefresh', (Date.now() + 2).toString());
+    }, 500);
+  };
+
+  // Submit form
+  const addPackage = async (packageData, cardImage) => {
+    try {
+      const formDataToSend = new FormData();
+      
+      if (cardImage) {
+        formDataToSend.append("card_image", cardImage);
+      }
+
+      formDataToSend.append("data", JSON.stringify(packageData));
+
+      console.log('Sending package data:', packageData); // Debug log
+
+      const response = await fetch("http://localhost:5000/api/packages", {
+        method: "POST",
+        body: formDataToSend,
+      });
+
+      if (response.ok) {
+        const newPackage = await response.json();
+        console.log('Package created successfully:', newPackage); // Debug log
+        
+        toast.success("Package added successfully!");
+        
+        // Trigger dashboard refresh with multiple methods
+        triggerDashboardRefresh();
+        
+        // Reset form
+        setFormData({
+          name: '',
+          category: 'Domestic',
+          duration: '',
+          pricePerPerson: '',
+          currency: 'INR',
+          priceNote: '',
+          priceText: ''
+        });
+        setItinerary([{ day: 1, title: '', activities: [''] }]);
+        setInclusions(['']);
+        setExclusions(['']);
+        setCardImage(null);
+        setImagePreview(null);
+        setPricingMode('Structured');
+        
+        return newPackage;
+      } else {
+        const errorText = await response.text();
+        throw new Error(`HTTP ${response.status}: ${errorText}`);
+      }
+    } catch (error) {
+      console.error("Error adding package:", error);
+      toast.error(`Failed to add package: ${error.message}`);
+    }
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    const packageData = {
+      ...formData,
+      pricingMode,
+      itinerary: itinerary.filter(day => day.title && day.activities.some(act => act)),
+      inclusions: inclusions.filter(inc => inc.trim()),
+      exclusions: exclusions.filter(exc => exc.trim())
+    };
+
+    await addPackage(packageData, cardImage);
+  };
 
   return (
-    <Box sx={{ maxWidth: 1000, mx: "auto", p: { xs: 2, md: 3 } }}>
-      <Typography variant="h5" sx={{ fontWeight: 700, mb: 1.5 }}>
-        Add Package
-      </Typography>
+    <div className="add-package-container">
+      <div className="add-package-header">
+        <h1>Travel Admin Panel</h1>
+        <p>Add a new package with images and full details.</p>
+      </div>
 
-      <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 1 }}>
-        <CardHeader title="Basic Details" sx={{ py: 1.25 }} />
-        <CardContent sx={{ pt: 1, pb: 0.5 }}>
-          <Grid container spacing={1.5} sx={{ width: "100%" }}>
-            <Grid size={{ xs: 12, md: 8 }}>
-              <TextField
-                label="Package Name"
-                fullWidth
-                size="small"
-                margin="dense"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
+      <form onSubmit={handleSubmit} className="add-package-form">
+        {/* Basic Info Section */}
+        <div className="form-section">
+          <h2>Basic Info</h2>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>Package Name</label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder="India gate"
+                required
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                label="Category"
-                select
-                fullWidth
-                size="small"
-                margin="dense"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
+            </div>
+            
+            <div className="form-group">
+              <label>Category</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
               >
-                <MenuItem value="domestic">Domestic</MenuItem>
-                <MenuItem value="international">International</MenuItem>
-                <MenuItem value="pilgrimage">Pilgrimage</MenuItem>
-                <MenuItem value="group">Group Trip</MenuItem>
-              </TextField>
-            </Grid>
+                <option value="Domestic">Domestic</option>
+                <option value="International">International</option>
+                <option value="Pilgrimage">Pilgrimage</option>
+                <option value="Group">Group</option>
+              </select>
+            </div>
+          </div>
 
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                label="Price per person"
-                type="number"
-                fullWidth
-                size="small"
-                margin="dense"
-                value={pricePerPerson}
-                onChange={(e) => setPricePerPerson(e.target.value)}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                label="Currency"
-                fullWidth
-                size="small"
-                margin="dense"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                label="Price note (optional)"
-                fullWidth
-                size="small"
-                margin="dense"
-                value={priceNote}
-                onChange={(e) => setPriceNote(e.target.value)}
-              />
-            </Grid>
+          <div className="form-group full-width">
+            <label>Duration</label>
+            <input
+              type="text"
+              name="duration"
+              value={formData.duration}
+              onChange={handleInputChange}
+              placeholder="e.g., 5 Days 4 Nights"
+            />
+          </div>
+        </div>
 
-            <Grid size={12}>
-              <Typography variant="subtitle2" sx={{ mb: 0.75 }}>
-                Big Description
-              </Typography>
-              <Box
-                sx={{
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: 1,
-                  p: 1,
-                  bgcolor: "background.paper",
-                  width: "100%",
-                }}
-              >
-                <RichText value={description} onChange={setDescription} />
-              </Box>
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+        {/* Pricing Section */}
+        <div className="form-section">
+          <h2>Pricing</h2>
+          
+          <div className="pricing-mode">
+            <label>Mode:</label>
+            <button 
+              type="button" 
+              className={`mode-btn ${pricingMode === 'Structured' ? 'active' : ''}`}
+              onClick={() => handlePricingModeChange('Structured')}
+            >
+              Structured
+            </button>
+            <button 
+              type="button" 
+              className={`mode-btn ${pricingMode === 'Text' ? 'active' : ''}`}
+              onClick={() => handlePricingModeChange('Text')}
+            >
+              Text
+            </button>
+          </div>
 
-      <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 1, mt: 2 }}>
-        <CardHeader title="Media & Lists" sx={{ py: 1.25 }} />
-        <CardContent sx={{ pt: 1, pb: 0.5 }}>
-          <Grid container spacing={1.5}>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Stack spacing={0.75}>
-                <Typography variant="subtitle2">
-                  Card Image <Typography component="span" variant="caption" color="text.secondary">(optional)</Typography>
-                </Typography>
-                <Button component="label" variant="outlined" size="small">
+          {pricingMode === 'Structured' ? (
+            <>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Price per person</label>
+                  <input
+                    type="number"
+                    name="pricePerPerson"
+                    value={formData.pricePerPerson}
+                    onChange={handleInputChange}
+                    placeholder="2000"
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Currency</label>
+                  <select
+                    name="currency"
+                    value={formData.currency}
+                    onChange={handleInputChange}
+                  >
+                    <option value="INR">INR</option>
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group full-width">
+                <label>Price note (optional)</label>
+                <input
+                  type="text"
+                  name="priceNote"
+                  value={formData.priceNote}
+                  onChange={handleInputChange}
+                  placeholder="e.g., With flights ex Bangalore"
+                />
+              </div>
+            </>
+          ) : (
+            <div className="form-group full-width">
+              <label>Price Text</label>
+              <textarea
+                name="priceText"
+                value={formData.priceText}
+                onChange={handleInputChange}
+                placeholder="Starting from ₹25,000 per person"
+                rows="3"
+                className="price-text-area"
+              />
+            </div>
+          )}
+        </div>
+
+        {/* Images Section */}
+        <div className="form-section">
+          <h2>Images</h2>
+          
+          <div className="image-upload-section">
+            <div className="form-group">
+              <label>Card image (required)</label>
+              <div className="file-input-container">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCardImageChange}
+                  id="cardImage"
+                  className="file-input"
+                  required
+                />
+                <label htmlFor="cardImage" className="file-input-label">
                   Choose File
+                </label>
+              </div>
+              
+              {imagePreview && (
+                <div className="image-preview">
+                  <img src={imagePreview} alt="Card preview" />
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Day-wise Itinerary Section */}
+        <div className="form-section">
+          <h2>Day-wise Itinerary</h2>
+          
+          {itinerary.map((day, dayIndex) => (
+            <div key={dayIndex} className="itinerary-day">
+              <h3>Day {day.day}</h3>
+              
+              <div className="form-group">
+                <label>Title</label>
+                <input
+                  type="text"
+                  value={day.title}
+                  onChange={(e) => handleItineraryChange(dayIndex, 'title', e.target.value)}
+                  placeholder="e.g., Arrive Cochin"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Activities</label>
+                {day.activities.map((activity, actIndex) => (
                   <input
-                    hidden
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) =>
-                      setCardImage(e.target.files && e.target.files ? e.target.files : null)
-                    }
+                    key={actIndex}
+                    type="text"
+                    value={activity}
+                    onChange={(e) => handleActivityChange(dayIndex, actIndex, e.target.value)}
+                    placeholder="Activity description"
+                    className="activity-input"
                   />
-                </Button>
-                <Typography variant="caption" color="text.secondary">
-                  1200×800 JPG/PNG
-                </Typography>
-              </Stack>
-            </Grid>
+                ))}
+                <button
+                  type="button"
+                  onClick={() => addActivity(dayIndex)}
+                  className="add-btn small"
+                >
+                  + Add Activity
+                </button>
+              </div>
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={addDay}
+            className="add-btn full-width"
+          >
+            + Add Day
+          </button>
+        </div>
 
-            <Grid size={{ xs: 12, md: 6 }}>
-              <Stack spacing={0.75}>
-                <Typography variant="subtitle2">More Images (max 10)</Typography>
-                <Button component="label" variant="outlined" size="small">
-                  Choose Files
-                  <input
-                    hidden
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={(e) => setImages(e.target.files ? Array.from(e.target.files) : [])}
-                  />
-                </Button>
-              </Stack>
-            </Grid>
-
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                label="Inclusions (comma separated)"
-                fullWidth
-                size="small"
-                margin="dense"
-                onChange={(e) =>
-                  setInclusions(
-                    e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
-                  )
-                }
+        {/* Inclusions Section */}
+        <div className="form-section">
+          <h2>Inclusions</h2>
+          
+          {inclusions.map((inclusion, index) => (
+            <div key={index} className="form-group">
+              <input
+                type="text"
+                value={inclusion}
+                onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
+                placeholder="Inclusion item"
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                label="Exclusions (comma separated)"
-                fullWidth
-                size="small"
-                margin="dense"
-                onChange={(e) =>
-                  setExclusions(
-                    e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
-                  )
-                }
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 4 }}>
-              <TextField
-                label="Contact Numbers (comma separated)"
-                fullWidth
-                size="small"
-                margin="dense"
-                onChange={(e) =>
-                  setContactNumbers(
-                    e.target.value.split(",").map((s) => s.trim()).filter(Boolean)
-                  )
-                }
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
-      </Card>
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={() => addArrayItem('inclusions')}
+            className="add-btn"
+          >
+            + Add Inclusion
+          </button>
+        </div>
 
-      <Card variant="outlined" sx={{ borderRadius: 2, boxShadow: 1, mt: 2 }}>
-        <CardHeader title="Itinerary" sx={{ py: 1.25 }} />
-        <CardContent sx={{ pt: 1, pb: 1 }}>
-          <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
-            <Button onClick={addItineraryDay} size="small" variant="outlined">
-              + Add Day
-            </Button>
-          </Stack>
-          <Stack spacing={1}>
-            {itinerary.map((d, i) => (
-              <Grid key={i} container spacing={1}>
-                <Grid size={{ xs: 12, md: 2 }}>
-                  <TextField
-                    label="Day"
-                    value={`Day ${d.day}`}
-                    fullWidth
-                    size="small"
-                    margin="dense"
-                    InputProps={{ readOnly: true }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 10 }}>
-                  <TextField
-                    label="Title"
-                    fullWidth
-                    size="small"
-                    margin="dense"
-                    value={d.title}
-                    onChange={(e) => {
-                      const copy = [...itinerary];
-                      copy[i].title = e.target.value;
-                      setItinerary(copy);
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            ))}
-          </Stack>
-        </CardContent>
-      </Card>
+        {/* Exclusions Section */}
+        <div className="form-section">
+          <h2>Exclusions</h2>
+          
+          {exclusions.map((exclusion, index) => (
+            <div key={index} className="form-group">
+              <input
+                type="text"
+                value={exclusion}
+                onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
+                placeholder="Exclusion item"
+              />
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={() => addArrayItem('exclusions')}
+            className="add-btn"
+          >
+            + Add Exclusion
+          </button>
+        </div>
 
-      <Stack direction="row" spacing={1.5} sx={{ mt: 2 }}>
-        <Button onClick={handleSubmit} disabled={saving} size="small" variant="contained">
-          {saving ? "Saving..." : "Save Package"}
-        </Button>
-        {msg && <Typography variant="body2" sx={{ alignSelf: "center" }}>{msg}</Typography>}
-      </Stack>
-    </Box>
+        {/* Submit Button */}
+        <div className="submit-section">
+          <button type="submit" className="save-btn">
+            💾 Save Package
+          </button>
+        </div>
+
+        {/* Debug button - Remove this after testing */}
+        <div style={{ marginTop: '20px', padding: '10px', background: '#f0f0f0' }}>
+          <button 
+            type="button"
+            onClick={triggerDashboardRefresh}
+            style={{ padding: '5px 10px', background: '#007bff', color: 'white', border: 'none' }}
+          >
+            🔄 Force Dashboard Refresh (Debug)
+          </button>
+          <p style={{ fontSize: '12px', margin: '5px 0 0 0' }}>
+            Use this button to manually trigger dashboard refresh after adding packages
+          </p>
+        </div>
+      </form>
+    </div>
   );
-}
+};
+
+export default AddPackage;
