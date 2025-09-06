@@ -9,12 +9,53 @@ export default function International() {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-  // Helper function to get correct image URL with backslash fix
-  const getImageUrl = (imagePath) => {
-    if (!imagePath) return 'https://via.placeholder.com/350x240/cccccc/666666?text=No+Image';
-    const fixedPath = imagePath.replace(/\\/g, '/');
-    if (fixedPath.startsWith('http')) return fixedPath;
-    return `http://localhost:5000/${fixedPath}`;
+  // Constants
+  const SERVER_BASE = 'http://localhost:5000';
+  const FALLBACK = '/images/placeholder-card.jpg';
+
+  // Enhanced picker that handles strings AND objects
+  const pickPrimaryImagePath = (pkg) => {
+    const extractPath = (p) => {
+      if (typeof p === 'string' && p.trim()) return p.trim();
+      if (typeof p === 'object' && p) return p.url || p.path || null;
+      return null;
+    };
+
+    const cardImage = pkg?.cardImage;
+    if (Array.isArray(cardImage)) {
+      for (const p of cardImage) {
+        const path = extractPath(p);
+        if (path) return path;
+      }
+    } else {
+      const path = extractPath(cardImage);
+      if (path) return path;
+    }
+
+    const imgs = pkg?.images;
+    if (Array.isArray(imgs)) {
+      for (const p of imgs) {
+        const path = extractPath(p);
+        if (path) return path;
+      }
+    } else {
+      const path = extractPath(imgs);
+      if (path) return path;
+    }
+
+    return null;
+  };
+
+  const getImageUrl = (path) => {
+    if (typeof path !== 'string' || !path.trim()) return FALLBACK;
+    const fixed = path.replace(/\\/g, '/');
+    if (/^https?:\/\//i.test(fixed)) return fixed;
+    return `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
+  };
+
+  const applyFallback = (e) => {
+    e.currentTarget.onerror = null;
+    e.currentTarget.src = FALLBACK;
   };
 
   useEffect(() => {
@@ -51,7 +92,6 @@ export default function International() {
   return (
     
     <div className="international-tours">
-      {/* Hero Section: Simple, Static, No Glass Effect */}
       <section className="hero-section">
         <div className="hero-content">
           <h2 className="hero-subtitle">S4 HOLIDAYS</h2>
@@ -59,7 +99,6 @@ export default function International() {
         </div>
       </section>
 
-      {/* Destinations Section: No Pagination */}
       <section className="destinations-section">
         <div className="container">
           <div className="section-header">
@@ -78,41 +117,45 @@ export default function International() {
             </div>
           ) : (
             <div className="destinations-grid">
-              {packages.map(pkg => (
-                <div key={pkg._id} className="destination-card">
-                  <div className="card-image">
-                    <img 
-                      src={getImageUrl(pkg.cardImage || (pkg.images && pkg.images[0]))} 
-                      alt={pkg.title} 
-                      onError={(e) => { 
-                        e.target.src = 'https://via.placeholder.com/350x240/cccccc/666666?text=International+Package'; 
-                      }} 
-                    />
-                    <div className="card-overlay">
-                      <div className="rating">
-                        <span className="stars">★★★★★</span>
-                        <span className="rating-number">4.8</span>
+              {packages.map(pkg => {
+                const primaryPath = pickPrimaryImagePath(pkg);
+                const imgUrl = getImageUrl(primaryPath);
+                console.log('[IMG DEBUG]', pkg.title, { primaryPath, imgUrl });
+                
+                return (
+                  <div key={pkg._id} className="destination-card">
+                    <div className="card-image">
+                      <img 
+                        src={imgUrl}
+                        alt={pkg.title}
+                        onError={applyFallback}
+                      />
+                      <div className="card-overlay">
+                        <div className="rating">
+                          <span className="stars">★★★★★</span>
+                          <span className="rating-number">4.8</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="card-content">
-                    <h3 className="destination-name">{pkg.title}</h3>
-                    <p className="destination-description">
-                      {pkg.description ? pkg.description.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : 'Explore this amazing destination'}
-                    </p>
-                    <div className="card-details">
-                      <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
-                      <div className="duration">{formatDuration(pkg)}</div>
+                    <div className="card-content">
+                      <h3 className="destination-name">{pkg.title}</h3>
+                      <p className="destination-description">
+                        {pkg.description ? pkg.description.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : 'Explore this amazing destination'}
+                      </p>
+                      <div className="card-details">
+                        <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
+                        <div className="duration">{formatDuration(pkg)}</div>
+                      </div>
+                      <button 
+                        className="explore-btn"
+                        onClick={() => navigate(`/package/${pkg._id}`)}
+                      >
+                        Explore Package
+                      </button>
                     </div>
-                    <button 
-                      className="explore-btn"
-                      onClick={() => navigate(`/package/${pkg._id}`)}
-                    >
-                      Explore Package
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
