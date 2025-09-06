@@ -22,6 +22,16 @@
     url('https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&w=2070&q=80') center/cover no-repeat;
 }
 
+.hero-subtitle {
+  font-size: 1.5rem;       /* bigger, but still smaller than main title */
+  font-weight: 800;        /* bold */
+  color: #fff;             /* white for contrast */
+  margin-bottom: 0.75rem;  /* space below */
+  text-transform: uppercase;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7); /* same as hero title */
+  letter-spacing: 1px;     /* slight spacing for elegance */
+}
+
 .hero-content {
   color: white;
 }
