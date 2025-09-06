@@ -29,7 +29,7 @@ const AddPackage = () => {
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
-    severity: 'success' // 'success', 'error', 'warning', 'info'
+    severity: 'success'
   });
 
   // Handle snackbar close
@@ -101,12 +101,34 @@ const AddPackage = () => {
     setItinerary(newItinerary);
   };
 
+  // NEW: Remove activity function
+  const removeActivity = (dayIndex, activityIndex) => {
+    const newItinerary = [...itinerary];
+    if (newItinerary[dayIndex].activities.length > 1) {
+      newItinerary[dayIndex].activities.splice(activityIndex, 1);
+      setItinerary(newItinerary);
+    }
+  };
+
   const addDay = () => {
     setItinerary([...itinerary, {
       day: itinerary.length + 1,
       title: '',
       activities: ['']
     }]);
+  };
+
+  // NEW: Remove day function
+  const removeDay = (dayIndex) => {
+    if (itinerary.length > 1) {
+      const newItinerary = [...itinerary];
+      newItinerary.splice(dayIndex, 1);
+      const renumberedItinerary = newItinerary.map((day, index) => ({
+        ...day,
+        day: index + 1
+      }));
+      setItinerary(renumberedItinerary);
+    }
   };
 
   // Handle inclusions/exclusions
@@ -127,6 +149,24 @@ const AddPackage = () => {
       setInclusions([...inclusions, '']);
     } else if (type === 'exclusions') {
       setExclusions([...exclusions, '']);
+    }
+  };
+
+  // NEW: Remove inclusion function
+  const removeInclusion = (index) => {
+    if (inclusions.length > 1) {
+      const newInclusions = [...inclusions];
+      newInclusions.splice(index, 1);
+      setInclusions(newInclusions);
+    }
+  };
+
+  // NEW: Remove exclusion function
+  const removeExclusion = (index) => {
+    if (exclusions.length > 1) {
+      const newExclusions = [...exclusions];
+      newExclusions.splice(index, 1);
+      setExclusions(newExclusions);
     }
   };
 
@@ -169,13 +209,9 @@ const AddPackage = () => {
         const newPackage = await response.json();
         console.log('Package created successfully:', newPackage);
         
-        // Show success snackbar
         showSuccess("🎉 Package added successfully! Your dashboard will update automatically.");
-        
-        // Trigger dashboard refresh
         triggerDashboardRefresh();
         
-        // Reset form after small delay to show success message
         setTimeout(() => {
           setFormData({
             name: '',
@@ -202,8 +238,6 @@ const AddPackage = () => {
       }
     } catch (error) {
       console.error("Error adding package:", error);
-      
-      // Show error snackbar with specific error message
       showError(`❌ Failed to add package: ${error.message}`);
     } finally {
       setIsSubmitting(false);
@@ -383,13 +417,24 @@ const AddPackage = () => {
           </div>
         </div>
 
-        {/* Day-wise Itinerary Section */}
+        {/* Day-wise Itinerary Section - FIXED */}
         <div className="form-section">
           <h2>Day-wise Itinerary</h2>
           
           {itinerary.map((day, dayIndex) => (
             <div key={dayIndex} className="itinerary-day">
-              <h3>Day {day.day}</h3>
+              <div className="itinerary-day-header">
+                <h3>Day {day.day}</h3>
+                {itinerary.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeDay(dayIndex)}
+                    className="remove-day-btn"
+                  >
+                    ❌ Remove Day
+                  </button>
+                )}
+              </div>
               
               <div className="form-group">
                 <label>Title</label>
@@ -404,14 +449,24 @@ const AddPackage = () => {
               <div className="form-group">
                 <label>Activities</label>
                 {day.activities.map((activity, actIndex) => (
-                  <input
-                    key={actIndex}
-                    type="text"
-                    value={activity}
-                    onChange={(e) => handleActivityChange(dayIndex, actIndex, e.target.value)}
-                    placeholder="Activity description"
-                    className="activity-input"
-                  />
+                  <div key={actIndex} className="activity-row">
+                    <input
+                      type="text"
+                      value={activity}
+                      onChange={(e) => handleActivityChange(dayIndex, actIndex, e.target.value)}
+                      placeholder="Activity description"
+                      className="activity-input"
+                    />
+                    {day.activities.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeActivity(dayIndex, actIndex)}
+                        className="remove-btn-small"
+                      >
+                        ❌
+                      </button>
+                    )}
+                  </div>
                 ))}
                 <button
                   type="button"
@@ -433,18 +488,27 @@ const AddPackage = () => {
           </button>
         </div>
 
-        {/* Inclusions Section */}
+        {/* Inclusions Section - FIXED */}
         <div className="form-section">
           <h2>Inclusions</h2>
           
           {inclusions.map((inclusion, index) => (
-            <div key={index} className="form-group">
+            <div key={index} className="input-row">
               <input
                 type="text"
                 value={inclusion}
                 onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
                 placeholder="Inclusion item"
               />
+              {inclusions.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeInclusion(index)}
+                  className="remove-btn-small"
+                >
+                  ❌
+                </button>
+              )}
             </div>
           ))}
           
@@ -457,18 +521,27 @@ const AddPackage = () => {
           </button>
         </div>
 
-        {/* Exclusions Section */}
+        {/* Exclusions Section - FIXED */}
         <div className="form-section">
           <h2>Exclusions</h2>
           
           {exclusions.map((exclusion, index) => (
-            <div key={index} className="form-group">
+            <div key={index} className="input-row">
               <input
                 type="text"
                 value={exclusion}
                 onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
                 placeholder="Exclusion item"
               />
+              {exclusions.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeExclusion(index)}
+                  className="remove-btn-small"
+                >
+                  ❌
+                </button>
+              )}
             </div>
           ))}
           
