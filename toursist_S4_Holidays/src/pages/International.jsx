@@ -130,12 +130,7 @@ export default function International() {
                         alt={pkg.title}
                         onError={applyFallback}
                       />
-                      <div className="card-overlay">
-                        <div className="rating">
-                          <span className="stars">★★★★★</span>
-                          <span className="rating-number">4.8</span>
-                        </div>
-                      </div>
+                      
                     </div>
                     <div className="card-content">
                       <h3 className="destination-name">{pkg.title}</h3>

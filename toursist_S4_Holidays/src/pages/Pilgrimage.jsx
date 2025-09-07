@@ -153,21 +153,17 @@ export default function Pilgrimage() {
                         alt={pkg.title}
                         onError={applyFallback}
                       />
-                      <div className="faith-badge">🕉️</div>
-                      <div className="rating-badge">⭐ 4.8</div>
+                      
+                      
                     </div>
                     <div className="card-content">
                       <h3>{pkg.title}</h3>
-                      <div className="sacred-name">{pkg.title}</div>
+                      {/* <div className="sacred-name">{pkg.title}</div> */}
                       <div className="card-details">
                         <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
                         <div className="duration">{formatDuration(pkg)}</div>
                       </div>
-                      <div className="highlights">
-                        {pkg.inclusions && pkg.inclusions.slice(0, 3).map((inclusion, index) => (
-                          <span key={index} className="highlight-tag">{inclusion}</span>
-                        ))}
-                      </div>
+                      
                       <button 
                         className="pilgrimage-btn"
                         onClick={() => navigate(`/package/${pkg._id}`)}
