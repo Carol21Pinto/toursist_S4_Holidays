@@ -265,9 +265,9 @@
 
 .explore-btn {
   width: 100%;
-  background: #5aa9ff; 
-  color: #0b2545;
-  border: 1px solid #4f97e8;
+  background: #5aa9ff;       /* India green */
+  color: #0b2545;            /* White text */
+  border: 1px solid #0f6b07; /* Slightly darker green border */
   padding: 12px 18px;
   border-radius: 10px;
   font-weight: 700;
@@ -276,10 +276,11 @@
   transition: all 0.3s ease;
 }
 .explore-btn:hover { 
-  background: #3f8efc; 
-  color: #fff; 
+  background: #5aa9ff;       /* Darker green on hover */
+  color: #0b2545;
   transform: translateY(-2px);
 }
+
 
 /* CTA Section */
 .indian-cta {

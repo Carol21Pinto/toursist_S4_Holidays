@@ -131,10 +131,7 @@ export default function Domestic() {
                         onError={applyFallback}
                       />
                       <div className="region-badge">{pkg.category}</div>
-                      <div className="rating-badge">
-                        <span className="stars">⭐</span>
-                        <span>4.8</span>
-                      </div>
+                      
                     </div>
 
                     <div className="card-content">
@@ -151,18 +148,12 @@ export default function Domestic() {
                         </div>
                       </div>
 
-                      {pkg.inclusions && pkg.inclusions.length > 0 && (
-                        <div className="highlights">
-                          {pkg.inclusions.slice(0, 3).map((inclusion, i) => (
-                            <span key={i} className="highlight-tag">{inclusion}</span>
-                          ))}
-                        </div>
-                      )}
+                      
 
-                      <div className="best-time">
+                      {/* <div className="best-time">
                         <span className="time-icon">🗓️</span>
                         Best Time: Oct-Mar
-                      </div>
+                      </div> */}
 
                       <button
                         className="explore-btn"
