@@ -1,108 +1,261 @@
-.package-detail-container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 20px;
-  font-family: Arial, sans-serif;
-}
-
-.package-header {
-  text-align: center;
-  margin-bottom: 30px;
-}
-
-.package-header h1 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
-.package-image {
-  margin: 20px 0;
-}
-
-.package-details h2 {
-  color: #444;
-  border-bottom: 2px solid #eee;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-}
-
-.details-grid {
-  display: grid;
-  gap: 15px;
-}
-
-.detail-item {
-  display: grid;
-  grid-template-columns: 200px 1fr;
-  gap: 15px;
-  padding: 10px;
-  border: 1px solid #eee;
-  border-radius: 5px;
-  background-color: #fafafa;
-}
-
-.detail-label {
-  font-weight: bold;
-  color: #555;
-}
-
-.detail-value {
-  color: #333;
-}
-
-.empty-value {
-  color: #999;
-  font-style: italic;
-}
-
-.list-items {
+/* Package Detail Scoped Styling - NO global conflicts with Admin Panel */
+.package-detail-container * {
   margin: 0;
-  padding-left: 20px;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.itinerary-list {
-  border-left: 3px solid #007bff;
-  padding-left: 15px;
+.package-detail-container {
+  font-family: "Poppins", sans-serif;
+  background: #f8f9fa;
+  color: #333;
+  line-height: 1.6;
+  min-height: 100vh;
 }
 
-.itinerary-day {
-  margin-bottom: 15px;
-}
-
-.itinerary-day h4 {
-  color: #007bff;
-  margin: 0 0 5px 0;
-}
-
-.loading, .error, .no-data {
+/* Hero Section */
+.package-detail-container header {
+  position: relative;
+  height: 40vh;
+  width: 80%;
+  margin: 20px auto;
+  border-radius: 15px;
+  overflow: hidden;
+  background: url("https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg") 
+              no-repeat center center/cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
   text-align: center;
-  padding: 40px;
-  font-size: 18px;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
-.error {
-  color: #d32f2f;
+.package-detail-container header::after {
+  content: "";
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  right: 0; 
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
 }
 
-.debug-section {
-  border: 1px solid #ddd;
+.package-detail-container header .hero-text {
+  position: relative;
+  z-index: 1;
+}
+
+.package-detail-container header h1 { 
+  font-size: 2.5rem; 
+  font-weight: 700; 
+}
+
+.package-detail-container header p { 
+  font-size: 1.1rem; 
+  font-weight: 500; 
+}
+
+/* Section Styling */
+.package-detail-container .section {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 20px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+}
+
+.package-detail-container .section h2 {
+  margin-bottom: 15px;
+  color: #00695c;
+  font-family: "Merriweather", serif;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 8px;
+}
+
+/* Package Overview - Overlap Effect */
+.package-detail-container .overview-section { 
+  margin-top: -60px; 
+  position: relative; 
+  z-index: 2; 
+}
+
+.package-detail-container .overview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.package-detail-container .overview div { 
+  font-size: 1.1rem; 
+  font-weight: 500; 
+}
+
+.package-detail-container .price {
+  background: linear-gradient(135deg, #ffcc00, #ff9900);
+  padding: 8px 15px;
   border-radius: 8px;
-  padding: 10px;
+  font-weight: bold;
+  color: #fff;
 }
 
-.debug-section summary {
-  cursor: pointer;
+/* Itinerary */
+.package-detail-container .itinerary-box {
+  background: #fdfdfd;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+.package-detail-container .day-card {
+  background: #f9fdfc;
+  border: 1px solid #e0f2f1;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.package-detail-container .day-card:hover { 
+  transform: translateY(-3px); 
+  box-shadow: 0 6px 12px rgba(0,0,0,0.12); 
+}
+
+.package-detail-container .day-card h3 { 
+  color: #004d40; 
+  margin-bottom: 10px; 
+}
+
+/* Custom bullet points */
+.package-detail-container .point {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.package-detail-container .point span {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-right: 10px;
+  border-radius: 50%;
+  background: #ff9800;
+  color: white;
+  text-align: center;
+  line-height: 22px;
+  font-size: 14px;
   font-weight: bold;
-  color: #666;
+}
+
+/* Inclusions & Exclusions */
+.package-detail-container .two-col {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.package-detail-container .col {
+  flex: 1;
+  background: #fdfdfd;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  min-width: 300px;
+}
+
+.package-detail-container .col h3 {
+  margin-bottom: 10px;
+  color: #00796b;
+}
+
+/* Green bullets for inclusions */
+.package-detail-container .col .point span { 
+  background: #4caf50; 
+}
+
+/* Red bullets for exclusions */
+.package-detail-container .col.exclusions .point span { 
+  background: #f44336; 
+}
+
+/* Footer */
+.package-detail-container .footer {
+  text-align: center;
+  padding: 20px;
+  background: #00695c;
+  color: white;
+  margin-top: 40px;
+  font-weight: 500;
+  border-radius: 0;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .detail-item {
-    grid-template-columns: 1fr;
+  .package-detail-container header {
+    width: 95%;
+    height: 30vh;
   }
   
-  .detail-label {
-    margin-bottom: 5px;
+  .package-detail-container header h1 {
+    font-size: 2rem;
+  }
+  
+  .package-detail-container .section {
+    margin: 20px;
+    padding: 15px;
+  }
+  
+  .package-detail-container .overview {
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+  
+  .package-detail-container .two-col {
+    flex-direction: column;
+  }
+  
+  .package-detail-container .col {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .package-detail-container header {
+    width: 100%;
+    margin: 10px auto;
+    border-radius: 10px;
+  }
+  
+  .package-detail-container header h1 {
+    font-size: 1.8rem;
+  }
+  
+  .package-detail-container header p {
+    font-size: 1rem;
+  }
+  
+  .package-detail-container .section {
+    margin: 10px;
+    padding: 10px;
+  }
+  
+  .package-detail-container .day-card {
+    padding: 10px;
+  }
+  
+  .package-detail-container .point {
+    font-size: 0.9rem;
+  }
+  
+  .package-detail-container .point span {
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+    font-size: 12px;
   }
 }

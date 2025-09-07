@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import './PackageDetail.css';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -11,7 +12,7 @@ const PackageDetail = () => {
 
   // USE YOUR WORKING IMAGE URL FUNCTION
   const getImageUrl = (imagePath) => {
-    if (!imagePath) return 'https://via.placeholder.com/800x600/cccccc/666666?text=No+Image';
+    if (!imagePath) return 'https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg';
     
     const fixedPath = imagePath.replace(/\\/g, '/');
     if (fixedPath.startsWith('http')) return fixedPath;
@@ -30,7 +31,7 @@ const PackageDetail = () => {
         }
         
         const data = await response.json();
-        console.log('Package data received:', data); // Debug log
+        console.log('Package data received:', data);
         setPackageData(data);
         setError(null);
       } catch (err) {
@@ -46,138 +47,7 @@ const PackageDetail = () => {
     }
   }, [id]);
 
-  // Helper function to render different data types
-  const renderValue = (key, value) => {
-    if (value === null || value === undefined || value === '') {
-      return <span className="empty-value">Not provided</span>;
-    }
-
-    // Handle arrays
-    if (Array.isArray(value)) {
-      if (value.length === 0) {
-        return <span className="empty-value">None</span>;
-      }
-      
-      // Special handling for itinerary array
-      if (key === 'itinerary') {
-        return (
-          <div className="itinerary-list">
-            {value.map((day, index) => (
-              <div key={index} className="itinerary-day">
-                <h4>Day {day.day}: {day.title}</h4>
-                {day.activities && day.activities.length > 0 && (
-                  <ul>
-                    {day.activities.map((activity, actIndex) => (
-                      <li key={actIndex}>{activity}</li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            ))}
-          </div>
-        );
-      }
-      
-      // Handle regular arrays (inclusions, exclusions, etc.)
-      return (
-        <ul className="list-items">
-          {value.map((item, index) => (
-            <li key={index}>{item}</li>
-          ))}
-        </ul>
-      );
-    }
-
-    // Handle objects
-    if (typeof value === 'object') {
-      return <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
-        {JSON.stringify(value, null, 2)}
-      </pre>;
-    }
-
-    // Handle regular values
-    return <span>{value.toString()}</span>;
-  };
-
-  // Helper function to format field names
-  const formatFieldName = (fieldName) => {
-    return fieldName
-      .replace(/([A-Z])/g, ' $1')
-      .replace(/^./, str => str.toUpperCase())
-      .replace(/Id$/, 'ID');
-  };
-
-  // NEW: Helper function to render pricing fields conditionally
-  const renderPricingFields = () => {
-    if (!packageData || !packageData.pricingMode) return null;
-
-    if (packageData.pricingMode === 'Structured') {
-      return (
-        <>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '200px 1fr', 
-            gap: '15px', 
-            padding: '10px', 
-            border: '1px solid #eee', 
-            borderRadius: '5px', 
-            backgroundColor: '#fafafa' 
-          }}>
-            <div style={{ fontWeight: 'bold', color: '#555' }}>Price Per Person:</div>
-            <div style={{ color: '#333' }}>
-              {packageData.pricePerPerson} {packageData.currency}
-            </div>
-          </div>
-
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '200px 1fr', 
-            gap: '15px', 
-            padding: '10px', 
-            border: '1px solid #eee', 
-            borderRadius: '5px', 
-            backgroundColor: '#fafafa' 
-          }}>
-            <div style={{ fontWeight: 'bold', color: '#555' }}>Currency:</div>
-            <div style={{ color: '#333' }}>{packageData.currency}</div>
-          </div>
-
-          {packageData.priceNote && packageData.priceNote.trim() && (
-            <div style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '200px 1fr', 
-              gap: '15px', 
-              padding: '10px', 
-              border: '1px solid #eee', 
-              borderRadius: '5px', 
-              backgroundColor: '#fafafa' 
-            }}>
-              <div style={{ fontWeight: 'bold', color: '#555' }}>Price Note:</div>
-              <div style={{ color: '#333' }}>{packageData.priceNote}</div>
-            </div>
-          )}
-        </>
-      );
-    } else if (packageData.pricingMode === 'Text') {
-      return (
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: '200px 1fr', 
-          gap: '15px', 
-          padding: '10px', 
-          border: '1px solid #eee', 
-          borderRadius: '5px', 
-          backgroundColor: '#fafafa' 
-        }}>
-          <div style={{ fontWeight: 'bold', color: '#555' }}>Price Text:</div>
-          <div style={{ color: '#333' }}>{packageData.priceText}</div>
-        </div>
-      );
-    }
-
-    return null;
-  };
-
+  // Loading state
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
@@ -186,6 +56,7 @@ const PackageDetail = () => {
     );
   }
 
+  // Error state
   if (error) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
@@ -196,6 +67,7 @@ const PackageDetail = () => {
     );
   }
 
+  // No data state
   if (!packageData) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
@@ -204,108 +76,105 @@ const PackageDetail = () => {
     );
   }
 
+  // Helper function to render pricing
+  const renderPriceDisplay = () => {
+    if (packageData.pricingMode === 'Structured' && packageData.pricePerPerson) {
+      return `₹${packageData.pricePerPerson} per person`;
+    } else if (packageData.pricingMode === 'Text' && packageData.priceText) {
+      return packageData.priceText;
+    }
+    return 'Contact for pricing';
+  };
+
   return (
-    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
-      {/* Package Header */}
-      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-        <h1 style={{ color: '#333', marginBottom: '20px' }}>
-          {packageData.title || 'Untitled Package'}
-        </h1>
-        
-        {/* USE YOUR WORKING IMAGE DISPLAY */}
-        {packageData.cardImage && (
-          <div style={{ margin: '20px 0' }}>
-            <img 
-              src={getImageUrl(packageData.cardImage)} 
-              alt={packageData.title} 
-              style={{ 
-                maxWidth: '100%', 
-                height: '400px', 
-                objectFit: 'cover', 
-                borderRadius: '8px',
-                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-              }}
-              onError={(e) => {
-                console.log('Image failed to load:', e.target.src);
-                e.target.src = 'https://via.placeholder.com/800x400/cccccc/666666?text=Package+Image';
-              }}
-            />
-          </div>
-        )}
-      </div>
-
-      {/* All Package Fields */}
-      <div>
-        <h2 style={{ color: '#444', borderBottom: '2px solid #eee', paddingBottom: '10px', marginBottom: '20px' }}>
-          Package Information
-        </h2>
-        
-        <div style={{ display: 'grid', gap: '15px' }}>
-          {/* Show Pricing Mode */}
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: '200px 1fr', 
-            gap: '15px', 
-            padding: '10px', 
-            border: '1px solid #eee', 
-            borderRadius: '5px', 
-            backgroundColor: '#fafafa' 
-          }}>
-            <div style={{ fontWeight: 'bold', color: '#555' }}>Pricing Mode:</div>
-            <div style={{ color: '#333' }}>{packageData.pricingMode || 'Not specified'}</div>
-          </div>
-
-          {/* Conditional Pricing Fields */}
-          {renderPricingFields()}
-
-          {/* Show all other fields except pricing-related ones */}
-          {Object.entries(packageData)
-            .filter(([key]) => 
-              key !== '_id' && 
-              key !== '__v' && 
-              key !== 'pricingMode' && 
-              key !== 'pricePerPerson' && 
-              key !== 'currency' && 
-              key !== 'priceNote' && 
-              key !== 'priceText'
-            )
-            .map(([key, value]) => (
-              <div key={key} style={{ 
-                display: 'grid', 
-                gridTemplateColumns: '200px 1fr', 
-                gap: '15px', 
-                padding: '10px', 
-                border: '1px solid #eee', 
-                borderRadius: '5px', 
-                backgroundColor: '#fafafa' 
-              }}>
-                <div style={{ fontWeight: 'bold', color: '#555' }}>
-                  {formatFieldName(key)}:
-                </div>
-                <div style={{ color: '#333' }}>
-                  {renderValue(key, value)}
-                </div>
-              </div>
-            ))}
+    <div className="package-detail-container">
+      
+      {/* Hero Section */}
+      <header style={{
+        backgroundImage: `url("${getImageUrl(packageData.cardImage)}")`,
+        backgroundPosition: 'center center',
+        backgroundSize: 'cover',
+        backgroundRepeat: 'no-repeat'
+      }}>
+        <div className="hero-text">
+          <h1>{packageData.title || 'Travel Package'}</h1>
+          <p>{packageData.duration} | {renderPriceDisplay()}</p>
         </div>
+      </header>
 
-        {/* Raw Data Debug Section */}
-        {/* <details style={{ marginTop: '40px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px' }}>
-          <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: '#666' }}>
-            🔍 Raw Data (Debug)
-          </summary>
-          <pre style={{ 
-            background: '#f5f5f5', 
-            padding: '15px', 
-            borderRadius: '8px', 
-            fontSize: '12px',
-            overflow: 'auto',
-            marginTop: '10px'
-          }}>
-            {JSON.stringify(packageData, null, 2)}
-          </pre>
-        </details> */}
-      </div>
+      {/* Package Overview */}
+      <section className="section overview-section">
+        <h2>Package Overview</h2>
+        <div className="overview">
+          <div><strong>Duration:</strong> {packageData.duration || 'Not specified'}</div>
+          <div><strong>Cost:</strong> {packageData.priceNote || 'All inclusive'}</div>
+          <div className="price">{renderPriceDisplay()}</div>
+        </div>
+      </section>
+
+      {/* Itinerary */}
+      <section className="section">
+        <h2>Itinerary</h2>
+        <div className="itinerary-box">
+          {packageData.itinerary && packageData.itinerary.length > 0 ? (
+            packageData.itinerary.map((day, index) => (
+              <div key={index} className="day-card">
+                <h3>Day {day.day}: {day.title}</h3>
+                {day.activities && day.activities.map((activity, actIndex) => (
+                  <div key={actIndex} className="point">
+                    <span>✓</span>
+                    {activity}
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            <p>No itinerary details available</p>
+          )}
+        </div>
+      </section>
+
+      {/* Inclusions & Exclusions */}
+      <section className="section">
+        <h2>Details</h2>
+        <div className="two-col">
+          {/* Inclusions */}
+          <div className="col">
+            <h3>Inclusions</h3>
+            {packageData.inclusions && packageData.inclusions.length > 0 ? (
+              packageData.inclusions.map((inclusion, index) => (
+                <div key={index} className="point">
+                  <span>+</span>
+                  {inclusion}
+                </div>
+              ))
+            ) : (
+              <p>No inclusions specified</p>
+            )}
+          </div>
+
+          {/* Exclusions */}
+          <div className="col exclusions">
+            <h3>Exclusions</h3>
+            {packageData.exclusions && packageData.exclusions.length > 0 ? (
+              packageData.exclusions.map((exclusion, index) => (
+                <div key={index} className="point">
+                  <span>-</span>
+                  {exclusion}
+                </div>
+              ))
+            ) : (
+              <p>No exclusions specified</p>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="footer">
+        <p>&copy; 2025 Kerala Tours. All Rights Reserved.</p>
+      </footer>
+
     </div>
   );
 };
