@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-// import './PackageDetail.css';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-export default function PackageDetail() {
-  const { id } = useParams(); // Get package ID from URL
-  const navigate = useNavigate();
+const PackageDetail = () => {
+  const { id } = useParams();
   const [packageData, setPackageData] = useState(null);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Fix Windows backslashes in image paths
+  // USE YOUR WORKING IMAGE URL FUNCTION
   const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://via.placeholder.com/800x600/cccccc/666666?text=No+Image';
     
@@ -22,45 +20,162 @@ export default function PackageDetail() {
   };
 
   useEffect(() => {
-    window.scrollTo(0, 0);
-    fetchPackage();
+    const fetchPackage = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch(`${API_URL}/packages/${id}`);
+        
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}: Package not found`);
+        }
+        
+        const data = await response.json();
+        console.log('Package data received:', data); // Debug log
+        setPackageData(data);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching package:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchPackage();
+    }
   }, [id]);
 
-  const fetchPackage = async () => {
-    try {
-      setLoading(true);
-      const response = await fetch(`${API_URL}/packages/${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setPackageData(data);
-        console.log('Fetched package details:', data);
-      } else {
-        console.error('Package not found');
-      }
-    } catch (error) {
-      console.error('Error fetching package:', error);
-    } finally {
-      setLoading(false);
+  // Helper function to render different data types
+  const renderValue = (key, value) => {
+    if (value === null || value === undefined || value === '') {
+      return <span className="empty-value">Not provided</span>;
     }
+
+    // Handle arrays
+    if (Array.isArray(value)) {
+      if (value.length === 0) {
+        return <span className="empty-value">None</span>;
+      }
+      
+      // Special handling for itinerary array
+      if (key === 'itinerary') {
+        return (
+          <div className="itinerary-list">
+            {value.map((day, index) => (
+              <div key={index} className="itinerary-day">
+                <h4>Day {day.day}: {day.title}</h4>
+                {day.activities && day.activities.length > 0 && (
+                  <ul>
+                    {day.activities.map((activity, actIndex) => (
+                      <li key={actIndex}>{activity}</li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      }
+      
+      // Handle regular arrays (inclusions, exclusions, etc.)
+      return (
+        <ul className="list-items">
+          {value.map((item, index) => (
+            <li key={index}>{item}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    // Handle objects
+    if (typeof value === 'object') {
+      return <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+        {JSON.stringify(value, null, 2)}
+      </pre>;
+    }
+
+    // Handle regular values
+    return <span>{value.toString()}</span>;
   };
 
-  // Get all images (cardImage + images array)
-  const getAllImages = () => {
-    if (!packageData) return [];
-    
-    const images = [];
-    
-    // Add cardImage first if it exists
-    if (packageData.cardImage) {
-      images.push(packageData.cardImage);
+  // Helper function to format field names
+  const formatFieldName = (fieldName) => {
+    return fieldName
+      .replace(/([A-Z])/g, ' $1')
+      .replace(/^./, str => str.toUpperCase())
+      .replace(/Id$/, 'ID');
+  };
+
+  // NEW: Helper function to render pricing fields conditionally
+  const renderPricingFields = () => {
+    if (!packageData || !packageData.pricingMode) return null;
+
+    if (packageData.pricingMode === 'Structured') {
+      return (
+        <>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '200px 1fr', 
+            gap: '15px', 
+            padding: '10px', 
+            border: '1px solid #eee', 
+            borderRadius: '5px', 
+            backgroundColor: '#fafafa' 
+          }}>
+            <div style={{ fontWeight: 'bold', color: '#555' }}>Price Per Person:</div>
+            <div style={{ color: '#333' }}>
+              {packageData.pricePerPerson} {packageData.currency}
+            </div>
+          </div>
+
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '200px 1fr', 
+            gap: '15px', 
+            padding: '10px', 
+            border: '1px solid #eee', 
+            borderRadius: '5px', 
+            backgroundColor: '#fafafa' 
+          }}>
+            <div style={{ fontWeight: 'bold', color: '#555' }}>Currency:</div>
+            <div style={{ color: '#333' }}>{packageData.currency}</div>
+          </div>
+
+          {packageData.priceNote && packageData.priceNote.trim() && (
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '200px 1fr', 
+              gap: '15px', 
+              padding: '10px', 
+              border: '1px solid #eee', 
+              borderRadius: '5px', 
+              backgroundColor: '#fafafa' 
+            }}>
+              <div style={{ fontWeight: 'bold', color: '#555' }}>Price Note:</div>
+              <div style={{ color: '#333' }}>{packageData.priceNote}</div>
+            </div>
+          )}
+        </>
+      );
+    } else if (packageData.pricingMode === 'Text') {
+      return (
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '200px 1fr', 
+          gap: '15px', 
+          padding: '10px', 
+          border: '1px solid #eee', 
+          borderRadius: '5px', 
+          backgroundColor: '#fafafa' 
+        }}>
+          <div style={{ fontWeight: 'bold', color: '#555' }}>Price Text:</div>
+          <div style={{ color: '#333' }}>{packageData.priceText}</div>
+        </div>
+      );
     }
-    
-    // Add all images from images array
-    if (packageData.images && packageData.images.length > 0) {
-      images.push(...packageData.images);
-    }
-    
-    return images;
+
+    return null;
   };
 
   if (loading) {
@@ -71,244 +186,128 @@ export default function PackageDetail() {
     );
   }
 
-  if (!packageData) {
+  if (error) {
     return (
       <div style={{ textAlign: 'center', padding: '50px' }}>
-        <h2>Package not found</h2>
-        <button onClick={() => navigate(-1)} className="back-btn">
-          ← Go Back
-        </button>
+        <div style={{ color: '#d32f2f', fontSize: '18px', marginBottom: '20px' }}>
+          Error: {error}
+        </div>
       </div>
     );
   }
 
-  const allImages = getAllImages();
+  if (!packageData) {
+    return (
+      <div style={{ textAlign: 'center', padding: '50px' }}>
+        <div style={{ fontSize: '18px' }}>No package data found.</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="package-detail">
-      <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
-        {/* Back Button */}
-        <button 
-          onClick={() => navigate(-1)} 
-          className="back-btn"
-          style={{ 
-            padding: '10px 20px', 
-            marginBottom: '20px', 
-            background: '#1976d2', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '5px',
-            cursor: 'pointer'
-          }}
-        >
-          ← Back to Packages
-        </button>
-
-        {/* Package Header */}
-        <div className="package-header" style={{ marginBottom: '30px' }}>
-          <h1 style={{ fontSize: '32px', marginBottom: '10px' }}>{packageData.title}</h1>
-          <div style={{ display: 'flex', gap: '20px', alignItems: 'center' }}>
-            <span style={{ 
-              background: '#1976d2', 
-              color: 'white', 
-              padding: '5px 15px', 
-              borderRadius: '20px',
-              textTransform: 'capitalize'
-            }}>
-              {packageData.category}
-            </span>
-            <span style={{ fontSize: '24px', fontWeight: 'bold', color: '#1976d2' }}>
-              {packageData.currency}{packageData.pricePerPerson.toLocaleString()}/person
-            </span>
-          </div>
-        </div>
-
-        {/* Image Gallery */}
-        {allImages.length > 0 && (
-          <div className="image-gallery" style={{ marginBottom: '40px' }}>
-            <div className="main-image" style={{ marginBottom: '15px' }}>
-              <img 
-                src={getImageUrl(allImages[selectedImage])} 
-                alt={`${packageData.title} - Image ${selectedImage + 1}`}
-                style={{ 
-                  width: '100%', 
-                  height: '400px', 
-                  objectFit: 'cover', 
-                  borderRadius: '10px',
-                  boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
-                }}
-                onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/800x400/cccccc/666666?text=Package+Image';
-                }}
-              />
-            </div>
-            
-            {allImages.length > 1 && (
-              <div className="thumbnail-strip" style={{ 
-                display: 'flex', 
-                gap: '10px', 
-                overflowX: 'auto', 
-                padding: '10px 0' 
-              }}>
-                {allImages.map((img, index) => (
-                  <div 
-                    key={index}
-                    onClick={() => setSelectedImage(index)}
-                    style={{ 
-                      cursor: 'pointer',
-                      border: selectedImage === index ? '3px solid #1976d2' : '3px solid transparent',
-                      borderRadius: '5px',
-                      minWidth: '100px'
-                    }}
-                  >
-                    <img 
-                      src={getImageUrl(img)} 
-                      alt={`Thumbnail ${index + 1}`}
-                      style={{ 
-                        width: '100px', 
-                        height: '70px', 
-                        objectFit: 'cover',
-                        borderRadius: '5px'
-                      }}
-                      onError={(e) => {
-                        e.target.src = 'https://via.placeholder.com/100x70/cccccc/666666?text=Img';
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* Package Details */}
-        <div className="package-details" style={{ display: 'grid', gap: '30px' }}>
-          {/* Description */}
-          <div className="detail-section">
-            <h2 style={{ color: '#333', marginBottom: '15px' }}>Description</h2>
-            <div 
-              dangerouslySetInnerHTML={{ __html: packageData.description }} 
-              style={{ lineHeight: '1.6', color: '#666' }}
+    <div style={{ maxWidth: '800px', margin: '0 auto', padding: '20px', fontFamily: 'Arial, sans-serif' }}>
+      {/* Package Header */}
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h1 style={{ color: '#333', marginBottom: '20px' }}>
+          {packageData.title || 'Untitled Package'}
+        </h1>
+        
+        {/* USE YOUR WORKING IMAGE DISPLAY */}
+        {packageData.cardImage && (
+          <div style={{ margin: '20px 0' }}>
+            <img 
+              src={getImageUrl(packageData.cardImage)} 
+              alt={packageData.title} 
+              style={{ 
+                maxWidth: '100%', 
+                height: '400px', 
+                objectFit: 'cover', 
+                borderRadius: '8px',
+                boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+              }}
+              onError={(e) => {
+                console.log('Image failed to load:', e.target.src);
+                e.target.src = 'https://via.placeholder.com/800x400/cccccc/666666?text=Package+Image';
+              }}
             />
           </div>
+        )}
+      </div>
 
-          {/* Inclusions */}
-          {packageData.inclusions && packageData.inclusions.length > 0 && (
-            <div className="detail-section">
-              <h2 style={{ color: '#333', marginBottom: '15px' }}>What's Included</h2>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {packageData.inclusions.map((inclusion, index) => (
-                  <li key={index} style={{ 
-                    padding: '8px 0', 
-                    borderBottom: '1px solid #eee',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
-                    <span style={{ color: '#4caf50', marginRight: '10px' }}>✓</span>
-                    {inclusion}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Exclusions */}
-          {packageData.exclusions && packageData.exclusions.length > 0 && (
-            <div className="detail-section">
-              <h2 style={{ color: '#333', marginBottom: '15px' }}>What's Not Included</h2>
-              <ul style={{ listStyle: 'none', padding: 0 }}>
-                {packageData.exclusions.map((exclusion, index) => (
-                  <li key={index} style={{ 
-                    padding: '8px 0', 
-                    borderBottom: '1px solid #eee',
-                    display: 'flex',
-                    alignItems: 'center'
-                  }}>
-                    <span style={{ color: '#f44336', marginRight: '10px' }}>✗</span>
-                    {exclusion}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-          {/* Itinerary */}
-          {packageData.itinerary && packageData.itinerary.length > 0 && (
-            <div className="detail-section">
-              <h2 style={{ color: '#333', marginBottom: '15px' }}>Itinerary</h2>
-              <div className="itinerary">
-                {packageData.itinerary.map((day, index) => (
-                  <div key={index} style={{ 
-                    padding: '20px', 
-                    marginBottom: '15px', 
-                    background: '#f9f9f9',
-                    borderRadius: '8px',
-                    borderLeft: '4px solid #1976d2'
-                  }}>
-                    <h3 style={{ color: '#1976d2', marginBottom: '8px' }}>
-                      Day {day.day}
-                    </h3>
-                    <h4 style={{ marginBottom: '10px' }}>{day.title}</h4>
-                    {day.activities && day.activities.length > 0 && (
-                      <ul style={{ marginLeft: '20px' }}>
-                        {day.activities.map((activity, i) => (
-                          <li key={i} style={{ marginBottom: '5px' }}>{activity}</li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* Contact Section */}
-        <div className="contact-section" style={{ 
-          background: '#1976d2', 
-          color: 'white', 
-          padding: '30px', 
-          borderRadius: '10px',
-          textAlign: 'center',
-          marginTop: '40px'
-        }}>
-          <h2 style={{ marginBottom: '20px' }}>Ready to Book This Package?</h2>
-          {packageData.contactNumbers && packageData.contactNumbers.length > 0 && (
-            <div style={{ marginBottom: '20px' }}>
-              <p style={{ marginBottom: '10px' }}>Contact us:</p>
-              {packageData.contactNumbers.map((number, index) => (
-                <a 
-                  key={index} 
-                  href={`tel:${number}`} 
-                  style={{ 
-                    color: 'white', 
-                    textDecoration: 'none',
-                    display: 'inline-block',
-                    margin: '5px 10px',
-                    padding: '8px 16px',
-                    background: 'rgba(255,255,255,0.2)',
-                    borderRadius: '20px'
-                  }}
-                >
-                  📞 {number}
-                </a>
-              ))}
-            </div>
-          )}
-          <button style={{ 
-            background: 'white', 
-            color: '#1976d2', 
-            padding: '15px 30px', 
-            border: 'none', 
-            borderRadius: '25px',
-            fontSize: '18px',
-            fontWeight: 'bold',
-            cursor: 'pointer'
+      {/* All Package Fields */}
+      <div>
+        <h2 style={{ color: '#444', borderBottom: '2px solid #eee', paddingBottom: '10px', marginBottom: '20px' }}>
+          Package Information
+        </h2>
+        
+        <div style={{ display: 'grid', gap: '15px' }}>
+          {/* Show Pricing Mode */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '200px 1fr', 
+            gap: '15px', 
+            padding: '10px', 
+            border: '1px solid #eee', 
+            borderRadius: '5px', 
+            backgroundColor: '#fafafa' 
           }}>
-            Book Now
-          </button>
+            <div style={{ fontWeight: 'bold', color: '#555' }}>Pricing Mode:</div>
+            <div style={{ color: '#333' }}>{packageData.pricingMode || 'Not specified'}</div>
+          </div>
+
+          {/* Conditional Pricing Fields */}
+          {renderPricingFields()}
+
+          {/* Show all other fields except pricing-related ones */}
+          {Object.entries(packageData)
+            .filter(([key]) => 
+              key !== '_id' && 
+              key !== '__v' && 
+              key !== 'pricingMode' && 
+              key !== 'pricePerPerson' && 
+              key !== 'currency' && 
+              key !== 'priceNote' && 
+              key !== 'priceText'
+            )
+            .map(([key, value]) => (
+              <div key={key} style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '200px 1fr', 
+                gap: '15px', 
+                padding: '10px', 
+                border: '1px solid #eee', 
+                borderRadius: '5px', 
+                backgroundColor: '#fafafa' 
+              }}>
+                <div style={{ fontWeight: 'bold', color: '#555' }}>
+                  {formatFieldName(key)}:
+                </div>
+                <div style={{ color: '#333' }}>
+                  {renderValue(key, value)}
+                </div>
+              </div>
+            ))}
         </div>
+
+        {/* Raw Data Debug Section */}
+        {/* <details style={{ marginTop: '40px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px' }}>
+          <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: '#666' }}>
+            🔍 Raw Data (Debug)
+          </summary>
+          <pre style={{ 
+            background: '#f5f5f5', 
+            padding: '15px', 
+            borderRadius: '8px', 
+            fontSize: '12px',
+            overflow: 'auto',
+            marginTop: '10px'
+          }}>
+            {JSON.stringify(packageData, null, 2)}
+          </pre>
+        </details> */}
       </div>
     </div>
   );
-}
+};
+
+export default PackageDetail;

@@ -148,12 +148,32 @@ const EditPackage = () => {
     setItinerary(newItinerary);
   };
 
+  const removeActivity = (dayIndex, activityIndex) => {
+    const newItinerary = [...itinerary];
+    if (newItinerary[dayIndex].activities.length > 1) {
+      newItinerary[dayIndex].activities.splice(activityIndex, 1);
+      setItinerary(newItinerary);
+    }
+  };
+
   const addDay = () => {
     setItinerary([...itinerary, {
       day: itinerary.length + 1,
       title: '',
       activities: ['']
     }]);
+  };
+
+  const removeDay = (dayIndex) => {
+    if (itinerary.length > 1) {
+      const newItinerary = [...itinerary];
+      newItinerary.splice(dayIndex, 1);
+      const renumberedItinerary = newItinerary.map((day, index) => ({
+        ...day,
+        day: index + 1
+      }));
+      setItinerary(renumberedItinerary);
+    }
   };
 
   const handleArrayChange = (index, value, type) => {
@@ -173,6 +193,22 @@ const EditPackage = () => {
       setInclusions([...inclusions, '']);
     } else if (type === 'exclusions') {
       setExclusions([...exclusions, '']);
+    }
+  };
+
+  const removeInclusion = (index) => {
+    if (inclusions.length > 1) {
+      const newInclusions = [...inclusions];
+      newInclusions.splice(index, 1);
+      setInclusions(newInclusions);
+    }
+  };
+
+  const removeExclusion = (index) => {
+    if (exclusions.length > 1) {
+      const newExclusions = [...exclusions];
+      newExclusions.splice(index, 1);
+      setExclusions(newExclusions);
     }
   };
 
@@ -196,14 +232,11 @@ const EditPackage = () => {
         const updatedPackage = await response.json();
         console.log('Package updated successfully:', updatedPackage);
         
-        // Show success snackbar
         showSuccess("✅ Package updated successfully! Redirecting to packages list...");
         
-        // Trigger dashboard refresh
         localStorage.setItem('dashboardRefresh', Date.now().toString());
         window.dispatchEvent(new CustomEvent('dashboardRefresh'));
         
-        // Navigate back to packages list after showing success message
         setTimeout(() => {
           navigate('/admin/packages');
         }, 2000);
@@ -411,13 +444,33 @@ const EditPackage = () => {
           </div>
         </div>
 
-        {/* Day-wise Itinerary Section */}
+        {/* Day-wise Itinerary Section with Activities Remove Buttons */}
         <div className="form-section">
           <h2>Day-wise Itinerary</h2>
           
           {itinerary.map((day, dayIndex) => (
             <div key={dayIndex} className="itinerary-day">
-              <h3>Day {day.day}</h3>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+                <h3>Day {day.day}</h3>
+                {itinerary.length > 1 && (
+                  <button
+                    type="button"
+                    onClick={() => removeDay(dayIndex)}
+                    style={{
+                      background: '#ffebee',
+                      color: '#d32f2f',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      fontSize: '0.9rem',
+                      cursor: 'pointer',
+                      fontWeight: '600'
+                    }}
+                  >
+                    Remove Day
+                  </button>
+                )}
+              </div>
               
               <div className="form-group">
                 <label>Title</label>
@@ -432,14 +485,36 @@ const EditPackage = () => {
               <div className="form-group">
                 <label>Activities</label>
                 {day.activities.map((activity, actIndex) => (
-                  <input
-                    key={actIndex}
-                    type="text"
-                    value={activity}
-                    onChange={(e) => handleActivityChange(dayIndex, actIndex, e.target.value)}
-                    placeholder="Activity description"
-                    className="activity-input"
-                  />
+                  <div key={actIndex} style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
+                    <input
+                      type="text"
+                      value={activity}
+                      onChange={(e) => handleActivityChange(dayIndex, actIndex, e.target.value)}
+                      placeholder="Activity description"
+                      className="activity-input"
+                      style={{ flex: 1 }}
+                    />
+                    {/* Remove Activity Button - only show if more than 1 activity */}
+                    {day.activities.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removeActivity(dayIndex, actIndex)}
+                        style={{
+                          background: '#ffebee',
+                          color: '#d32f2f',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          minWidth: 'auto'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
                 ))}
                 <button
                   type="button"
@@ -461,18 +536,39 @@ const EditPackage = () => {
           </button>
         </div>
 
-        {/* Inclusions Section */}
+        {/* Inclusions Section with Remove Buttons */}
         <div className="form-section">
           <h2>Inclusions</h2>
           
           {inclusions.map((inclusion, index) => (
-            <div key={index} className="form-group">
-              <input
-                type="text"
-                value={inclusion}
-                onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
-                placeholder="Inclusion item"
-              />
+            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="text"
+                  value={inclusion}
+                  onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
+                  placeholder="Inclusion item"
+                />
+              </div>
+              {inclusions.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeInclusion(index)}
+                  style={{
+                    background: '#ffebee',
+                    color: '#d32f2f',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    alignSelf: 'center'
+                  }}
+                >
+                  Remove
+                </button>
+              )}
             </div>
           ))}
           
@@ -485,18 +581,39 @@ const EditPackage = () => {
           </button>
         </div>
 
-        {/* Exclusions Section */}
+        {/* Exclusions Section with Remove Buttons */}
         <div className="form-section">
           <h2>Exclusions</h2>
           
           {exclusions.map((exclusion, index) => (
-            <div key={index} className="form-group">
-              <input
-                type="text"
-                value={exclusion}
-                onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
-                placeholder="Exclusion item"
-              />
+            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="text"
+                  value={exclusion}
+                  onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
+                  placeholder="Exclusion item"
+                />
+              </div>
+              {exclusions.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeExclusion(index)}
+                  style={{
+                    background: '#ffebee',
+                    color: '#d32f2f',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    alignSelf: 'center'
+                  }}
+                >
+                  Remove
+                </button>
+                )}
             </div>
           ))}
           
@@ -516,8 +633,19 @@ const EditPackage = () => {
             className="cancel-btn"
             onClick={() => navigate('/admin/packages')}
             disabled={isSubmitting}
+            style={{
+              background: '#f5f5f5',
+              color: '#666',
+              border: '2px solid #ddd',
+              padding: '16px 30px',
+              borderRadius: '10px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              marginRight: '15px'
+            }}
           >
-            
+            Cancel
           </button>
           <button 
             type="submit" 
