@@ -18,6 +18,7 @@ import AddPackage from "./pages/admin/AddPackage";
 import PackagesList from "./pages/admin/PackagesList";
 import PackageDetail from './pages/PackageDetail';
 import EditPackage from './pages/admin/EditPackage';
+import ForgotPassword from "./pages/admin/ForgotPassword.jsx";
 
 const About = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>About Page - Coming Soon</h1></div>;
 const Destination = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Destination Page - Coming Soon</h1></div>;
@@ -59,6 +60,7 @@ export default function App() {
         <Route path="/admin/packages" element={<AdminLayout><PackagesList /></AdminLayout>} />
         <Route path="/admin/add" element={<AdminLayout><AddPackage /></AdminLayout>} />
         <Route path="/admin/packages/edit/:id" element={<AdminLayout><EditPackage /></AdminLayout>} />
+        <Route path="/admin/forgot-password" element={<AdminLayout><ForgotPassword /></AdminLayout>} />
       </Route>
     </Routes>
   );

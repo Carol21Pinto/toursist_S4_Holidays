@@ -34,7 +34,11 @@ export default function AdminLayout({ children }) {
   };
 
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh" }}>
+    <Box sx={{ 
+      display: "flex", 
+      minHeight: "100vh",
+      background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)' // Fixed white space
+    }}>
       {/* Top AppBar */}
       <AppBar 
         position="fixed" 
@@ -108,7 +112,7 @@ export default function AdminLayout({ children }) {
         </Toolbar>
       </AppBar>
 
-      {/* Dark Sidebar */}
+      {/* Dark Sidebar - RESTORED TO ORIGINAL */}
       <Drawer
         variant="permanent"
         sx={{

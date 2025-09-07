@@ -32,12 +32,12 @@ import {
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-// Beautiful Package Card Component
+// Package Card Component - Displays BOTH pricing types
 function PackageCard({ package: pkg, onEdit, onDelete }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
   const getCategoryIcon = (category) => {
-    switch (category.toLowerCase()) {
+    switch (category?.toLowerCase()) {
       case 'domestic': return <Home sx={{ fontSize: '20px' }} />;
       case 'international': return <Flight sx={{ fontSize: '20px' }} />;
       case 'pilgrimage': return <Church sx={{ fontSize: '20px' }} />;
@@ -47,7 +47,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
   };
 
   const getCategoryColor = (category) => {
-    switch (category.toLowerCase()) {
+    switch (category?.toLowerCase()) {
       case 'domestic': return '#10b981';
       case 'international': return '#3b82f6';
       case 'pilgrimage': return '#f59e0b';
@@ -57,6 +57,15 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
   };
 
   const handleMenuClose = () => setAnchorEl(null);
+
+  // Display the appropriate price based on pricing mode
+  const renderPrice = () => {
+    if (pkg?.pricingMode === 'Structured') {
+      return `${pkg?.currency || '₹'} ${pkg?.pricePerPerson?.toLocaleString() || '0'}`;
+    } else {
+      return pkg?.priceText || 'Contact for Price';
+    }
+  };
 
   return (
     <Card
@@ -81,7 +90,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           left: 0,
           right: 0,
           height: '4px',
-          background: `linear-gradient(90deg, ${getCategoryColor(pkg.category)}, ${getCategoryColor(pkg.category)}90)`,
+          background: `linear-gradient(90deg, ${getCategoryColor(pkg?.category)}, ${getCategoryColor(pkg?.category)}90)`,
         }
       }}
     >
@@ -91,12 +100,12 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Avatar
               sx={{
-                background: `linear-gradient(45deg, ${getCategoryColor(pkg.category)}, ${getCategoryColor(pkg.category)}90)`,
+                background: `linear-gradient(45deg, ${getCategoryColor(pkg?.category)}, ${getCategoryColor(pkg?.category)}90)`,
                 width: 48,
                 height: 48,
               }}
             >
-              {getCategoryIcon(pkg.category)}
+              {getCategoryIcon(pkg?.category)}
             </Avatar>
             <Box>
               <Typography
@@ -108,19 +117,33 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
                   marginBottom: '4px'
                 }}
               >
-                {pkg.title}
+                {pkg?.title || 'Untitled Package'}
               </Typography>
-              <Chip
-                label={pkg.category.charAt(0).toUpperCase() + pkg.category.slice(1)}
-                size="small"
-                sx={{
-                  background: `linear-gradient(45deg, ${getCategoryColor(pkg.category)}20, ${getCategoryColor(pkg.category)}10)`,
-                  color: getCategoryColor(pkg.category),
-                  fontWeight: 600,
-                  fontSize: '0.75rem',
-                  border: `1px solid ${getCategoryColor(pkg.category)}30`
-                }}
-              />
+              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+                <Chip
+                  label={(pkg?.category || 'general').charAt(0).toUpperCase() + (pkg?.category || 'general').slice(1)}
+                  size="small"
+                  sx={{
+                    background: `linear-gradient(45deg, ${getCategoryColor(pkg?.category)}20, ${getCategoryColor(pkg?.category)}10)`,
+                    color: getCategoryColor(pkg?.category),
+                    fontWeight: 600,
+                    fontSize: '0.75rem',
+                    border: `1px solid ${getCategoryColor(pkg?.category)}30`
+                  }}
+                />
+                {/* Show pricing mode indicator */}
+                <Chip
+                  label={pkg?.pricingMode || 'Unknown'}
+                  size="small"
+                  variant="outlined"
+                  sx={{
+                    fontSize: '0.7rem',
+                    height: '20px',
+                    color: pkg?.pricingMode === 'Structured' ? '#059669' : '#7c3aed',
+                    borderColor: pkg?.pricingMode === 'Structured' ? '#059669' : '#7c3aed'
+                  }}
+                />
+              </Box>
             </Box>
           </Box>
 
@@ -141,11 +164,11 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={() => { onEdit(pkg._id); handleMenuClose(); }}>
+            <MenuItem onClick={() => { onEdit(pkg?._id); handleMenuClose(); }}>
               <Edit sx={{ marginRight: 1, fontSize: '18px' }} />
               Edit Package
             </MenuItem>
-            <MenuItem onClick={() => { onDelete(pkg._id); handleMenuClose(); }} sx={{ color: '#ef4444' }}>
+            <MenuItem onClick={() => { onDelete(pkg?._id); handleMenuClose(); }} sx={{ color: '#ef4444' }}>
               <Delete sx={{ marginRight: 1, fontSize: '18px' }} />
               Delete Package
             </MenuItem>
@@ -154,36 +177,34 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
 
         {/* Package Details */}
         <Box sx={{ marginBottom: '20px' }}>
-          {pkg.duration && (
+          {pkg?.duration && (
             <Typography sx={{ color: '#6b7280', fontSize: '0.9rem', marginBottom: '8px' }}>
               📅 {pkg.duration}
             </Typography>
           )}
           
-          {/* Price Display */}
+          {/* Price Display - Shows BOTH types */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: '12px' }}>
-            <AttachMoney sx={{ color: getCategoryColor(pkg.category), fontSize: '20px' }} />
+            <AttachMoney sx={{ color: getCategoryColor(pkg?.category), fontSize: '20px' }} />
             <Typography
               variant="h6"
               sx={{
                 fontWeight: 700,
-                color: getCategoryColor(pkg.category),
-                fontSize: '1.2rem'
+                color: getCategoryColor(pkg?.category),
+                fontSize: '1.2rem',
+                wordBreak: 'break-word'
               }}
             >
-              {pkg.pricingMode === 'Structured' 
-                ? `${pkg.currency} ${pkg.pricePerPerson?.toLocaleString() || 'N/A'}`
-                : pkg.priceText || 'Contact for Price'
-              }
+              {renderPrice()}
             </Typography>
-            {pkg.pricingMode === 'Structured' && (
+            {pkg?.pricingMode === 'Structured' && (
               <Typography sx={{ color: '#6b7280', fontSize: '0.85rem' }}>
                 per person
               </Typography>
             )}
           </Box>
 
-          {pkg.priceNote && (
+          {pkg?.priceNote && (
             <Typography sx={{ color: '#6b7280', fontSize: '0.8rem', fontStyle: 'italic' }}>
               {pkg.priceNote}
             </Typography>
@@ -192,7 +213,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
 
         {/* Package Stats */}
         <Box sx={{ display: 'flex', gap: 2, marginTop: 'auto' }}>
-          {pkg.itinerary && pkg.itinerary.length > 0 && (
+          {pkg?.itinerary && pkg.itinerary.length > 0 && (
             <Chip
               label={`${pkg.itinerary.length} Days`}
               size="small"
@@ -200,7 +221,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
               sx={{ fontSize: '0.75rem' }}
             />
           )}
-          {pkg.inclusions && pkg.inclusions.length > 0 && (
+          {pkg?.inclusions && pkg.inclusions.length > 0 && (
             <Chip
               label={`${pkg.inclusions.length} Inclusions`}
               size="small"
@@ -215,9 +236,9 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           <Button
             size="small"
             startIcon={<Edit />}
-            onClick={() => onEdit(pkg._id)}
+            onClick={() => onEdit(pkg?._id)}
             sx={{
-              background: `linear-gradient(45deg, ${getCategoryColor(pkg.category)}, ${getCategoryColor(pkg.category)}90)`,
+              background: `linear-gradient(45deg, ${getCategoryColor(pkg?.category)}, ${getCategoryColor(pkg?.category)}90)`,
               color: 'white',
               borderRadius: '20px',
               textTransform: 'none',
@@ -226,7 +247,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
               padding: '6px 16px',
               '&:hover': {
                 transform: 'translateY(-1px)',
-                boxShadow: `0 4px 15px ${getCategoryColor(pkg.category)}40`,
+                boxShadow: `0 4px 15px ${getCategoryColor(pkg?.category)}40`,
               }
             }}
           >
@@ -235,7 +256,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           <Button
             size="small"
             startIcon={<Delete />}
-            onClick={() => onDelete(pkg._id)}
+            onClick={() => onDelete(pkg?._id)}
             variant="outlined"
             sx={{
               color: '#ef4444',
@@ -270,9 +291,17 @@ export default function PackagesList() {
     try {
       setLoading(true);
       const response = await fetch(`${API_URL}/packages`);
+      
       if (response.ok) {
         const data = await response.json();
-        setPackages(Array.isArray(data) ? data : []);
+        console.log('Loaded packages:', data);
+        
+        // Handle different API response formats
+        const packagesArray = Array.isArray(data) ? data : (data.packages || data.data || []);
+        setPackages(packagesArray);
+      } else {
+        console.error('Failed to fetch packages');
+        setPackages([]);
       }
     } catch (error) {
       console.error('Error loading packages:', error);
@@ -293,19 +322,37 @@ export default function PackagesList() {
   const handleDelete = async (id) => {
     if (window.confirm('Are you sure you want to delete this package?')) {
       try {
-        await fetch(`${API_URL}/packages/${id}`, { method: 'DELETE' });
-        loadPackages();
+        const response = await fetch(`${API_URL}/packages/${id}`, { method: 'DELETE' });
+        if (response.ok) {
+          loadPackages(); // Reload packages after deletion
+        }
       } catch (error) {
         console.error('Error deleting package:', error);
       }
     }
   };
 
-  // Filter packages
+  // Filter packages - NO pricing mode filtering, shows ALL packages
   const filteredPackages = packages.filter(pkg => {
-    const matchesSearch = pkg.title?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || pkg.category === categoryFilter;
+    if (!pkg) return false;
+    
+    const matchesSearch = !searchTerm || 
+      (pkg.title && pkg.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesCategory = categoryFilter === 'all' || 
+      (pkg.category && pkg.category === categoryFilter);
+    
     return matchesSearch && matchesCategory;
+  });
+
+  // Sort packages to show structured first, then text (optional)
+  const sortedPackages = filteredPackages.sort((a, b) => {
+    // Optional: Sort by pricing mode (Structured first)
+    if (a.pricingMode === 'Structured' && b.pricingMode !== 'Structured') return -1;
+    if (a.pricingMode !== 'Structured' && b.pricingMode === 'Structured') return 1;
+    
+    // Then sort alphabetically by title
+    return (a.title || '').localeCompare(b.title || '');
   });
 
   const categories = [
@@ -330,7 +377,7 @@ export default function PackagesList() {
                 marginBottom: '8px'
               }}
             >
-              All Packages
+              All Packages ({packages.length})
             </Typography>
             <Typography 
               sx={{ 
@@ -338,7 +385,7 @@ export default function PackagesList() {
                 fontSize: '1.1rem'
               }}
             >
-              Manage your travel packages with style
+              Showing both structured and text pricing packages
             </Typography>
           </Box>
           <Button
@@ -418,12 +465,12 @@ export default function PackagesList() {
         </Stack>
       </Box>
 
-      {/* Packages Grid */}
+      {/* Packages Grid - Shows ALL packages */}
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
           <Typography>Loading packages...</Typography>
         </Box>
-      ) : filteredPackages.length === 0 ? (
+      ) : sortedPackages.length === 0 ? (
         <Card sx={{
           background: 'rgba(255, 255, 255, 0.95)',
           backdropFilter: 'blur(10px)',
@@ -459,8 +506,8 @@ export default function PackagesList() {
         </Card>
       ) : (
         <Grid container spacing={3}>
-          {filteredPackages.map((pkg) => (
-            <Grid item xs={12} sm={6} md={4} key={pkg._id}>
+          {sortedPackages.map((pkg, index) => (
+            <Grid item xs={12} sm={6} md={4} key={pkg?._id || index}>
               <PackageCard 
                 package={pkg} 
                 onEdit={handleEdit} 
@@ -472,7 +519,7 @@ export default function PackagesList() {
       )}
 
       {/* Stats Footer */}
-      {!loading && filteredPackages.length > 0 && (
+      {!loading && sortedPackages.length > 0 && (
         <Box sx={{ 
           marginTop: '40px', 
           textAlign: 'center',
@@ -482,7 +529,11 @@ export default function PackagesList() {
           backdropFilter: 'blur(10px)',
         }}>
           <Typography sx={{ color: '#6b7280', fontSize: '0.9rem' }}>
-            Showing {filteredPackages.length} of {packages.length} packages
+            Showing {sortedPackages.length} of {packages.length} packages
+            <br />
+            <Typography component="span" sx={{ fontSize: '0.8rem', color: '#9ca3af' }}>
+              Including both Structured and Text pricing packages
+            </Typography>
           </Typography>
         </Box>
       )}

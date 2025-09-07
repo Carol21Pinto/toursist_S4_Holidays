@@ -2,7 +2,7 @@ const Admin = require('../models/Admin');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-// LOGIN (returns JWT)
+// LOGIN (returns JWT) - YOUR EXISTING CODE UNCHANGED
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -23,23 +23,14 @@ exports.login = async (req, res) => {
   }
 };
 
-// LOGOUT - NEW FUNCTION
+// LOGOUT - YOUR EXISTING CODE UNCHANGED
 exports.logout = async (req, res) => {
   try {
-    // For JWT tokens, we can't invalidate them server-side without a blacklist
-    // But we can perform cleanup operations here
-    
     console.log('Admin logout request received');
     
-    // Optional: Add token to blacklist (if you implement one)
-    // const token = req.headers['authorization']?.split(' ')[1];
-    // await addToTokenBlacklist(token);
-    
-    // Optional: Log logout activity
-    const adminId = req.admin; // From auth middleware
+    const adminId = req.admin;
     console.log(`Admin ${adminId} logged out at ${new Date()}`);
     
-    // Send success response
     return res.status(200).json({ 
       message: 'Logout successful' 
     });
@@ -49,7 +40,7 @@ exports.logout = async (req, res) => {
   }
 };
 
-// FIRST-TIME ONLY — Admin Registration
+// REGISTER - YOUR EXISTING CODE UNCHANGED
 exports.register = async (req, res) => {
   try {
     const { email, password } = req.body || {};
@@ -68,5 +59,42 @@ exports.register = async (req, res) => {
     return res.status(201).json({ message: 'Admin registered' });
   } catch (err) {
     return res.status(500).json({ message: err.message });
+  }
+};
+
+// NEW: FORGOT PASSWORD FUNCTION - ADD THIS
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { username, newPassword } = req.body || {};
+    
+    // Validation
+    if (!username || !newPassword) {
+      return res.status(400).json({ message: 'Username and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters long' });
+    }
+
+    // Find admin by email (username is email in your case)
+    const admin = await Admin.findOne({ email: username });
+    if (!admin) {
+      return res.status(404).json({ message: 'Admin not found with this email' });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update admin password
+    await Admin.findByIdAndUpdate(admin._id, { password: hashedPassword });
+
+    return res.status(200).json({ 
+      success: true,
+      message: 'Password updated successfully' 
+    });
+
+  } catch (err) {
+    console.error('Forgot password error:', err);
+    return res.status(500).json({ message: 'Server error. Please try again.' });
   }
 };

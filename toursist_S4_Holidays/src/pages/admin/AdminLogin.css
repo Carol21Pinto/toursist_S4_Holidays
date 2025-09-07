@@ -1,370 +1,669 @@
+/* Mountain Landscape Travel Theme with Real Photo */
 .login-container {
   min-height: 100vh;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: #ffffff;
-  padding: 20px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Realistic Panda Styles */
-.panda {
   position: relative;
-  margin-bottom: 20px;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+  /* REMOVE overflow: hidden; to let birds show */
+  font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
+  /* Real mountain photo background */
+  background-image: url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
 }
 
-.panda-head {
-  position: relative;
-  width: 180px;
-  height: 160px;
-  background: #ffffff;
-  border-radius: 50%;
-  border: 3px solid #e0e0e0;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
-  margin-bottom: -10px;
-  z-index: 2;
-}
-
-/* Panda Ears - Black and iconic */
-.ear {
-  position: absolute;
-  width: 50px;
-  height: 60px;
-  background: #1a1a1a;
-  border-radius: 50%;
-  top: -15px;
-}
-
-.ear.left {
-  left: 20px;
-  transform: rotate(-20deg);
-}
-
-.ear.right {
-  right: 20px;
-  transform: rotate(20deg);
-}
-
-.ear::after {
+/* UPDATED: Dark overlay with lower z-index */
+.login-container::before {
   content: '';
   position: absolute;
-  width: 20px;
-  height: 25px;
-  background: #ff69b4;
-  border-radius: 50%;
-  top: 15px;
-  left: 15px;
-  opacity: 0.8;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1; /* Lower z-index so birds show above */
 }
 
-.face {
-  position: relative;
+/* UPDATED: Flying Birds Animation with higher z-index */
+.birds-container {
+  position: absolute;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
+  z-index: 5; /* Higher than overlay but lower than login card */
+  pointer-events: none;
 }
 
-/* Black eye patches - the iconic panda look */
-.eye-patch {
-  position: absolute;
-  width: 55px;
-  height: 65px;
-  background: #1a1a1a;
-  border-radius: 50%;
-  top: 35px;
-}
-
-.eye-patch.left {
-  left: 25px;
-  transform: rotate(-10deg);
-}
-
-.eye-patch.right {
-  right: 25px;
-  transform: rotate(10deg);
-}
-
-/* White eyes inside the black patches */
-.eye {
+.bird {
   position: absolute;
   width: 30px;
-  height: 30px;
-  background: #ffffff;
-  border-radius: 50%;
-  top: 50px;
-  z-index: 3;
-}
-
-.eye.left {
-  left: 38px;
-}
-
-.eye.right {
-  right: 38px;
-}
-
-.eyeball {
-  position: absolute;
-  width: 25px;
-  height: 25px;
-  background: #ffffff;
-  border-radius: 50%;
-  top: 2.5px;
-  left: 2.5px;
-  transition: all 0.3s ease;
-}
-
-.pupil {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  background: #1a1a1a;
-  border-radius: 50%;
-  top: 9px;
-  left: 9px;
-  transition: all 0.3s ease;
-}
-
-/* Panda nose - small black triangle */
-.nose {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-left: 8px solid transparent;
-  border-right: 8px solid transparent;
-  border-top: 12px solid #1a1a1a;
-  top: 90px;
-  left: 50%;
-  transform: translateX(-50%);
-  border-radius: 50%;
-}
-
-/* Panda mouth - simple curved line */
-.mouth {
-  position: absolute;
-  width: 40px;
   height: 20px;
-  border-bottom: 3px solid #1a1a1a;
-  border-radius: 0 0 40px 40px;
-  top: 110px;
-  left: 50%;
-  transform: translateX(-50%);
-}
-
-/* Panda body/torso */
-.panda-body {
-  width: 120px;
-  height: 80px;
-  background: #ffffff;
-  border: 3px solid #e0e0e0;
-  border-radius: 60px 60px 30px 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  z-index: 1;
-}
-
-.torso {
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, #ffffff 70%, #f0f0f0 100%);
-  border-radius: inherit;
-}
-
-/* Panda hands for covering eyes */
-.hand {
-  position: absolute;
-  width: 40px;
-  height: 70px;
-  background: #1a1a1a;
-  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.8); /* Made darker for better visibility */
+  clip-path: polygon(0% 30%, 25% 0%, 50% 30%, 75% 0%, 100% 30%, 85% 60%, 50% 40%, 15% 60%);
   opacity: 0;
-  transition: all 0.5s ease;
-  z-index: 10;
 }
 
-.hand.left {
-  left: -10px;
-  top: 40px;
-  transform: rotate(-20deg);
+/* Bird 1 Animation */
+.bird--one {
+  top: 15%;
+  animation: fly-right-one 20s linear infinite;
 }
 
-.hand.right {
-  right: -10px;
-  top: 40px;
-  transform: rotate(20deg);
-}
-
-.hand::after {
-  content: '';
-  position: absolute;
-  width: 30px;
-  height: 30px;
-  background: #1a1a1a;
-  border-radius: 50%;
-  bottom: -5px;
-  left: 5px;
-}
-
-/* Panda Animation States */
-
-/* Normal State */
-.panda.normal .pupil {
-  top: 9px;
-  left: 9px;
-}
-
-/* Watching State - Eyes follow */
-.panda.watching .pupil {
-  animation: watchMovement 2s ease-in-out infinite;
-}
-
-@keyframes watchMovement {
-  0%, 100% { 
-    transform: translateX(-3px);
+@keyframes fly-right-one {
+  0% {
+    transform: translateX(-100px) scale(0.3);
+    opacity: 0;
   }
-  50% { 
-    transform: translateX(3px);
+  5% {
+    opacity: 1; /* Increased opacity for visibility */
+    transform: translateX(0px) scale(0.3);
+  }
+  10% {
+    transform: translateX(10vw) scale(0.5);
+  }
+  25% {
+    transform: translateX(40vw) scale(0.8);
+  }
+  50% {
+    transform: translateX(70vw) scale(1);
+  }
+  75% {
+    transform: translateX(90vw) scale(0.6);
+    opacity: 1;
+  }
+  95% {
+    opacity: 0;
+    transform: translateX(110vw) scale(0.3);
+  }
+  100% {
+    transform: translateX(120vw) scale(0.3);
+    opacity: 0;
   }
 }
 
-/* Hiding State - Hands cover eyes */
-.panda.hiding .hand {
-  opacity: 1;
+/* Bird 2 Animation */
+.bird--two {
+  top: 25%;
+  animation: fly-right-two 18s linear infinite;
+  animation-delay: 3s;
 }
 
-.panda.hiding .hand.left {
-  left: 20px;
-  top: 35px;
-  transform: rotate(-10deg);
+@keyframes fly-right-two {
+  0% {
+    transform: translateX(-100px) scale(0.2);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.8;
+    transform: translateX(0px) scale(0.2);
+  }
+  15% {
+    transform: translateX(15vw) scale(0.4);
+  }
+  30% {
+    transform: translateX(45vw) scale(0.7);
+  }
+  60% {
+    transform: translateX(75vw) scale(0.9);
+  }
+  80% {
+    transform: translateX(95vw) scale(0.5);
+    opacity: 0.8;
+  }
+  95% {
+    opacity: 0;
+    transform: translateX(115vw) scale(0.2);
+  }
+  100% {
+    transform: translateX(125vw) scale(0.2);
+    opacity: 0;
+  }
 }
 
-.panda.hiding .hand.right {
-  right: 20px;
-  top: 35px;
-  transform: rotate(10deg);
+/* Bird 3 Animation */
+.bird--three {
+  top: 35%;
+  animation: fly-right-three 22s linear infinite;
+  animation-delay: 8s;
 }
 
-.panda.hiding .pupil {
-  transform: scale(0.3);
+@keyframes fly-right-three {
+  0% {
+    transform: translateX(-100px) scale(0.4);
+    opacity: 0;
+  }
+  3% {
+    opacity: 0.9;
+    transform: translateX(0px) scale(0.4);
+  }
+  12% {
+    transform: translateX(20vw) scale(0.6);
+  }
+  35% {
+    transform: translateX(50vw) scale(0.9);
+  }
+  65% {
+    transform: translateX(80vw) scale(1.1);
+  }
+  85% {
+    transform: translateX(100vw) scale(0.7);
+    opacity: 0.9;
+  }
+  97% {
+    opacity: 0;
+    transform: translateX(120vw) scale(0.4);
+  }
+  100% {
+    transform: translateX(130vw) scale(0.4);
+    opacity: 0;
+  }
 }
 
-/* Form Styles - matching your original design */
-.login-form {
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+/* Enhanced login card for photo background */
+.login-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 20px;
+  padding: 40px;
   width: 100%;
-  max-width: 400px;
-  border: 1px solid #e1e5e9;
+  max-width: 420px;
+  box-shadow: 
+    0 25px 50px rgba(0, 0, 0, 0.15),
+    0 0 0 1px rgba(255, 255, 255, 0.3);
+  z-index: 10; /* Highest z-index so it appears above everything */
+  position: relative;
 }
 
+/* Keep all your other existing styles... */
 .form-header {
   text-align: center;
-  margin-bottom: 25px;
+  margin-bottom: 35px;
 }
 
-.logo-circle {
+.travel-icon {
   width: 60px;
   height: 60px;
-  background: #dc3545;
+  margin: 0 auto 20px;
+  padding: 15px;
+  background: linear-gradient(135deg, #ff7b54, #ff9a76);
   border-radius: 50%;
-  margin: 0 auto 15px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(255, 123, 84, 0.3);
 }
 
-.login-form h2 {
-  margin: 0;
-  color: #333;
-  font-size: 1.5rem;
+.travel-icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.form-header h2 {
+  margin: 0 0 8px 0;
+  color: #2c3e50;
+  font-size: 1.8rem;
   font-weight: 600;
+  letter-spacing: -0.5px;
+}
+
+.form-header p {
+  margin: 0;
+  color: #7f8c8d;
+  font-size: 0.95rem;
+  font-weight: 400;
+}
+
+/* All your other existing styles remain the same */
+.login-form {
+  margin-bottom: 20px;
+}
+
+.input-group {
+  margin-bottom: 20px;
 }
 
 .form-input {
   width: 100%;
-  padding: 12px 15px;
-  margin: 10px 0;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  padding: 16px 20px;
+  border: 2px solid #e8ecf0;
+  border-radius: 12px;
   font-size: 1rem;
-  background: #f9f9f9;
+  font-weight: 400;
+  background: rgba(255, 255, 255, 0.9);
   transition: all 0.3s ease;
   box-sizing: border-box;
+  color: #2c3e50;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: #17a2b8;
-  background: #fff;
-  box-shadow: 0 0 5px rgba(23, 162, 184, 0.3);
+  border-color: #ff9a76;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 0 0 3px rgba(255, 154, 118, 0.1);
+  transform: translateY(-1px);
+}
+
+.form-input::placeholder {
+  color: #95a5a6;
 }
 
 .checkbox-wrapper {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin: 15px 0;
+  gap: 10px;
+  margin: 20px 0 25px 0;
   font-size: 0.9rem;
-  color: #666;
+  color: #5d6d7e;
 }
 
 .checkbox-wrapper input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  accent-color: #17a2b8;
+  width: 18px;
+  height: 18px;
+  accent-color: #ff9a76;
+  cursor: pointer;
 }
 
-.error {
-  color: #dc3545;
-  margin: 15px 0;
-  padding: 10px;
-  background: #f8d7da;
-  border: 1px solid #f5c6cb;
-  border-radius: 5px;
+.checkbox-wrapper label {
+  cursor: pointer;
+  user-select: none;
+}
+
+.error-message {
+  color: #e74c3c;
+  background: rgba(231, 76, 60, 0.1);
+  border: 1px solid rgba(231, 76, 60, 0.2);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 20px 0;
   font-size: 0.9rem;
+  text-align: center;
 }
 
 .login-btn {
   width: 100%;
-  padding: 12px;
-  background: #17a2b8;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #ff7b54, #ff9a76);
   color: white;
   border: none;
-  border-radius: 5px;
-  font-size: 1rem;
+  border-radius: 12px;
+  font-size: 1.05rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  letter-spacing: 0.3px;
+  box-shadow: 0 4px 15px rgba(255, 123, 84, 0.3);
 }
 
 .login-btn:hover {
-  background: #138496;
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 123, 84, 0.4);
+  background: linear-gradient(135deg, #ff6b42, #ff8a64);
+}
+
+.login-btn:active {
+  transform: translateY(0);
+}
+
+.login-footer {
+  text-align: center;
+  border-top: 1px solid rgba(151, 151, 151, 0.2);
+  padding-top: 20px;
+}
+
+.login-footer small {
+  color: #7f8c8d;
+  font-size: 0.8rem;
+}
+
+.forgot-password-link {
+  text-align: center;
+  margin: 15px 0;
+}
+
+.forgot-link {
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  text-decoration: none;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  padding: 0;
+}
+
+.forgot-link:hover {
+  color: #ff9a76;
+}
+
+.success-message {
+  color: #27ae60;
+  background: rgba(39, 174, 96, 0.1);
+  border: 1px solid rgba(39, 174, 96, 0.2);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.login-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-  .panda {
-    transform: scale(0.8);
-    margin-bottom: 15px;
+  .login-container {
+    background-attachment: scroll;
   }
   
-  .login-form {
-    padding: 25px 20px;
-    margin: 0 15px;
+  .login-card {
+    margin: 20px;
+    padding: 30px 25px;
+    max-width: 100%;
+  }
+  
+  .form-header h2 {
+    font-size: 1.6rem;
+  }
+  
+  .bird {
+    width: 25px;
+    height: 16px;
   }
 }
 
 @media (max-width: 480px) {
-  .panda {
-    transform: scale(0.7);
-    margin-bottom: 10px;
+  .login-card {
+    margin: 15px;
+    padding: 25px 20px;
+    border-radius: 15px;
   }
   
-  .login-form {
-    padding: 20px 15px;
+  .travel-icon {
+    width: 50px;
+    height: 50px;
+    margin-bottom: 15px;
+  }
+  
+  .travel-icon svg {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .form-header h2 {
+    font-size: 1.5rem;
+  }
+  
+  .form-input {
+    padding: 14px 16px;
+  }
+  
+  .bird {
+    width: 20px;
+    height: 14px;
+  }
+}
+
+/* ADD THIS TO YOUR EXISTING AdminLogin.CSS FILE */
+
+/* Floating Clouds Animation */
+.clouds-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 3; /* Above overlay, below birds */
+  pointer-events: none;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50px;
+  opacity: 0;
+}
+
+/* Cloud shapes using pseudo-elements */
+.cloud::before,
+.cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 50px;
+}
+
+.cloud::before {
+  width: 50px;
+  height: 50px;
+  top: -25px;
+  left: 10px;
+}
+
+.cloud::after {
+  width: 60px;
+  height: 60px;
+  top: -35px;
+  right: 10px;
+}
+
+/* Cloud 1 */
+.cloud--one {
+  width: 80px;
+  height: 40px;
+  top: 20%;
+  animation: float-left-one 30s linear infinite;
+}
+
+@keyframes float-left-one {
+  0% {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+  5% {
+    opacity: 0.7;
+  }
+  10% {
+    transform: translateX(90vw);
+  }
+  90% {
+    transform: translateX(-10vw);
+    opacity: 0.7;
+  }
+  95% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-20vw);
+    opacity: 0;
+  }
+}
+
+/* Cloud 2 */
+.cloud--two {
+  width: 60px;
+  height: 30px;
+  top: 15%;
+  animation: float-left-two 40s linear infinite;
+  animation-delay: 10s;
+}
+
+@keyframes float-left-two {
+  0% {
+    transform: translateX(110vw);
+    opacity: 0;
+  }
+  3% {
+    opacity: 0.5;
+  }
+  8% {
+    transform: translateX(95vw);
+  }
+  92% {
+    transform: translateX(-15vw);
+    opacity: 0.5;
+  }
+  97% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-25vw);
+    opacity: 0;
+  }
+}
+
+/* Cloud 3 */
+.cloud--three {
+  width: 100px;
+  height: 50px;
+  top: 25%;
+  animation: float-left-three 35s linear infinite;
+  animation-delay: 20s;
+}
+
+@keyframes float-left-three {
+  0% {
+    transform: translateX(105vw);
+    opacity: 0;
+  }
+  4% {
+    opacity: 0.6;
+  }
+  9% {
+    transform: translateX(92vw);
+  }
+  91% {
+    transform: translateX(-12vw);
+    opacity: 0.6;
+  }
+  96% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-22vw);
+    opacity: 0;
+  }
+}
+
+/* Cloud 4 */
+.cloud--four {
+  width: 70px;
+  height: 35px;
+  top: 30%;
+  animation: float-left-four 45s linear infinite;
+  animation-delay: 5s;
+}
+
+@keyframes float-left-four {
+  0% {
+    transform: translateX(115vw);
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.4;
+  }
+  7% {
+    transform: translateX(98vw);
+  }
+  93% {
+    transform: translateX(-18vw);
+    opacity: 0.4;
+  }
+  98% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-28vw);
+    opacity: 0;
+  }
+}
+
+/* Cloud 5 */
+.cloud--five {
+  width: 90px;
+  height: 45px;
+  top: 35%;
+  animation: float-left-five 50s linear infinite;
+  animation-delay: 25s;
+}
+
+@keyframes float-left-five {
+  0% {
+    transform: translateX(120vw);
+    opacity: 0;
+  }
+  2% {
+    opacity: 0.5;
+  }
+  6% {
+    transform: translateX(100vw);
+  }
+  94% {
+    transform: translateX(-20vw);
+    opacity: 0.5;
+  }
+  98% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-30vw);
+    opacity: 0;
+  }
+}
+
+/* Cloud 6 - Higher up */
+.cloud--six {
+  width: 75px;
+  height: 38px;
+  top: 10%;
+  animation: float-left-six 38s linear infinite;
+  animation-delay: 15s;
+}
+
+@keyframes float-left-six {
+  0% {
+    transform: translateX(108vw);
+    opacity: 0;
+  }
+  3% {
+    opacity: 0.6;
+  }
+  8% {
+    transform: translateX(94vw);
+  }
+  92% {
+    transform: translateX(-14vw);
+    opacity: 0.6;
+  }
+  97% {
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(-24vw);
+    opacity: 0;
+  }
+}
+
+/* Responsive adjustments for clouds */
+@media (max-width: 768px) {
+  .cloud {
+    transform: scale(0.8);
+  }
+}
+
+@media (max-width: 480px) {
+  .cloud {
+    transform: scale(0.6);
   }
 }
