@@ -10,13 +10,10 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // USE YOUR WORKING IMAGE URL FUNCTION
   const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg';
-    
     const fixedPath = imagePath.replace(/\\/g, '/');
     if (fixedPath.startsWith('http')) return fixedPath;
-    
     return `http://localhost:5000/${fixedPath}`;
   };
 
@@ -25,11 +22,9 @@ const PackageDetail = () => {
       try {
         setLoading(true);
         const response = await fetch(`${API_URL}/packages/${id}`);
-        
         if (!response.ok) {
           throw new Error(`Error ${response.status}: Package not found`);
         }
-        
         const data = await response.json();
         console.log('Package data received:', data);
         setPackageData(data);
@@ -42,9 +37,7 @@ const PackageDetail = () => {
       }
     };
 
-    if (id) {
-      fetchPackage();
-    }
+    if (id) fetchPackage();
   }, [id]);
 
   // Loading state
