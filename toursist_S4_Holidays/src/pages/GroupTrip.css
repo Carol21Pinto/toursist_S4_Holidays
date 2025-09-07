@@ -15,19 +15,21 @@
 /* Hero Section */
 .group-hero {
   position: relative;
-  height: 80vh;
+  min-height: 65vh;   /* instead of fixed 80vh */
+  max-height: 80vh;   /* keeps it within 70–80% */
   background: linear-gradient(
       rgba(0, 0, 0, 0.6),
       rgba(0, 0, 0, 0.4)
     ),
     url("/images/group-hero.jpg") center/cover no-repeat;
   display: flex;
-  align-items: center;
+  align-items: flex-end; /* moves content down instead of strict center */
   justify-content: center;
   color: white;
   text-align: center;
-  padding: 0 20px;
+  padding: 40px 20px; /* adds space below */
 }
+
 
 .hero-content {
   z-index: 2;
@@ -184,6 +186,19 @@
   background: #38a69b;
   transform: scale(1.05);
 }
+
+.simple-footer {
+  background: linear-gradient(90deg, #4ecdc4, #45b7d1); /* fresh travel vibe */
+  color: white;
+  text-align: center;
+  padding: 25px 15px;
+  font-size: 1.3rem;
+  font-weight: 600;
+  letter-spacing: 1px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
 
 /* Responsive */
 @media (max-width: 768px) {

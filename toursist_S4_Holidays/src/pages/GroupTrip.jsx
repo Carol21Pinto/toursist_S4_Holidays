@@ -187,11 +187,11 @@ export default function GroupTrip() {
       </div> {/* ✅ close wrapper */}
 
       {/* Footer */}
-      <footer className="footer">
-        <div className="container">
-          <p>© 2025 S4 Holidays. All rights reserved.</p>
-        </div>
-      </footer>
+      {/* Footer */}
+<footer className="simple-footer">
+  <p>“The world is waiting — pack your bags!”</p>
+</footer>
+
     </>
   );
 }
