@@ -148,10 +148,9 @@ const EditPackage = () => {
     setItinerary(newItinerary);
   };
 
-  // NEW: Remove activity function
   const removeActivity = (dayIndex, activityIndex) => {
     const newItinerary = [...itinerary];
-    if (newItinerary[dayIndex].activities.length > 1) { // Keep at least 1 activity
+    if (newItinerary[dayIndex].activities.length > 1) {
       newItinerary[dayIndex].activities.splice(activityIndex, 1);
       setItinerary(newItinerary);
     }
@@ -165,12 +164,10 @@ const EditPackage = () => {
     }]);
   };
 
-  // NEW: Remove entire day function
   const removeDay = (dayIndex) => {
-    if (itinerary.length > 1) { // Keep at least 1 day
+    if (itinerary.length > 1) {
       const newItinerary = [...itinerary];
       newItinerary.splice(dayIndex, 1);
-      // Re-number days after removal
       const renumberedItinerary = newItinerary.map((day, index) => ({
         ...day,
         day: index + 1
@@ -199,18 +196,16 @@ const EditPackage = () => {
     }
   };
 
-  // NEW: Remove inclusion function
   const removeInclusion = (index) => {
-    if (inclusions.length > 1) { // Keep at least 1 inclusion
+    if (inclusions.length > 1) {
       const newInclusions = [...inclusions];
       newInclusions.splice(index, 1);
       setInclusions(newInclusions);
     }
   };
 
-  // NEW: Remove exclusion function
   const removeExclusion = (index) => {
-    if (exclusions.length > 1) { // Keep at least 1 exclusion
+    if (exclusions.length > 1) {
       const newExclusions = [...exclusions];
       newExclusions.splice(index, 1);
       setExclusions(newExclusions);
@@ -237,14 +232,11 @@ const EditPackage = () => {
         const updatedPackage = await response.json();
         console.log('Package updated successfully:', updatedPackage);
         
-        // Show success snackbar
         showSuccess("✅ Package updated successfully! Redirecting to packages list...");
         
-        // Trigger dashboard refresh
         localStorage.setItem('dashboardRefresh', Date.now().toString());
         window.dispatchEvent(new CustomEvent('dashboardRefresh'));
         
-        // Navigate back to packages list after showing success message
         setTimeout(() => {
           navigate('/admin/packages');
         }, 2000);
@@ -452,31 +444,30 @@ const EditPackage = () => {
           </div>
         </div>
 
-        {/* ENHANCED Day-wise Itinerary Section with Remove Buttons */}
+        {/* Day-wise Itinerary Section with Activities Remove Buttons */}
         <div className="form-section">
           <h2>Day-wise Itinerary</h2>
           
           {itinerary.map((day, dayIndex) => (
             <div key={dayIndex} className="itinerary-day">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                 <h3>Day {day.day}</h3>
-                {/* Remove Day Button - only show if more than 1 day */}
                 {itinerary.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeDay(dayIndex)}
                     style={{
-                      background: '#ff4444',
-                      color: 'white',
+                      background: '#ffebee',
+                      color: '#d32f2f',
                       border: 'none',
-                      padding: '6px 12px',
-                      borderRadius: '4px',
-                      fontSize: '12px',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      fontSize: '0.9rem',
                       cursor: 'pointer',
-                      fontWeight: '500'
+                      fontWeight: '600'
                     }}
                   >
-                    ❌ Remove Day
+                    Remove Day
                   </button>
                 )}
               </div>
@@ -509,17 +500,18 @@ const EditPackage = () => {
                         type="button"
                         onClick={() => removeActivity(dayIndex, actIndex)}
                         style={{
-                          background: '#ff6666',
-                          color: 'white',
+                          background: '#ffebee',
+                          color: '#d32f2f',
                           border: 'none',
-                          padding: '5px 8px',
+                          padding: '8px 12px',
                           borderRadius: '4px',
-                          fontSize: '11px',
+                          fontSize: '0.8rem',
                           cursor: 'pointer',
-                          minWidth: '24px'
+                          fontWeight: '600',
+                          minWidth: 'auto'
                         }}
                       >
-                        ❌
+                        Remove
                       </button>
                     )}
                   </div>
@@ -544,36 +536,37 @@ const EditPackage = () => {
           </button>
         </div>
 
-        {/* ENHANCED Inclusions Section with Remove Buttons */}
+        {/* Inclusions Section with Remove Buttons */}
         <div className="form-section">
           <h2>Inclusions</h2>
           
           {inclusions.map((inclusion, index) => (
             <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              <input
-                type="text"
-                value={inclusion}
-                onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
-                placeholder="Inclusion item"
-                style={{ flex: 1 }}
-              />
-              {/* Remove Inclusion Button - only show if more than 1 inclusion */}
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="text"
+                  value={inclusion}
+                  onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
+                  placeholder="Inclusion item"
+                />
+              </div>
               {inclusions.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeInclusion(index)}
                   style={{
-                    background: '#ff6666',
-                    color: 'white',
+                    background: '#ffebee',
+                    color: '#d32f2f',
                     border: 'none',
-                    padding: '5px 8px',
-                    borderRadius: '4px',
-                    fontSize: '11px',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
                     cursor: 'pointer',
-                    minWidth: '24px'
+                    fontWeight: '600',
+                    alignSelf: 'center'
                   }}
                 >
-                  ❌
+                  Remove
                 </button>
               )}
             </div>
@@ -588,38 +581,39 @@ const EditPackage = () => {
           </button>
         </div>
 
-        {/* ENHANCED Exclusions Section with Remove Buttons */}
+        {/* Exclusions Section with Remove Buttons */}
         <div className="form-section">
           <h2>Exclusions</h2>
           
           {exclusions.map((exclusion, index) => (
             <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              <input
-                type="text"
-                value={exclusion}
-                onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
-                placeholder="Exclusion item"
-                style={{ flex: 1 }}
-              />
-              {/* Remove Exclusion Button - only show if more than 1 exclusion */}
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="text"
+                  value={exclusion}
+                  onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
+                  placeholder="Exclusion item"
+                />
+              </div>
               {exclusions.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeExclusion(index)}
                   style={{
-                    background: '#ff6666',
-                    color: 'white',
+                    background: '#ffebee',
+                    color: '#d32f2f',
                     border: 'none',
-                    padding: '5px 8px',
-                    borderRadius: '4px',
-                    fontSize: '11px',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
                     cursor: 'pointer',
-                    minWidth: '24px'
+                    fontWeight: '600',
+                    alignSelf: 'center'
                   }}
                 >
-                  ❌
+                  Remove
                 </button>
-              )}
+                )}
             </div>
           ))}
           
@@ -639,6 +633,17 @@ const EditPackage = () => {
             className="cancel-btn"
             onClick={() => navigate('/admin/packages')}
             disabled={isSubmitting}
+            style={{
+              background: '#f5f5f5',
+              color: '#666',
+              border: '2px solid #ddd',
+              padding: '16px 30px',
+              borderRadius: '10px',
+              fontSize: '1.1rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              marginRight: '15px'
+            }}
           >
             Cancel
           </button>

@@ -417,21 +417,30 @@ const AddPackage = () => {
           </div>
         </div>
 
-        {/* Day-wise Itinerary Section - FIXED */}
+        {/* Day-wise Itinerary Section with Activities Remove Buttons */}
         <div className="form-section">
           <h2>Day-wise Itinerary</h2>
           
           {itinerary.map((day, dayIndex) => (
             <div key={dayIndex} className="itinerary-day">
-              <div className="itinerary-day-header">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                 <h3>Day {day.day}</h3>
                 {itinerary.length > 1 && (
                   <button
                     type="button"
                     onClick={() => removeDay(dayIndex)}
-                    className="remove-day-btn"
+                    style={{
+                      background: '#ffebee',
+                      color: '#d32f2f',
+                      border: 'none',
+                      padding: '8px 16px',
+                      borderRadius: '6px',
+                      fontSize: '0.9rem',
+                      cursor: 'pointer',
+                      fontWeight: '600'
+                    }}
                   >
-                    ❌ Remove Day
+                    Remove Day
                   </button>
                 )}
               </div>
@@ -449,21 +458,33 @@ const AddPackage = () => {
               <div className="form-group">
                 <label>Activities</label>
                 {day.activities.map((activity, actIndex) => (
-                  <div key={actIndex} className="activity-row">
+                  <div key={actIndex} style={{ display: 'flex', gap: '10px', marginBottom: '8px' }}>
                     <input
                       type="text"
                       value={activity}
                       onChange={(e) => handleActivityChange(dayIndex, actIndex, e.target.value)}
                       placeholder="Activity description"
                       className="activity-input"
+                      style={{ flex: 1 }}
                     />
+                    {/* Remove Activity Button - only show if more than 1 activity */}
                     {day.activities.length > 1 && (
                       <button
                         type="button"
                         onClick={() => removeActivity(dayIndex, actIndex)}
-                        className="remove-btn-small"
+                        style={{
+                          background: '#ffebee',
+                          color: '#d32f2f',
+                          border: 'none',
+                          padding: '8px 12px',
+                          borderRadius: '4px',
+                          fontSize: '0.8rem',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          minWidth: 'auto'
+                        }}
                       >
-                        ❌
+                        Remove
                       </button>
                     )}
                   </div>
@@ -488,25 +509,37 @@ const AddPackage = () => {
           </button>
         </div>
 
-        {/* Inclusions Section - FIXED */}
+        {/* Inclusions Section with Remove Buttons */}
         <div className="form-section">
           <h2>Inclusions</h2>
           
           {inclusions.map((inclusion, index) => (
-            <div key={index} className="input-row">
-              <input
-                type="text"
-                value={inclusion}
-                onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
-                placeholder="Inclusion item"
-              />
+            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="text"
+                  value={inclusion}
+                  onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
+                  placeholder="Inclusion item"
+                />
+              </div>
               {inclusions.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeInclusion(index)}
-                  className="remove-btn-small"
+                  style={{
+                    background: '#ffebee',
+                    color: '#d32f2f',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    alignSelf: 'center'
+                  }}
                 >
-                  ❌
+                  Remove
                 </button>
               )}
             </div>
@@ -521,25 +554,37 @@ const AddPackage = () => {
           </button>
         </div>
 
-        {/* Exclusions Section - FIXED */}
+        {/* Exclusions Section with Remove Buttons */}
         <div className="form-section">
           <h2>Exclusions</h2>
           
           {exclusions.map((exclusion, index) => (
-            <div key={index} className="input-row">
-              <input
-                type="text"
-                value={exclusion}
-                onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
-                placeholder="Exclusion item"
-              />
+            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="text"
+                  value={exclusion}
+                  onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
+                  placeholder="Exclusion item"
+                />
+              </div>
               {exclusions.length > 1 && (
                 <button
                   type="button"
                   onClick={() => removeExclusion(index)}
-                  className="remove-btn-small"
+                  style={{
+                    background: '#ffebee',
+                    color: '#d32f2f',
+                    border: 'none',
+                    padding: '8px 16px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    alignSelf: 'center'
+                  }}
                 >
-                  ❌
+                  Remove
                 </button>
               )}
             </div>

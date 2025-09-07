@@ -107,6 +107,77 @@ const PackageDetail = () => {
       .replace(/Id$/, 'ID');
   };
 
+  // NEW: Helper function to render pricing fields conditionally
+  const renderPricingFields = () => {
+    if (!packageData || !packageData.pricingMode) return null;
+
+    if (packageData.pricingMode === 'Structured') {
+      return (
+        <>
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '200px 1fr', 
+            gap: '15px', 
+            padding: '10px', 
+            border: '1px solid #eee', 
+            borderRadius: '5px', 
+            backgroundColor: '#fafafa' 
+          }}>
+            <div style={{ fontWeight: 'bold', color: '#555' }}>Price Per Person:</div>
+            <div style={{ color: '#333' }}>
+              {packageData.pricePerPerson} {packageData.currency}
+            </div>
+          </div>
+
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '200px 1fr', 
+            gap: '15px', 
+            padding: '10px', 
+            border: '1px solid #eee', 
+            borderRadius: '5px', 
+            backgroundColor: '#fafafa' 
+          }}>
+            <div style={{ fontWeight: 'bold', color: '#555' }}>Currency:</div>
+            <div style={{ color: '#333' }}>{packageData.currency}</div>
+          </div>
+
+          {packageData.priceNote && packageData.priceNote.trim() && (
+            <div style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '200px 1fr', 
+              gap: '15px', 
+              padding: '10px', 
+              border: '1px solid #eee', 
+              borderRadius: '5px', 
+              backgroundColor: '#fafafa' 
+            }}>
+              <div style={{ fontWeight: 'bold', color: '#555' }}>Price Note:</div>
+              <div style={{ color: '#333' }}>{packageData.priceNote}</div>
+            </div>
+          )}
+        </>
+      );
+    } else if (packageData.pricingMode === 'Text') {
+      return (
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: '200px 1fr', 
+          gap: '15px', 
+          padding: '10px', 
+          border: '1px solid #eee', 
+          borderRadius: '5px', 
+          backgroundColor: '#fafafa' 
+        }}>
+          <div style={{ fontWeight: 'bold', color: '#555' }}>Price Text:</div>
+          <div style={{ color: '#333' }}>{packageData.priceText}</div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
   if (loading) {
     return (
       <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
@@ -170,8 +241,34 @@ const PackageDetail = () => {
         </h2>
         
         <div style={{ display: 'grid', gap: '15px' }}>
+          {/* Show Pricing Mode */}
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: '200px 1fr', 
+            gap: '15px', 
+            padding: '10px', 
+            border: '1px solid #eee', 
+            borderRadius: '5px', 
+            backgroundColor: '#fafafa' 
+          }}>
+            <div style={{ fontWeight: 'bold', color: '#555' }}>Pricing Mode:</div>
+            <div style={{ color: '#333' }}>{packageData.pricingMode || 'Not specified'}</div>
+          </div>
+
+          {/* Conditional Pricing Fields */}
+          {renderPricingFields()}
+
+          {/* Show all other fields except pricing-related ones */}
           {Object.entries(packageData)
-            .filter(([key]) => key !== '_id' && key !== '__v') // Exclude MongoDB internal fields
+            .filter(([key]) => 
+              key !== '_id' && 
+              key !== '__v' && 
+              key !== 'pricingMode' && 
+              key !== 'pricePerPerson' && 
+              key !== 'currency' && 
+              key !== 'priceNote' && 
+              key !== 'priceText'
+            )
             .map(([key, value]) => (
               <div key={key} style={{ 
                 display: 'grid', 
@@ -193,7 +290,7 @@ const PackageDetail = () => {
         </div>
 
         {/* Raw Data Debug Section */}
-        <details style={{ marginTop: '40px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px' }}>
+        {/* <details style={{ marginTop: '40px', border: '1px solid #ddd', borderRadius: '8px', padding: '10px' }}>
           <summary style={{ cursor: 'pointer', fontWeight: 'bold', color: '#666' }}>
             🔍 Raw Data (Debug)
           </summary>
@@ -207,7 +304,7 @@ const PackageDetail = () => {
           }}>
             {JSON.stringify(packageData, null, 2)}
           </pre>
-        </details>
+        </details> */}
       </div>
     </div>
   );
