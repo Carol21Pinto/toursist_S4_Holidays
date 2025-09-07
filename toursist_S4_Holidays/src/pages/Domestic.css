@@ -86,7 +86,7 @@
   display: block;
   font-family: 'Kalam', cursive;
   font-size: 1.5rem;
-  color: #0d6efd;
+  color: #ff9933;
   font-weight: 700;
   margin-bottom: 0.35rem;
 }
@@ -94,7 +94,7 @@
   display: block;
   font-size: 2rem;
   font-weight: 700;
-  color: #2c3e50;
+  color: #2c3e50ff99;
   position: relative;
 }
 .title-english::after {
@@ -105,7 +105,7 @@
   transform: translateX(-50%);
   width: 80px;
   height: 3px;
-  background: #0d6efd;
+  background: #ff9933;
   border-radius: 2px;
 }
 
@@ -285,7 +285,7 @@
 /* CTA Section */
 .indian-cta {
   padding: 3.5rem 0;
-  background: #5aa9ff;
+  background: #198754;
   color: #0b2545;
   text-align: center;
 }
@@ -296,14 +296,14 @@
   font-size: 1.6rem;
   font-weight: 700;
   margin-bottom: 0.4rem;
-  color: #0b2545;
+  color: #ffffff;
 }
 .cta-english {
   display: block;
   font-size: 2.2rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #0b2545;
+  color: #ffffff;
 }
 .cta-content p { display: none; } 
 .cta-buttons {
