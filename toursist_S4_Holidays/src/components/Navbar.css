@@ -11,6 +11,10 @@
   width: auto;           /* keep aspect ratio */
   object-fit: contain;   /* avoid distortion */
   display: block;
+  
+  border-radius: 100%; /* circle */
+  background: transparent;
+  opacity: 0.3;
 }
 
 /* Optional: scale with viewport but cap the extremes */
