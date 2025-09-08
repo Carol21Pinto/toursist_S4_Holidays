@@ -125,21 +125,29 @@ export default function International() {
                 return (
                   <div key={pkg._id} className="destination-card">
                     <div className="card-image">
-                      <img 
-                        src={imgUrl}
-                        alt={pkg.title}
-                        onError={applyFallback}
-                      />
-                      
-                    </div>
+                        {imgUrl ? (
+                          <img 
+                            src={imgUrl}
+                            alt={pkg.title}
+                            onError={applyFallback}
+                          />
+                        ) : (
+                          <div className="placeholder">Image coming soon</div>
+                        )}
+                      </div>
+
                     <div className="card-content">
                       <h3 className="destination-name">{pkg.title}</h3>
-                      <p className="destination-description">
-                        {pkg.description ? pkg.description.replace(/<[^>]*>/g, '').substring(0, 100) + '...' : 'Explore this amazing destination'}
-                      </p>
+                      
                       <div className="card-details">
-                        <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
-                        <div className="duration">{formatDuration(pkg)}</div>
+                        <div className="price">
+                        <span className="from">From</span>
+                        <span className="amount">
+                          {pkg.currency}{pkg.pricePerPerson.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="duration">{formatDuration(pkg)}</div>
+
                       </div>
                       <button 
                         className="explore-btn"

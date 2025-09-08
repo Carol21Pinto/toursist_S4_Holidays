@@ -221,22 +221,39 @@
 .card-details {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.9rem;
+  align-items: flex-end; /* align bottom nicely */
+  margin-bottom: 1rem;
 }
-.price { 
-  font-size: 1.1rem; 
-  font-weight: 700; 
-  color: #198754; 
+
+.price-block {
+  display: flex;
+  flex-direction: column;
 }
+
+.price-block .label {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #6b7280; /* muted gray */
+  margin-bottom: 0.2rem;
+}
+
+.price-block .amount {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #16a34a; /* richer green */
+  letter-spacing: -0.5px;
+}
+
 .duration {
-  background: #f5f6f7;
-  padding: 0.3rem 0.7rem;
+  background: #f3f4f6;
+  padding: 0.35rem 0.7rem;
   border-radius: 10px;
   font-size: 0.9rem;
-  color: #555;
-  font-weight: 500;
+  color: #374151;
+  font-weight: 600;
+  white-space: nowrap;
 }
+
 
 .highlights {
   display: flex;
@@ -264,21 +281,12 @@
 .time-icon { font-size: 1rem; }
 
 .explore-btn {
-  width: 100%;
-  background: #5aa9ff;       /* India green */
-  color: #0b2545;            /* White text */
-  border: 1px solid #0f6b07; /* Slightly darker green border */
-  padding: 12px 18px;
-  border-radius: 10px;
-  font-weight: 700;
-  cursor: pointer;
-  margin-top: auto;
-  transition: all 0.3s ease;
+  background: #0d6efd;   /* bootstrap blue */
+  border: none;
+  color: #fff;
 }
-.explore-btn:hover { 
-  background: #5aa9ff;       /* Darker green on hover */
-  color: #0b2545;
-  transform: translateY(-2px);
+.explore-btn:hover {
+  background: #0b5ed7;
 }
 
 

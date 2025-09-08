@@ -114,20 +114,7 @@ export default function Pilgrimage() {
         </div>
       </section>
 
-      <section className="sacred-experiences">
-        <div className="container">
-          <h2 className="section-title">Spiritual Experiences</h2>
-          <div className="experiences-grid">
-            {sacredExperiences.map((experience) => (
-              <div key={experience.id} className="experience-card">
-                <div className="experience-symbol">{experience.symbol}</div>
-                <h3>{experience.title}</h3>
-                <p>{experience.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       <section className="destinations-section">
         <div className="container">
@@ -147,31 +134,36 @@ export default function Pilgrimage() {
                 
                 return (
                   <div key={pkg._id} className="destination-card">
-                    <div className="card-image">
-                      <img 
-                        src={imgUrl}
-                        alt={pkg.title}
-                        onError={applyFallback}
-                      />
-                      
-                      
-                    </div>
-                    <div className="card-content">
-                      <h3>{pkg.title}</h3>
-                      {/* <div className="sacred-name">{pkg.title}</div> */}
-                      <div className="card-details">
-                        <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
-                        <div className="duration">{formatDuration(pkg)}</div>
-                      </div>
-                      
-                      <button 
-                        className="pilgrimage-btn"
-                        onClick={() => navigate(`/package/${pkg._id}`)}
-                      >
-                        Begin Sacred Journey
-                      </button>
-                    </div>
+                  <div className="card-image">
+                    {imgUrl ? (
+                      <img src={imgUrl} alt={pkg.title} onError={applyFallback} />
+                    ) : (
+                      <div className="image-placeholder">Image coming soon</div>
+                    )}
                   </div>
+
+                  <div className="card-content">
+                    <h3 className="destination-name">{pkg.title}</h3>
+
+                    <div className="card-details">
+                      <div className="price">
+                        <span className="from">From</span>
+                        <span className="amount">
+                          {pkg.currency}{pkg.pricePerPerson.toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="duration">{formatDuration(pkg)}</div>
+                    </div>
+
+                    <button
+                      className="pilgrimage-btn"
+                      onClick={() => navigate(`/package/${pkg._id}`)}
+                    >
+                      Begin Sacred Journey
+                    </button>
+                  </div>
+                </div>
+
                 );
               })}
             </div>
@@ -183,10 +175,7 @@ export default function Pilgrimage() {
         <div className="container">
           <h2>Begin Your Sacred Journey</h2>
           <p>Experience divine blessings, inner peace, and spiritual awakening</p>
-          {/* <div className="cta-buttons">
-            <button className="btn-primary">Plan Pilgrimage</button>
-            <button className="btn-secondary">Contact Expert</button>
-          </div> */}
+        
         </div>
       </section>
     </div>

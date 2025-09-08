@@ -130,23 +130,25 @@ export default function Domestic() {
                         alt={pkg.title}
                         onError={applyFallback}
                       />
-                      <div className="region-badge">{pkg.category}</div>
+                      
                       
                     </div>
 
                     <div className="card-content">
                       <h3>{pkg.title}</h3>
                       <div className="card-details">
-                        <div className="price">
-                          From {pkg.currency}{pkg.pricePerPerson.toLocaleString()}
-                        </div>
-                        <div className="duration">
-                          {pkg.itinerary && pkg.itinerary.length > 0
-                            ? `${pkg.itinerary.length} Days`
-                            : '7 Days'
-                          }
-                        </div>
+                      <div className="price-block">
+                        <span className="label">From</span>
+                        <div className="amount">{pkg.currency}{pkg.pricePerPerson.toLocaleString()}</div>
                       </div>
+                      <div className="duration">
+                        {pkg.itinerary && pkg.itinerary.length > 0
+                          ? `${pkg.itinerary.length} Days`
+                          : '7 Days'
+                        }
+                      </div>
+                     </div>
+
 
                       
 
