@@ -7,11 +7,15 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import TravelExploreIcon from "@mui/icons-material/TravelExplore";
 import './AdminLayout.css';
 
-const drawerWidth = 280;
+const drawerWidth = 280; // Back to normal size
 
 export default function AdminLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
+  
+  // Check if user is logged in and not on login page
+  const isLoggedIn = !!localStorage.getItem("adminToken");
+  const isLoginPage = location.pathname === "/admin/login";
 
   const handleLogout = async () => {
     try {
@@ -37,9 +41,9 @@ export default function AdminLayout({ children }) {
     <Box sx={{ 
       display: "flex", 
       minHeight: "100vh",
-      background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)' // Fixed white space
+      background: 'linear-gradient(180deg, #1e293b 0%, #0f172a 100%)'
     }}>
-      {/* Top AppBar */}
+      {/* Normal Top AppBar */}
       <AppBar 
         position="fixed" 
         sx={{ 
@@ -69,50 +73,53 @@ export default function AdminLayout({ children }) {
             Super Admin
           </Typography>
           
-          <Box sx={{ display: "flex", gap: 1, alignItems: 'center' }}>
-            <Button 
-              variant="contained" 
-              size="small" 
-              startIcon={<AddIcon />} 
-              onClick={() => navigate("/admin/add")}
-              sx={{
-                background: 'linear-gradient(45deg, #667eea, #764ba2)',
-                borderRadius: '25px',
-                textTransform: 'none',
-                fontWeight: 600,
-                '&:hover': {
-                  transform: 'translateY(-2px)',
-                  boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
-                }
-              }}
-            >
-              Add New Package
-            </Button>
-            
-            <Button 
-              variant="outlined" 
-              size="small" 
-              startIcon={<LogoutIcon />} 
-              onClick={handleLogout}
-              sx={{
-                color: '#ef4444',
-                borderColor: '#ef4444',
-                borderRadius: '25px',
-                textTransform: 'none',
-                fontWeight: 600,
-                '&:hover': {
-                  borderColor: '#dc2626',
-                  backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                }
-              }}
-            >
-              Logout
-            </Button>
-          </Box>
+          {/* Show buttons ONLY if logged in AND not on login page */}
+          {isLoggedIn && !isLoginPage && (
+            <Box sx={{ display: "flex", gap: 1, alignItems: 'center' }}>
+              <Button 
+                variant="contained" 
+                size="small" 
+                startIcon={<AddIcon />} 
+                onClick={() => navigate("/admin/add")}
+                sx={{
+                  background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                  borderRadius: '25px',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': {
+                    transform: 'translateY(-2px)',
+                    boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
+                  }
+                }}
+              >
+                Add New Package
+              </Button>
+              
+              <Button 
+                variant="outlined" 
+                size="small" 
+                startIcon={<LogoutIcon />} 
+                onClick={handleLogout}
+                sx={{
+                  color: '#ef4444',
+                  borderColor: '#ef4444',
+                  borderRadius: '25px',
+                  textTransform: 'none',
+                  fontWeight: 600,
+                  '&:hover': {
+                    borderColor: '#dc2626',
+                    backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                  }
+                }}
+              >
+                Logout
+              </Button>
+            </Box>
+          )}
         </Toolbar>
       </AppBar>
 
-      {/* Dark Sidebar - RESTORED TO ORIGINAL */}
+      {/* Normal Sidebar */}
       <Drawer
         variant="permanent"
         sx={{

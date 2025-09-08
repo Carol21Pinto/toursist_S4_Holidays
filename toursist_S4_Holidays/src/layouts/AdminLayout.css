@@ -16,7 +16,7 @@ html, body, #root {
 
 /* CRITICAL FIX: Remove MUI Drawer's default spacing/margins */
 .MuiDrawer-root {
-  width: 0 !important; /* This eliminates the white space */
+  width: 0 !important;
   flex-shrink: 0 !important;
 }
 
@@ -63,7 +63,7 @@ html, body, #root {
   background: rgba(255, 255, 255, 0.5);
 }
 
-/* Rest of your existing styles */
+/* Animation */
 @keyframes slideIn {
   from {
     opacity: 0;
