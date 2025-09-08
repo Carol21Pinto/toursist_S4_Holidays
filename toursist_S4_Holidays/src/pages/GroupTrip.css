@@ -15,19 +15,19 @@
 /* Hero Section */
 .group-hero {
   position: relative;
-  min-height: 65vh;   /* instead of fixed 80vh */
-  max-height: 80vh;   /* keeps it within 70–80% */
+  min-height: 65vh;
+  max-height: 80vh;
   background: linear-gradient(
       rgba(0, 0, 0, 0.6),
       rgba(0, 0, 0, 0.4)
     ),
-    url("/images/group-hero.jpg") center/cover no-repeat;
+    url("/images/group-trip.jpg") center/cover no-repeat;
   display: flex;
-  align-items: flex-end; /* moves content down instead of strict center */
+  align-items: flex-end;
   justify-content: center;
   color: white;
   text-align: center;
-  padding: 40px 20px; /* adds space below */
+  padding: 40px 20px;
 }
 
 

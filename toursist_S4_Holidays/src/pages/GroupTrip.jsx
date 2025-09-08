@@ -109,16 +109,7 @@ export default function GroupTrip() {
     <>
       <div className="group-trip">
         {/* Hero Section */}
-        <section className="group-hero">
-          <div className="hero-background"></div>
-          <div className="hero-content">
-            <h1 className="hero-title">
-              <span className="title-part">Group</span>
-              <span className="title-part highlight">Adventures</span>
-              <span className="title-part">Await!</span>
-            </h1>
-          </div>
-        </section>
+        <section className="group-hero"> <div className="hero-background"></div> <div className="hero-content"> <div className="hero-subtitle">S4 HOLIDAYS</div> <h1 className="hero-title"> <span className="title-part">Group</span> <span className="title-part highlight">Adventures</span> <span className="title-part">Await!</span> </h1> </div> </section>
 
         {/* Popular Group Destinations */}
         <section className="group-destinations">
