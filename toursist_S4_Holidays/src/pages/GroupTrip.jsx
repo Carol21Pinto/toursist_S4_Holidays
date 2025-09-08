@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GroupTrip.css';
+import ContactIcons from '../components/ContactIcons'; // adjust path if needed
 
 export default function GroupTrip() {
   const [packages, setPackages] = useState([]);
@@ -176,7 +177,7 @@ export default function GroupTrip() {
           </div>
         </section>
       </div> {/* ✅ close wrapper */}
-
+<ContactIcons />
       {/* Footer */}
       {/* Footer */}
 <footer className="simple-footer">

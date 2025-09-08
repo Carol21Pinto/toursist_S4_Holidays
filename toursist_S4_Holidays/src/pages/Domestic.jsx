@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import './Domestic.css';
 import { useNavigate } from 'react-router-dom';
+import ContactIcons from '../components/ContactIcons'; // adjust path if needed
+
 
 export default function Domestic() {
   const [packages, setPackages] = useState([]);
@@ -78,6 +80,7 @@ export default function Domestic() {
   };
 
   return (
+    
     <div className="domestic-tours">
       {/* Hero Section */}
       <section className="indian-hero contain-hero">
@@ -171,7 +174,7 @@ export default function Domestic() {
           </div>
         </div>
       </section>
-
+<ContactIcons />
       {/* CTA */}
 <section className="indian-cta simple-cta">
   <div className="container">

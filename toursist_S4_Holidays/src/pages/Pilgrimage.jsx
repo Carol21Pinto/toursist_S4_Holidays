@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Pilgrimage.css';
+import ContactIcons from '../components/ContactIcons'; // adjust path if needed
 
 export default function Pilgrimage() {
   const [packages, setPackages] = useState([]);
@@ -170,7 +171,7 @@ export default function Pilgrimage() {
           )}
         </div>
       </section>
-
+<ContactIcons />
       <section className="sacred-cta">
         <div className="container">
           <h2>Begin Your Sacred Journey</h2>

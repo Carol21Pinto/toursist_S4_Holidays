@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import './PackageDetail.css';
+import ContactIcons from '../components/ContactIcons'; // adjust path if needed
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
@@ -162,7 +163,7 @@ const PackageDetail = () => {
           </div>
         </div>
       </section>
-
+<ContactIcons />
       {/* Footer */}
       <footer className="footer">
         <p>&copy; 2025 Kerala Tours. All Rights Reserved.</p>

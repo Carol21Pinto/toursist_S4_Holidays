@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './International.css';
+import ContactIcons from '../components/ContactIcons'; // adjust path if needed
 
 export default function International() {
   const [packages, setPackages] = useState([]);
@@ -163,7 +164,7 @@ export default function International() {
           )}
         </div>
       </section>
-
+<ContactIcons />
       {/* Features & CTA Sections */}
       <section className="features-section">
         <div className="container">
