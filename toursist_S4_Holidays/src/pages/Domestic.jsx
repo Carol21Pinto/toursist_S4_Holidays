@@ -343,10 +343,10 @@ export default function Domestic() {
                         <div className="card-content">
                           <h3>{pkg.title}</h3>
                           <div className="card-details">
-                            <div className="price-block">
+                            {/* <div className="price-block">
                               <span className="label">From</span>
                               <div className="amount">{pkg.currency}{pkg.pricePerPerson.toLocaleString()}</div>
-                            </div>
+                            </div> */}
                             <div className="duration">
                               {pkg.itinerary && pkg.itinerary.length > 0
                                 ? `${pkg.itinerary.length} Days`

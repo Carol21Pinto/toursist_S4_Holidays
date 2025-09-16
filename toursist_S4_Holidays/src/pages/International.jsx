@@ -309,10 +309,10 @@ export default function International() {
                           <h3 className="destination-name">{pkg.title}</h3>
                           <div className="card-details">
                             <div className="price">
-                              <span className="from">From</span>
+                              {/* <span className="from">From</span>
                               <span className="amount">
                                 {pkg.currency}{pkg.pricePerPerson.toLocaleString()}
-                              </span>
+                              </span> */}
                             </div>
                             <div className="duration">
                               {pkg.itinerary?.length ? `${pkg.itinerary.length} Days` : '7 Days'}
