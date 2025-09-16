@@ -76,7 +76,7 @@ export default function AdminLayout({ children }) {
           {/* Show buttons ONLY if logged in AND not on login page */}
           {isLoggedIn && !isLoginPage && (
             <Box sx={{ display: "flex", gap: 1, alignItems: 'center' }}>
-              <Button 
+              {/* <Button 
                 variant="contained" 
                 size="small" 
                 startIcon={<AddIcon />} 
@@ -93,7 +93,7 @@ export default function AdminLayout({ children }) {
                 }}
               >
                 Add New Package
-              </Button>
+              </Button> */}
               
               <Button 
                 variant="outlined" 

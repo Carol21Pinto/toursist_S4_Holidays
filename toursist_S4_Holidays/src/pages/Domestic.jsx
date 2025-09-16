@@ -9,7 +9,7 @@ export default function Domestic() {
   const [loading, setLoading] = useState(true);
   const [selectedState, setSelectedState] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [stateFilterExpanded, setStateFilterExpanded] = useState(false);
+  const [showAllStates, setShowAllStates] = useState(false);
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -18,7 +18,7 @@ export default function Domestic() {
   const SERVER_BASE = 'http://localhost:5000';
   const FALLBACK = '/images/placeholder-card.jpg';
 
-  // All 28 Indian States with their major cities/destinations
+  // All 28 Indian States with their major cities/destinations (for fallback text search)
   const stateWithCities = {
     'Andhra Pradesh': ['Hyderabad', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati', 'Amaravati'],
     'Arunachal Pradesh': ['Itanagar', 'Naharlagun', 'Pasighat', 'Tawang', 'Ziro', 'Bomdila', 'Tezu', 'Seppa'],
@@ -52,10 +52,16 @@ export default function Domestic() {
 
   const indianStates = Object.keys(stateWithCities);
 
-  // Enhanced filter function that matches state and cities
+  // Enhanced filter function that uses database-stored state field first, then fallback to text search
   const isPackageInState = (pkg, stateName) => {
     if (!stateName || stateName === '') return true;
 
+    // Check the database-stored state field first (most accurate)
+    if (pkg.state) {
+      return pkg.state.toLowerCase() === stateName.toLowerCase();
+    }
+
+    // Fallback: For older packages without state field, use text search
     const searchTerms = [
       stateName.toLowerCase(),
       ...stateWithCities[stateName]?.map(city => city.toLowerCase()) || []
@@ -64,7 +70,6 @@ export default function Domestic() {
     const packageText = [
       pkg.title?.toLowerCase() || '',
       pkg.description?.toLowerCase() || '',
-      pkg.state?.toLowerCase() || '',
       pkg.destination?.toLowerCase() || '',
       pkg.location?.toLowerCase() || '',
       pkg.city?.toLowerCase() || '',
@@ -74,11 +79,26 @@ export default function Domestic() {
       ).join(' ')
     ].join(' ');
 
-    // Check if any of the search terms (state name + cities) are found in package text
     return searchTerms.some(term => 
       packageText.includes(term) || 
       packageText.match(new RegExp(`\\b${term}\\b`, 'i'))
     );
+  };
+
+  // Calculate package count for each state
+  const getPackageCountForState = (stateName) => {
+    if (stateName === '') return packages.length;
+    return packages.filter(pkg => isPackageInState(pkg, stateName)).length;
+  };
+
+  // Get sorted states by package count (highest to lowest) - SHOW ALL STATES
+  const getSortedStates = () => {
+    return indianStates
+      .map(state => ({
+        name: state,
+        count: getPackageCountForState(state)
+      }))
+      .sort((a, b) => b.count - a.count); // Sort by count (highest first) - DON'T filter out 0-count states
   };
 
   // Safely pick a primary image path from a package (string only)
@@ -160,28 +180,20 @@ export default function Domestic() {
     if (window.innerWidth < 768) {
       setSidebarOpen(false);
     }
-    // Collapse the filter after selection
-    if (state !== '') {
-      setStateFilterExpanded(false);
-    }
-  };
-
-  const toggleStateFilter = () => {
-    setStateFilterExpanded(!stateFilterExpanded);
   };
 
   const clearFilters = () => {
     setSelectedState('');
-    setStateFilterExpanded(false);
-  };
-
-  // Calculate package count for each state
-  const getPackageCountForState = (stateName) => {
-    if (stateName === '') return packages.length;
-    return packages.filter(pkg => isPackageInState(pkg, stateName)).length;
+    setShowAllStates(false);
   };
 
   const displayPackages = filteredPackages.length > 0 ? filteredPackages : packages;
+  const sortedStates = getSortedStates();
+  const visibleStates = showAllStates ? sortedStates : sortedStates.slice(0, 5);
+
+  console.log('Total states:', sortedStates.length);
+  console.log('Visible states:', visibleStates.length);
+  console.log('Show all states:', showAllStates);
 
   return (
     <div className="domestic-tours">
@@ -217,6 +229,7 @@ export default function Domestic() {
 
         {/* Sidebar Overlay for Mobile */}
         {sidebarOpen && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>}
+        
         {/* Left Sidebar Filter */}
         <aside className={`filter-sidebar ${sidebarOpen ? 'open' : ''}`}>
           <div className="sidebar-header">
@@ -233,51 +246,42 @@ export default function Domestic() {
           </div>
 
           <div className="sidebar-content">
-            {/* Expandable State Filter */}
+            {/* State Filter Section */}
             <div className="filter-section">
-              <button 
-                className={`filter-header ${stateFilterExpanded ? 'expanded' : ''}`}
-                onClick={toggleStateFilter}
-              >
-                <div className="filter-header-content">
-                  <span className="filter-title">Select State</span>
-                  {selectedState && (
-                    <span className="selected-filter">{selectedState}</span>
-                  )}
-                </div>
-                <span className={`expand-icon ${stateFilterExpanded ? 'rotated' : ''}`}>
-                  ▼
-                </span>
-              </button>
+              <h4 className="filter-section-title">Select State</h4>
+              
+              <div className="states-list">
+                {/* All States Option */}
+                <button
+                  className={`state-option ${selectedState === '' ? 'active' : ''}`}
+                  onClick={() => handleStateSelect('')}
+                >
+                  <span className="state-name">All States</span>
+                  <span className="package-count">({packages.length})</span>
+                </button>
 
-              <div className={`filter-content ${stateFilterExpanded ? 'expanded' : ''}`}>
-                <div className="states-list">
-                  {/* All States Option */}
+                {/* Individual States (Sorted by Package Count) */}
+                {visibleStates.map(state => (
                   <button
-                    className={`state-option ${selectedState === '' ? 'active' : ''}`}
-                    onClick={() => handleStateSelect('')}
+                    key={state.name}
+                    className={`state-option ${selectedState === state.name ? 'active' : ''} ${state.count === 0 ? 'disabled' : ''}`}
+                    onClick={() => handleStateSelect(state.name)}
+                    disabled={state.count === 0}
                   >
-                    <span className="state-name">All States</span>
-                    <span className="package-count">({packages.length})</span>
+                    <span className="state-name">{state.name}</span>
+                    <span className="package-count">({state.count})</span>
                   </button>
+                ))}
 
-                  {/* Individual States */}
-                  {indianStates.map(state => {
-                    const statePackageCount = getPackageCountForState(state);
-
-                    return (
-                      <button
-                        key={state}
-                        className={`state-option ${selectedState === state ? 'active' : ''} ${statePackageCount === 0 ? 'disabled' : ''}`}
-                        onClick={() => handleStateSelect(state)}
-                        disabled={statePackageCount === 0}
-                      >
-                        <span className="state-name">{state}</span>
-                        <span className="package-count">({statePackageCount})</span>
-                      </button>
-                    );
-                  })}
-                </div>
+                {/* Show More Button */}
+                {sortedStates.length > 5 && (
+                  <button
+                    className="show-more-btn"
+                    onClick={() => setShowAllStates(!showAllStates)}
+                  >
+                    {showAllStates ? 'Show less' : `Show more (${sortedStates.length - 5})`}
+                  </button>
+                )}
               </div>
             </div>
           </div>

@@ -12,7 +12,7 @@ const EditPackage = () => {
   const [loading, setLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // Form state
+  // Form state with new location fields
   const [formData, setFormData] = useState({
     name: '',
     category: 'Domestic',
@@ -20,7 +20,10 @@ const EditPackage = () => {
     pricePerPerson: '',
     currency: 'INR',
     priceNote: '',
-    priceText: ''
+    priceText: '',
+    // New location fields
+    state: '',        // For Domestic packages
+    continent: ''     // For International packages
   });
 
   const [pricingMode, setPricingMode] = useState('Structured');
@@ -33,6 +36,21 @@ const EditPackage = () => {
   const [cardImage, setCardImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [existingImage, setExistingImage] = useState('');
+
+  // Location data
+  const indianStates = [
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+    'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+    'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+    'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+  ];
+
+  const continents = [
+    'Asia', 'Europe', 'North America', 'Middle East', 
+    'Africa', 'Oceania', 'South America'
+  ];
 
   // Snackbar state
   const [snackbar, setSnackbar] = useState({
@@ -83,7 +101,10 @@ const EditPackage = () => {
             pricePerPerson: packageData.pricePerPerson || '',
             currency: packageData.currency || 'INR',
             priceNote: packageData.priceNote || '',
-            priceText: packageData.priceText || ''
+            priceText: packageData.priceText || '',
+            // Load existing location data
+            state: packageData.state || '',
+            continent: packageData.continent || ''
           });
 
           setPricingMode(packageData.pricingMode || 'Structured');
@@ -115,6 +136,15 @@ const EditPackage = () => {
       ...prev,
       [name]: value
     }));
+
+    // Clear location fields when category changes
+    if (name === 'category') {
+      setFormData(prev => ({
+        ...prev,
+        state: '',
+        continent: ''
+      }));
+    }
   };
 
   const handlePricingModeChange = (mode) => {
@@ -317,16 +347,76 @@ const EditPackage = () => {
             </div>
           </div>
 
-          <div className="form-group full-width">
-            <label>Duration</label>
-            <input
-              type="text"
-              name="duration"
-              value={formData.duration}
-              onChange={handleInputChange}
-              placeholder="e.g., 5 Days 4 Nights"
-            />
+          {/* Location Selection Based on Category */}
+          <div className="form-row">
+            {formData.category === 'Domestic' && (
+              <div className="form-group">
+                <label>Select State <span style={{color: '#e74c3c'}}>*</span></label>
+                <select
+                  name="state"
+                  value={formData.state}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    background: formData.state ? '#e8f5e8' : 'white',
+                    borderColor: formData.state ? '#28a745' : '#e1e5e9'
+                  }}
+                >
+                  <option value="">Choose State...</option>
+                  {indianStates.map(state => (
+                    <option key={state} value={state}>{state}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            {formData.category === 'International' && (
+              <div className="form-group">
+                <label>Select Continent/Region <span style={{color: '#e74c3c'}}>*</span></label>
+                <select
+                  name="continent"
+                  value={formData.continent}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    background: formData.continent ? '#e8f5e8' : 'white',
+                    borderColor: formData.continent ? '#28a745' : '#e1e5e9'
+                  }}
+                >
+                  <option value="">Choose Continent/Region...</option>
+                  {continents.map(continent => (
+                    <option key={continent} value={continent}>{continent}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
+            <div className="form-group">
+              <label>Duration</label>
+              <input
+                type="text"
+                name="duration"
+                value={formData.duration}
+                onChange={handleInputChange}
+                placeholder="e.g., 5 Days 4 Nights"
+              />
+            </div>
           </div>
+
+          {/* Location Info Helper */}
+          {formData.category === 'Domestic' && formData.state && (
+            <div className="location-info">
+              <span className="info-icon">ℹ️</span>
+              <span>Selected State: <strong>{formData.state}</strong> - This will help users find your package easily!</span>
+            </div>
+          )}
+
+          {formData.category === 'International' && formData.continent && (
+            <div className="location-info">
+              <span className="info-icon">🌍</span>
+              <span>Selected Region: <strong>{formData.continent}</strong> - This will help users find your package easily!</span>
+            </div>
+          )}
         </div>
 
         {/* Pricing Section */}
@@ -355,14 +445,14 @@ const EditPackage = () => {
             <>
               <div className="form-row">
                 <div className="form-group">
-                  <label>Price per person</label>
+                  <label>Price per person (optional)</label>
                   <input
                     type="number"
                     name="pricePerPerson"
                     value={formData.pricePerPerson}
                     onChange={handleInputChange}
                     placeholder="2000"
-                    required
+                    // Removed required attribute - making it optional
                   />
                 </div>
                 
