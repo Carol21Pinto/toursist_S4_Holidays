@@ -12,6 +12,11 @@ export default function International() {
   const [showAllRegions, setShowAllRegions] = useState(false);
   const navigate = useNavigate();
 
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
   // Fallback image
@@ -265,7 +270,7 @@ export default function International() {
           <section className="destinations-section">
             <div className="container">
               <div className="section-header">
-                <h2 className="section-title">Popular International Destinations</h2>
+                <h2 className="section-title"> International Destinations</h2>
                 <p className="section-subtitle">Explore our handpicked destinations around the globe</p>
                 {selectedRegion && (
                   <div className="filter-info">

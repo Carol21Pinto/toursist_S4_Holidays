@@ -242,7 +242,7 @@ export default function GroupTrip() {
             <section className="group-destinations">
               <div className="container">
                 <h2 className="section-title">
-                  Popular Group Destinations
+                   Group Destinations
                   {selectedGroupType && (
                     <span className="filter-info">
                       Showing results for: <strong>{selectedGroupType}</strong> 
@@ -290,7 +290,7 @@ export default function GroupTrip() {
                               alt={pkg.title}
                               onError={applyFallback}
                             />
-                            <div className="group-size-badge">6-15 people</div>
+                            {/* <div className="group-size-badge">6-15 people</div> */}
                             {pkg.groupType && (
                               <div className="group-type-badge">{pkg.groupType}</div>
                             )}
@@ -299,26 +299,26 @@ export default function GroupTrip() {
                           <div className="card-content">
                             <h3>{pkg.title}</h3>
                             <div className="card-details">
-                              <div className="price">
+                              {/* <div className="price">
                                 {formatPrice(pkg.pricePerPerson, pkg.currency)}
-                              </div>
+                              </div> */}
                               <div className="duration">{formatDuration(pkg)}</div>
                             </div>
 
-                            <div className="activities-list">
+                            {/* <div className="activities-list">
                               {pkg.inclusions &&
                                 pkg.inclusions.slice(0, 3).map((inclusion, index) => (
                                   <span key={index} className="activity-tag">
                                     {inclusion}
                                   </span>
                                 ))}
-                            </div>
+                            </div> */}
 
                             <button
                               className="book-group-btn"
                               onClick={() => navigate(`/package/${pkg._id}`)}
                             >
-                              Book for Group
+                              Explore Now
                             </button>
                           </div>
                         </div>

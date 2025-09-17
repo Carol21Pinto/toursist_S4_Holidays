@@ -294,7 +294,7 @@ export default function Domestic() {
             <div className="container">
               <h2 className="section-title">
                 <span className="title-hindi">लोकप्रिय गंतव्य</span>
-                <span className="title-english">Popular Destinations</span>
+                <span className="title-english">Destinations</span>
                 {selectedState && (
                   <span className="filter-info">
                     Showing results for: <strong>{selectedState}</strong> 
