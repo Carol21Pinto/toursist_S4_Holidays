@@ -1,21 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './GroupTrip.css';
-import ContactIcons from '../components/ContactIcons'; // adjust path if needed
+import ContactIcons from '../components/ContactIcons';
 
 export default function GroupTrip() {
   const [packages, setPackages] = useState([]);
+  const [filteredPackages, setFilteredPackages] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [selectedGroupType, setSelectedGroupType] = useState('family');
-  const [groupSize, setGroupSize] = useState(4);
-  const [activeActivity, setActiveActivity] = useState(0);
+  const [selectedGroupType, setSelectedGroupType] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [showAllTypes, setShowAllTypes] = useState(false);
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-  // FIXED: Safe image handling (same as Domestic)
+  // Safe image handling
   const SERVER_BASE = 'http://localhost:5000';
   const FALLBACK = '/images/placeholder-card.jpg';
+
+  // Group types for filtering
+  const groupTypes = ['Domestic', 'International', 'Pilgrimage'];
 
   const pickPrimaryImagePath = (pkg) => {
     const fromCard = Array.isArray(pkg?.cardImage)
@@ -47,10 +51,43 @@ export default function GroupTrip() {
     e.currentTarget.src = FALLBACK;
   };
 
+  // Strict filtering - only match exact groupType
+  const isPackageInGroupType = (pkg, groupType) => {
+    if (!groupType || groupType === '') return true;
+    
+    // Only return true if the groupType matches exactly
+    if (pkg.groupType) {
+      return pkg.groupType.toLowerCase() === groupType.toLowerCase();
+    }
+    
+    // If no groupType is set, don't show it for any specific filter
+    return false;
+  };
+
+  // Calculate package count for each group type
+  const getPackageCountForGroupType = (groupType) => {
+    if (groupType === '') return packages.length;
+    return packages.filter(pkg => isPackageInGroupType(pkg, groupType)).length;
+  };
+
+  // Get sorted group types by package count (highest to lowest)
+  const getSortedGroupTypes = () => {
+    return groupTypes
+      .map(type => ({
+        name: type,
+        count: getPackageCountForGroupType(type)
+      }))
+      .sort((a, b) => b.count - a.count);
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchPackages();
   }, []);
+
+  useEffect(() => {
+    applyFilters();
+  }, [packages, selectedGroupType]);
 
   const fetchPackages = async () => {
     try {
@@ -70,19 +107,29 @@ export default function GroupTrip() {
     }
   };
 
-  const groupTypes = [
-    { id: 'family', name: 'Family Trips', icon: '👨‍👩‍👧‍👦', description: 'Perfect family bonding experiences', basePrice: 15000, color: '#ff6b6b' },
-    { id: 'friends', name: 'Friends Getaway', icon: '👥', description: 'Adventure with your squad', basePrice: 12000, color: '#4ecdc4' },
-    { id: 'corporate', name: 'Corporate Tours', icon: '💼', description: 'Team building & networking', basePrice: 18000, color: '#45b7d1' },
-    { id: 'wedding', name: 'Wedding Groups', icon: '💒', description: 'Celebrate special moments', basePrice: 25000, color: '#f093fb' }
-  ];
+  const applyFilters = () => {
+    let filtered = [...packages];
 
-  const groupActivities = [
-    { id: 1, title: 'Adventure Sports', icon: '🏄‍♂️', description: 'Thrilling activities like rafting, trekking, and paragliding', image: '/images/adventure.jpg' },
-    { id: 2, title: 'Cultural Experiences', icon: '🎭', description: 'Local traditions, folk dances, and cultural immersion', image: '/images/culture.jpg' },
-    { id: 3, title: 'Team Building', icon: '🤝', description: 'Games, workshops, and collaborative challenges', image: '/images/teambuilding.jpg' },
-    { id: 4, title: 'Food Tours', icon: '🍽️', description: 'Culinary adventures and local cuisine experiences', image: '/images/food.jpg' }
-  ];
+    if (selectedGroupType) {
+      filtered = filtered.filter(pkg => isPackageInGroupType(pkg, selectedGroupType));
+    }
+
+    setFilteredPackages(filtered);
+  };
+
+  const handleGroupTypeSelect = (type) => {
+    setSelectedGroupType(type);
+    console.log(`Selected group type: ${type}`);
+    
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
+
+  const clearFilters = () => {
+    setSelectedGroupType('');
+    setShowAllTypes(false);
+  };
 
   const formatPrice = (price, currency) => `From ${currency}${price.toLocaleString()}/person`;
   const formatDuration = (pkg) =>
@@ -90,100 +137,207 @@ export default function GroupTrip() {
       ? `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}`
       : '4 Days';
 
-  const calculatePrice = () => {
-    const selectedType = groupTypes.find(type => type.id === selectedGroupType);
-    let basePrice = selectedType.basePrice;
-    if (groupSize >= 10) basePrice *= 0.85;
-    else if (groupSize >= 6) basePrice *= 0.90;
-    else if (groupSize >= 4) basePrice *= 0.95;
-    return Math.round(basePrice);
-  };
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setActiveActivity((prev) => (prev + 1) % groupActivities.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+  const displayPackages = filteredPackages.length > 0 ? filteredPackages : packages;
+  const sortedGroupTypes = getSortedGroupTypes();
+  const visibleGroupTypes = showAllTypes ? sortedGroupTypes : sortedGroupTypes.slice(0, 3);
 
   return (
     <>
       <div className="group-trip">
         {/* Hero Section */}
-        <section className="group-hero"> <div className="hero-background"></div> <div className="hero-content"> <div className="hero-subtitle">S4 HOLIDAYS</div> <h1 className="hero-title"> <span className="title-part">Group</span> <span className="title-part highlight">Adventures</span> <span className="title-part">Await!</span> </h1> </div> </section>
-
-        {/* Popular Group Destinations */}
-        <section className="group-destinations">
-          <div className="container">
-            <h2 className="section-title">Popular Group Destinations</h2>
-
-            {loading ? (
-              <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
-                Loading group packages...
-              </div>
-            ) : packages.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
-                No group packages found. Add some packages in the admin panel!
-              </div>
-            ) : (
-              <div className="destinations-grid">
-                {packages.map((pkg) => {
-                  // FIXED: Safe image extraction
-                  const primaryPath = pickPrimaryImagePath(pkg);
-                  const imgUrl = getImageUrl(primaryPath);
-                  console.log('[IMG DEBUG]', pkg.title, { primaryPath, imgUrl });
-
-                  return (
-                    <div key={pkg._id} className="destination-card">
-                      <div className="card-image">
-                        <img
-                          src={imgUrl}
-                          alt={pkg.title}
-                          onError={applyFallback}
-                        />
-                        <div className="group-size-badge">6-15 people</div>
-                      </div>
-
-                      <div className="card-content">
-                        <h3>{pkg.title}</h3>
-                        <div className="card-details">
-                          <div className="price">
-                            {formatPrice(pkg.pricePerPerson, pkg.currency)}
-                          </div>
-                          <div className="duration">{formatDuration(pkg)}</div>
-                        </div>
-
-                        <div className="activities-list">
-                          {pkg.inclusions &&
-                            pkg.inclusions.slice(0, 3).map((inclusion, index) => (
-                              <span key={index} className="activity-tag">
-                                {inclusion}
-                              </span>
-                            ))}
-                        </div>
-
-                        <button
-                          className="book-group-btn"
-                          onClick={() => navigate(`/package/${pkg._id}`)}
-                        >
-                          Book for Group
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
+        <section className="group-hero">
+          <div className="hero-background"></div>
+          <div className="hero-content">
+            <div className="hero-subtitle">S4 HOLIDAYS</div>
+            <h1 className="hero-title">
+              <span className="title-part">Group</span>
+              <span className="title-part highlight">Adventures</span>
+              <span className="title-part">Await!</span>
+            </h1>
           </div>
         </section>
-      </div> {/* ✅ close wrapper */}
-<ContactIcons />
-      {/* Footer */}
-      {/* Footer */}
-<footer className="simple-footer">
-  <p>“The world is waiting — pack your bags!”</p>
-</footer>
 
+        {/* Main Content with Sidebar */}
+        <div className="main-content">
+          {/* Mobile Filter Toggle */}
+          <div className="mobile-filter-toggle">
+            <button 
+              className="filter-toggle-btn"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+            >
+              <span className="filter-icon">⚙️</span>
+              Sort & Filter
+            </button>
+            
+            {selectedGroupType && (
+              <button className="clear-filters-btn" onClick={clearFilters}>
+                Clear Filters
+              </button>
+            )}
+          </div>
+
+          {/* Sidebar Overlay for Mobile */}
+          {sidebarOpen && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>}
+          
+          {/* Left Sidebar Filter */}
+          <aside className={`filter-sidebar ${sidebarOpen ? 'open' : ''}`}>
+            <div className="sidebar-header">
+              <h3 className="sidebar-title">
+                <span className="filter-icon">👥</span>
+                Filters
+              </h3>
+              <button 
+                className="close-sidebar"
+                onClick={() => setSidebarOpen(false)}
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="sidebar-content">
+              {/* Group Type Filter Section */}
+              <div className="filter-section">
+                <h4 className="filter-section-title">Select Group Type</h4>
+                
+                <div className="group-types-list">
+                  {/* All Types Option */}
+                  <button
+                    className={`group-type-option ${selectedGroupType === '' ? 'active' : ''}`}
+                    onClick={() => handleGroupTypeSelect('')}
+                  >
+                    <span className="group-type-name">All Types</span>
+                    <span className="package-count">({packages.length})</span>
+                  </button>
+
+                  {/* Individual Group Types (Sorted by Package Count) */}
+                  {visibleGroupTypes.map(type => (
+                    <button
+                      key={type.name}
+                      className={`group-type-option ${selectedGroupType === type.name ? 'active' : ''} ${type.count === 0 ? 'disabled' : ''}`}
+                      onClick={() => handleGroupTypeSelect(type.name)}
+                      disabled={type.count === 0}
+                    >
+                      <span className="group-type-name">{type.name}</span>
+                      <span className="package-count">({type.count})</span>
+                    </button>
+                  ))}
+
+                  {/* Show More Button */}
+                  {sortedGroupTypes.length > 3 && (
+                    <button
+                      className="show-more-btn"
+                      onClick={() => setShowAllTypes(!showAllTypes)}
+                    >
+                      {showAllTypes ? 'Show less' : `Show more (${sortedGroupTypes.length - 3})`}
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* Main Content Area */}
+          <main className="content-area">
+            {/* Popular Group Destinations */}
+            <section className="group-destinations">
+              <div className="container">
+                <h2 className="section-title">
+                  Popular Group Destinations
+                  {selectedGroupType && (
+                    <span className="filter-info">
+                      Showing results for: <strong>{selectedGroupType}</strong> 
+                      <span className="results-count">({displayPackages.length} packages found)</span>
+                    </span>
+                  )}
+                </h2>
+
+                {loading ? (
+                  <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
+                    Loading group packages...
+                  </div>
+                ) : displayPackages.length === 0 ? (
+                  <div className="no-packages">
+                    <div className="no-results-icon">👥</div>
+                    <h3>No packages found</h3>
+                    <p>
+                      {selectedGroupType ? (
+                        <>
+                          No packages found for <strong>{selectedGroupType}</strong>. 
+                          <br />
+                          Try selecting a different type or view all packages!
+                        </>
+                      ) : (
+                        'No group packages found. Add some packages in the admin panel!'
+                      )}
+                    </p>
+                    {selectedGroupType && (
+                      <button className="reset-btn" onClick={clearFilters}>
+                        View All Packages
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="destinations-grid">
+                    {displayPackages.map((pkg) => {
+                      const primaryPath = pickPrimaryImagePath(pkg);
+                      const imgUrl = getImageUrl(primaryPath);
+
+                      return (
+                        <div key={pkg._id} className="destination-card">
+                          <div className="card-image">
+                            <img
+                              src={imgUrl}
+                              alt={pkg.title}
+                              onError={applyFallback}
+                            />
+                            <div className="group-size-badge">6-15 people</div>
+                            {pkg.groupType && (
+                              <div className="group-type-badge">{pkg.groupType}</div>
+                            )}
+                          </div>
+
+                          <div className="card-content">
+                            <h3>{pkg.title}</h3>
+                            <div className="card-details">
+                              <div className="price">
+                                {formatPrice(pkg.pricePerPerson, pkg.currency)}
+                              </div>
+                              <div className="duration">{formatDuration(pkg)}</div>
+                            </div>
+
+                            <div className="activities-list">
+                              {pkg.inclusions &&
+                                pkg.inclusions.slice(0, 3).map((inclusion, index) => (
+                                  <span key={index} className="activity-tag">
+                                    {inclusion}
+                                  </span>
+                                ))}
+                            </div>
+
+                            <button
+                              className="book-group-btn"
+                              onClick={() => navigate(`/package/${pkg._id}`)}
+                            >
+                              Book for Group
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            </section>
+          </main>
+        </div>
+      </div>
+      
+      <ContactIcons />
+      
+      {/* Footer */}
+      <footer className="simple-footer">
+        <p>"The world is waiting — pack your bags!"</p>
+      </footer>
     </>
   );
 }

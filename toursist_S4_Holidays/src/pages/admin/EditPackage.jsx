@@ -23,7 +23,8 @@ const EditPackage = () => {
     priceText: '',
     // New location fields
     state: '',        // For Domestic packages
-    continent: ''     // For International packages
+    continent: '',    // For International packages
+    groupType: ''     // For Group packages
   });
 
   const [pricingMode, setPricingMode] = useState('Structured');
@@ -50,6 +51,11 @@ const EditPackage = () => {
   const continents = [
     'Asia', 'Europe', 'North America', 'Middle East', 
     'Africa', 'Oceania', 'South America'
+  ];
+
+  // Group types for Group category
+  const groupTypes = [
+    'Domestic', 'International', 'Pilgrimage'
   ];
 
   // Snackbar state
@@ -104,7 +110,8 @@ const EditPackage = () => {
             priceText: packageData.priceText || '',
             // Load existing location data
             state: packageData.state || '',
-            continent: packageData.continent || ''
+            continent: packageData.continent || '',
+            groupType: packageData.groupType || ''
           });
 
           setPricingMode(packageData.pricingMode || 'Structured');
@@ -142,7 +149,8 @@ const EditPackage = () => {
       setFormData(prev => ({
         ...prev,
         state: '',
-        continent: ''
+        continent: '',
+        groupType: ''
       }));
     }
   };
@@ -341,11 +349,34 @@ const EditPackage = () => {
               >
                 <option value="Domestic">Domestic</option>
                 <option value="International">International</option>
-                <option value="Pilgrimage">Pilgrimage</option>
                 <option value="Group">Group</option>
               </select>
             </div>
           </div>
+
+          {/* Group Type Selection for Group Category */}
+          {formData.category === 'Group' && (
+            <div className="form-row">
+              <div className="form-group">
+                <label>Group Type <span style={{color: '#e74c3c'}}>*</span></label>
+                <select
+                  name="groupType"
+                  value={formData.groupType}
+                  onChange={handleInputChange}
+                  required
+                  style={{
+                    background: formData.groupType ? '#e8f5e8' : 'white',
+                    borderColor: formData.groupType ? '#28a745' : '#e1e5e9'
+                  }}
+                >
+                  <option value="">Choose Group Type...</option>
+                  {groupTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          )}
 
           {/* Location Selection Based on Category */}
           <div className="form-row">
@@ -415,6 +446,13 @@ const EditPackage = () => {
             <div className="location-info">
               <span className="info-icon">🌍</span>
               <span>Selected Region: <strong>{formData.continent}</strong> - This will help users find your package easily!</span>
+            </div>
+          )}
+
+          {formData.category === 'Group' && formData.groupType && (
+            <div className="location-info">
+              <span className="info-icon">👥</span>
+              <span>Selected Group Type: <strong>{formData.groupType}</strong> - This will help users find your group package easily!</span>
             </div>
           )}
         </div>

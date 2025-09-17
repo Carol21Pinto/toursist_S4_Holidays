@@ -27,9 +27,23 @@ exports.createPackage = async (req, res) => {
     const packageData = JSON.parse(req.body.data);
     const cardImage = req.file ? req.file.path : '';
     
+    // Debug logging
+    console.log('=== CREATE PACKAGE DEBUG ===');
+    console.log('Received packageData:', packageData);
+    console.log('Category:', packageData.category);
+    console.log('GroupType:', packageData.groupType);
+    console.log('State:', packageData.state);
+    console.log('Continent:', packageData.continent);
+    
     const newPackage = new Package({
       title: packageData.name,
       category: packageData.category.toLowerCase(),
+      
+      // New location fields
+      groupType: packageData.groupType || null,
+      state: packageData.state || null,
+      continent: packageData.continent || null,
+      
       pricePerPerson: Number(packageData.pricePerPerson),
       currency: packageData.currency,
       priceNote: packageData.priceNote || '',
@@ -46,6 +60,17 @@ exports.createPackage = async (req, res) => {
     });
 
     await newPackage.save();
+    
+    // Debug logging
+    console.log('Package saved successfully:');
+    console.log('ID:', newPackage._id);
+    console.log('Title:', newPackage.title);
+    console.log('Category:', newPackage.category);
+    console.log('GroupType:', newPackage.groupType);
+    console.log('State:', newPackage.state);
+    console.log('Continent:', newPackage.continent);
+    console.log('=== END CREATE DEBUG ===');
+    
     console.log('Package created successfully:', newPackage._id, 'at', newPackage.createdAt);
     return res.status(201).json(newPackage);
   } catch (err) {
@@ -67,6 +92,12 @@ exports.updatePackage = async (req, res) => {
     const updates = {
       title: packageData.name,
       category: packageData.category.toLowerCase(),
+      
+      // New location fields
+      groupType: packageData.groupType || null,
+      state: packageData.state || null,
+      continent: packageData.continent || null,
+      
       duration: packageData.duration,
       pricingMode: packageData.pricingMode,
       pricePerPerson: packageData.pricePerPerson ? Number(packageData.pricePerPerson) : undefined,
@@ -97,6 +128,13 @@ exports.updatePackage = async (req, res) => {
       console.log('Package not found with ID:', req.params.id);
       return res.status(404).json({ message: 'Package not found' });
     }
+
+    // Debug logging
+    console.log('Package updated successfully:');
+    console.log('ID:', pkg._id);
+    console.log('GroupType:', pkg.groupType);
+    console.log('State:', pkg.state);
+    console.log('Continent:', pkg.continent);
 
     console.log('Package updated successfully:', pkg._id, 'at', pkg.updatedAt);
     return res.json(pkg);

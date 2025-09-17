@@ -5,6 +5,11 @@ const PackageSchema = new mongoose.Schema({
   category: { type: String, enum: ['domestic', 'international', 'pilgrimage', 'group'], required: true },
   duration: { type: String }, // Added duration field
   
+  // New location fields
+  groupType: { type: String }, // For Group packages: "Domestic", "International", "Pilgrimage"
+  state: { type: String },     // For Domestic packages  
+  continent: { type: String }, // For International packages
+  
   // Pricing fields
   pricingMode: { type: String, enum: ['Structured', 'Text'], default: 'Structured' }, // New field
   pricePerPerson: { type: Number }, // Removed required since Text mode won't have this
