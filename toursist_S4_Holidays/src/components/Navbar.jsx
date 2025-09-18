@@ -52,7 +52,7 @@ export default function Navbar() {
           <li onClick={() => setMenuOpen(false)}>
             <Link to="/about">About</Link>
           </li>
-          <li onClick={() => setMenuOpen(false)}>
+          {/* <li onClick={() => setMenuOpen(false)}>
             <Link to="/destination">Destination</Link>
           </li>
           <li onClick={() => setMenuOpen(false)}>
@@ -63,7 +63,7 @@ export default function Navbar() {
           </li>
           <li onClick={() => setMenuOpen(false)}>
             <Link to="/contact">Contact</Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     </nav>
