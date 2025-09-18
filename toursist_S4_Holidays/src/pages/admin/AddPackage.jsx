@@ -354,6 +354,7 @@ const AddPackage = () => {
               >
                 <option value="Domestic">Domestic</option>
                 <option value="International">International</option>
+                <option value="Pilgrimage">Pilgrimage</option>
                 <option value="Group">Group</option>
               </select>
             </div>
@@ -427,6 +428,8 @@ const AddPackage = () => {
               </div>
             )}
 
+            {/* UPDATED: Pilgrimage - NO location selection required */}
+
             <div className="form-group">
               <label>Duration</label>
               <input
@@ -451,6 +454,14 @@ const AddPackage = () => {
             <div className="location-info">
               <span className="info-icon">🌍</span>
               <span>Selected Region: <strong>{formData.continent}</strong> - This will help users find your package easily!</span>
+            </div>
+          )}
+
+          {/* UPDATED: Simple Pilgrimage info (no location requirements) */}
+          {formData.category === 'Pilgrimage' && (
+            <div className="location-info">
+              <span className="info-icon">🕌</span>
+              <span>Pilgrimage package selected - Perfect for spiritual journeys and holy destinations!</span>
             </div>
           )}
 
@@ -597,7 +608,6 @@ const AddPackage = () => {
           )}
         </div>
 
-        {/* Rest of your existing sections... */}
         {/* Images Section */}
         <div className="form-section">
           <h2>Images</h2>

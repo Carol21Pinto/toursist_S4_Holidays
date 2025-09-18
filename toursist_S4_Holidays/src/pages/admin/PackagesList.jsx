@@ -31,11 +31,12 @@ import {
   AttachMoney,
   Warning,
   CheckCircle,
+  Church,
 } from "@mui/icons-material";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-// Package Card Component - Displays BOTH pricing types
+// Package Card Component
 function PackageCard({ package: pkg, onEdit, onDelete }) {
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -43,6 +44,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
     switch (category?.toLowerCase()) {
       case 'domestic': return <Home sx={{ fontSize: '20px' }} />;
       case 'international': return <Flight sx={{ fontSize: '20px' }} />;
+      case 'pilgrimage': return <Church sx={{ fontSize: '20px' }} />;
       case 'group': return <Group sx={{ fontSize: '20px' }} />;
       default: return <Home sx={{ fontSize: '20px' }} />;
     }
@@ -52,6 +54,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
     switch (category?.toLowerCase()) {
       case 'domestic': return '#10b981';
       case 'international': return '#3b82f6';
+      case 'pilgrimage': return '#f59e0b';
       case 'group': return '#8b5cf6';
       default: return '#6b7280';
     }
@@ -59,13 +62,28 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
 
   const handleMenuClose = () => setAnchorEl(null);
 
-  // Display the appropriate price based on pricing mode
   const renderPrice = () => {
     if (pkg?.pricingMode === 'Structured') {
       return `${pkg?.currency || '₹'} ${pkg?.pricePerPerson?.toLocaleString() || '0'}`;
     } else {
       return pkg?.priceText || 'Contact for Price';
     }
+  };
+
+  const handleEditClick = () => {
+    console.log('Edit button clicked for package:', pkg?.title, 'ID:', pkg?._id);
+    if (pkg?._id) {
+      onEdit(pkg._id);
+    }
+    handleMenuClose();
+  };
+
+  const handleDeleteClick = () => {
+    console.log('Delete button clicked for package:', pkg?.title, 'ID:', pkg?._id);
+    if (pkg?._id) {
+      onDelete(pkg._id, pkg?.title);
+    }
+    handleMenuClose();
   };
 
   return (
@@ -132,7 +150,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
                     border: `1px solid ${getCategoryColor(pkg?.category)}30`
                   }}
                 />
-                {/* Show pricing mode indicator */}
                 <Chip
                   label={pkg?.pricingMode || 'Unknown'}
                   size="small"
@@ -165,11 +182,11 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
             transformOrigin={{ horizontal: 'right', vertical: 'top' }}
             anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
           >
-            <MenuItem onClick={() => { onEdit(pkg?._id); handleMenuClose(); }}>
+            <MenuItem onClick={handleEditClick}>
               <Edit sx={{ marginRight: 1, fontSize: '18px' }} />
               Edit Package
             </MenuItem>
-            <MenuItem onClick={() => { onDelete(pkg?._id, pkg?.title); handleMenuClose(); }} sx={{ color: '#ef4444' }}>
+            <MenuItem onClick={handleDeleteClick} sx={{ color: '#ef4444' }}>
               <Delete sx={{ marginRight: 1, fontSize: '18px' }} />
               Delete Package
             </MenuItem>
@@ -184,7 +201,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
             </Typography>
           )}
           
-          {/* Price Display - Shows BOTH types */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: '12px' }}>
             <AttachMoney sx={{ color: getCategoryColor(pkg?.category), fontSize: '20px' }} />
             <Typography
@@ -237,7 +253,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           <Button
             size="small"
             startIcon={<Edit />}
-            onClick={() => onEdit(pkg?._id)}
+            onClick={handleEditClick}
             sx={{
               background: `linear-gradient(45deg, ${getCategoryColor(pkg?.category)}, ${getCategoryColor(pkg?.category)}90)`,
               color: 'white',
@@ -257,7 +273,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           <Button
             size="small"
             startIcon={<Delete />}
-            onClick={() => onDelete(pkg?._id, pkg?.title)}
+            onClick={handleDeleteClick}
             variant="outlined"
             sx={{
               color: '#ef4444',
@@ -288,7 +304,6 @@ export default function PackagesList() {
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
 
-  // ADDED: Snackbar states for delete confirmation
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: '',
@@ -296,11 +311,9 @@ export default function PackagesList() {
     action: null
   });
 
-  // ADDED: Pending delete state
-  const [pendingDelete, setPendingDelete] = useState({
-    id: null,
-    title: ''
-  });
+  // FIXED: Store the ID directly, not in state that can get lost
+  let deletePackageId = null;
+  let deletePackageTitle = '';
 
   const loadPackages = async () => {
     try {
@@ -311,7 +324,6 @@ export default function PackagesList() {
         const data = await response.json();
         console.log('Loaded packages:', data);
         
-        // Handle different API response formats
         const packagesArray = Array.isArray(data) ? data : (data.packages || data.data || []);
         setPackages(packagesArray);
       } else {
@@ -331,12 +343,28 @@ export default function PackagesList() {
   }, []);
 
   const handleEdit = (id) => {
-    navigate(`/admin/packages/edit/${id}`);
+    console.log('handleEdit received ID:', id);
+    if (id) {
+      navigate(`/admin/packages/edit/${id}`);
+    } else {
+      console.error('No ID provided to handleEdit');
+    }
   };
 
-  // UPDATED: Beautiful delete confirmation with Snackbar
-  const handleDelete = async (id, title) => {
-    setPendingDelete({ id, title });
+  // FIXED: Store ID in closure scope, not React state
+  const handleDelete = (id, title) => {
+    console.log('handleDelete called with ID:', id, 'Title:', title);
+    
+    if (!id) {
+      console.error('No ID provided to handleDelete');
+      return;
+    }
+    
+    // FIXED: Store in closure variables instead of state
+    deletePackageId = id;
+    deletePackageTitle = title || 'Unknown Package';
+    
+    console.log('Stored for delete:', { deletePackageId, deletePackageTitle });
     
     setSnackbar({
       open: true,
@@ -370,55 +398,64 @@ export default function PackagesList() {
     });
   };
 
-  // ADDED: Confirm delete action
+  // FIXED: Use closure variables instead of state
   const confirmDelete = async () => {
     try {
-      const response = await fetch(`${API_URL}/packages/${pendingDelete.id}`, { 
+      console.log('Confirming delete for ID:', deletePackageId);
+      
+      if (!deletePackageId) {
+        throw new Error('Package ID is missing');
+      }
+      
+      const response = await fetch(`${API_URL}/packages/${deletePackageId}`, { 
         method: 'DELETE' 
       });
       
       if (response.ok) {
-        // Show success message
         setSnackbar({
           open: true,
-          message: `✅ "${pendingDelete.title}" deleted successfully!`,
+          message: `✅ "${deletePackageTitle}" deleted successfully!`,
           severity: 'success',
           action: null
         });
         
-        // Reload packages
         loadPackages();
+        
+        localStorage.setItem('dashboardRefresh', Date.now().toString());
+        window.dispatchEvent(new CustomEvent('dashboardRefresh'));
       } else {
-        throw new Error('Failed to delete package');
+        const errorText = await response.text();
+        throw new Error(`Server error: ${response.status}`);
       }
     } catch (error) {
       console.error('Error deleting package:', error);
       setSnackbar({
         open: true,
-        message: `❌ Failed to delete "${pendingDelete.title}". Please try again.`,
+        message: `❌ Failed to delete "${deletePackageTitle}": ${error.message}`,
         severity: 'error',
         action: null
       });
     } finally {
-      setPendingDelete({ id: null, title: '' });
+      // FIXED: Clear closure variables
+      deletePackageId = null;
+      deletePackageTitle = '';
     }
   };
 
-  // ADDED: Cancel delete action
   const cancelDelete = () => {
-    setPendingDelete({ id: null, title: '' });
+    // FIXED: Clear closure variables
+    deletePackageId = null;
+    deletePackageTitle = '';
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // ADDED: Close snackbar
   const handleCloseSnackbar = (event, reason) => {
     if (reason === 'clickaway' && snackbar.action) {
-      return; // Don't auto-close confirmation snackbars
+      return;
     }
     setSnackbar({ ...snackbar, open: false });
   };
 
-  // Filter packages - NO pricing mode filtering, shows ALL packages
   const filteredPackages = packages.filter(pkg => {
     if (!pkg) return false;
     
@@ -431,21 +468,17 @@ export default function PackagesList() {
     return matchesSearch && matchesCategory;
   });
 
-  // Sort packages to show structured first, then text (optional)
   const sortedPackages = filteredPackages.sort((a, b) => {
-    // Optional: Sort by pricing mode (Structured first)
     if (a.pricingMode === 'Structured' && b.pricingMode !== 'Structured') return -1;
     if (a.pricingMode !== 'Structured' && b.pricingMode === 'Structured') return 1;
-    
-    // Then sort alphabetically by title
     return (a.title || '').localeCompare(b.title || '');
   });
 
-  // Categories without Pilgrimage
   const categories = [
     { value: 'all', label: 'All Categories', icon: FilterList },
     { value: 'domestic', label: 'Domestic', icon: Home },
     { value: 'international', label: 'International', icon: Flight },
+    { value: 'pilgrimage', label: 'Pilgrimage', icon: Church },
     { value: 'group', label: 'Group Trip', icon: Group },
   ];
 
@@ -471,7 +504,7 @@ export default function PackagesList() {
                 fontSize: '1.1rem'
               }}
             >
-              Showing both structured and text pricing packages
+              Manage your travel packages - including Pilgrimage packages
             </Typography>
           </Box>
           <Button
@@ -551,7 +584,7 @@ export default function PackagesList() {
         </Stack>
       </Box>
 
-      {/* Packages Grid - Shows ALL packages */}
+      {/* Packages Grid */}
       {loading ? (
         <Box sx={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
           <Typography>Loading packages...</Typography>
@@ -618,16 +651,16 @@ export default function PackagesList() {
             Showing {sortedPackages.length} of {packages.length} packages
             <br />
             <Typography component="span" sx={{ fontSize: '0.8rem', color: '#9ca3af' }}>
-              Including both Structured and Text pricing packages
+              Including Domestic, International, Pilgrimage & Group packages
             </Typography>
           </Typography>
         </Box>
       )}
 
-      {/* ADDED: Beautiful Delete Confirmation Snackbar */}
+      {/* Delete Confirmation Snackbar */}
       <Snackbar
         open={snackbar.open}
-        autoHideDuration={snackbar.action ? null : 4000} // Don't auto-close confirmation
+        autoHideDuration={snackbar.action ? null : 4000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
         sx={{ zIndex: 9999 }}

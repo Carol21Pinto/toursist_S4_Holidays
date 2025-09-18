@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './PackageDetail.css';
 import ContactIcons from '../components/ContactIcons'; // adjust path if needed
 
@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 const PackageDetail = () => {
   const { id } = useParams();
+  const navigate = useNavigate(); // Add navigate hook
   const [packageData, setPackageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -16,6 +17,11 @@ const PackageDetail = () => {
     const fixedPath = imagePath.replace(/\\/g, '/');
     if (fixedPath.startsWith('http')) return fixedPath;
     return `http://localhost:5000/${fixedPath}`;
+  };
+
+  // Handle back navigation
+  const handleGoBack = () => {
+    navigate(-1); // Goes back to previous page in history
   };
 
   useEffect(() => {
@@ -44,8 +50,17 @@ const PackageDetail = () => {
   // Loading state
   if (loading) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
-        Loading package details...
+      <div className="package-detail-container">
+        {/* Back Button for Loading State */}
+        <div className="back-button-container">
+          <button className="back-button" onClick={handleGoBack}>
+            <span className="back-arrow">←</span>
+            <span>Go Back</span>
+          </button>
+        </div>
+        <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
+          Loading package details...
+        </div>
       </div>
     );
   }
@@ -53,9 +68,18 @@ const PackageDetail = () => {
   // Error state
   if (error) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        <div style={{ color: '#d32f2f', fontSize: '18px', marginBottom: '20px' }}>
-          Error: {error}
+      <div className="package-detail-container">
+        {/* Back Button for Error State */}
+        <div className="back-button-container">
+          <button className="back-button" onClick={handleGoBack}>
+            <span className="back-arrow">←</span>
+            <span>Go Back</span>
+          </button>
+        </div>
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <div style={{ color: '#d32f2f', fontSize: '18px', marginBottom: '20px' }}>
+            Error: {error}
+          </div>
         </div>
       </div>
     );
@@ -64,8 +88,17 @@ const PackageDetail = () => {
   // No data state
   if (!packageData) {
     return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        <div style={{ fontSize: '18px' }}>No package data found.</div>
+      <div className="package-detail-container">
+        {/* Back Button for No Data State */}
+        <div className="back-button-container">
+          <button className="back-button" onClick={handleGoBack}>
+            <span className="back-arrow">←</span>
+            <span>Go Back</span>
+          </button>
+        </div>
+        <div style={{ textAlign: 'center', padding: '50px' }}>
+          <div style={{ fontSize: '18px' }}>No package data found.</div>
+        </div>
       </div>
     );
   }
@@ -83,6 +116,14 @@ const PackageDetail = () => {
   return (
     <div className="package-detail-container">
       
+      {/* NEW: Back Button at the Top */}
+      <div className="back-button-container">
+        <button className="back-button" onClick={handleGoBack}>
+          <span className="back-arrow">←</span>
+          <span>Go Back</span>
+        </button>
+      </div>
+
       {/* Hero Section with Auto-Fit Image */}
       <header style={{
         backgroundImage: `url("${getImageUrl(packageData.cardImage)}")`,

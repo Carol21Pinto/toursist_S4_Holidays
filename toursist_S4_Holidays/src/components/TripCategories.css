@@ -25,13 +25,14 @@
   line-height: 1.6;
 }
 
-/* All other CSS stays exactly the same */
+/* UPDATED: Bigger cards with full width usage */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 28px;
-  max-width: 1200px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  max-width: 100%;
   margin: 0 auto;
+  padding: 0 10px;
 }
 
 .category-box {
@@ -39,7 +40,7 @@
   display: block;
   overflow: hidden;
   border-radius: 18px;
-  min-height: 480px;
+  min-height: 520px;
   text-decoration: none;
   color: inherit;
   background: linear-gradient(135deg, #ffe7c2 0%, #ffd1c9 100%);
@@ -105,7 +106,7 @@
   position: relative;
   z-index: 2;
   height: 100%;
-  padding: 26px 24px;
+  padding: 30px 28px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -121,8 +122,8 @@
 }
 
 .category-content h3 {
-  margin: 0 0 10px 0;
-  font-size: 26px;
+  margin: 0 0 12px 0;
+  font-size: 28px;
   line-height: 1.2;
   letter-spacing: 0.2px;
   text-shadow: 0 2px 6px rgba(0,0,0,0.35);
@@ -130,7 +131,7 @@
 
 .category-content p {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   line-height: 1.6;
   opacity: 0.98;
   max-width: 62ch;
@@ -164,41 +165,73 @@
   pointer-events: none;
 }
 
-@media (min-width: 1200px) {
+/* UPDATED: Responsive layout for bigger cards */
+
+/* Large Desktop: 4 bigger cards */
+@media (min-width: 1400px) {
   .categories-grid { 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 32px;
-    max-width: 1400px;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 30px;
+    max-width: 1600px;
+    padding: 0 20px;
+  }
+  .category-box {
+    min-height: 550px;
   }
 }
 
-@media (max-width: 1199px) and (min-width: 900px) {
+/* Desktop: 4 cards with full width */
+@media (max-width: 1399px) and (min-width: 1000px) {
   .categories-grid { 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 24px;
+    grid-template-columns: repeat(4, 1fr); 
+    gap: 20px;
+    max-width: 100%;
+    padding: 0 15px;
+  }
+  .category-box {
+    min-height: 500px;
   }
 }
 
-@media (max-width: 899px) and (min-width: 600px) {
+/* Medium screens: 3 cards per row */
+@media (max-width: 999px) and (min-width: 768px) {
+  .categories-grid { 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 20px;
+    max-width: 100%;
+  }
+  .category-box { 
+    min-height: 480px; 
+  }
+}
+
+/* Tablet: 2x2 grid */
+@media (max-width: 767px) and (min-width: 600px) {
   .categories-grid { 
     grid-template-columns: repeat(2, 1fr); 
-    gap: 20px;
+    gap: 18px;
+    padding: 0 10px;
   }
   .category-box { 
     min-height: 460px; 
   }
-  
-  .category-box:nth-child(3) {
-    grid-column: 1 / -1;
-    max-width: 400px;
-    justify-self: center;
+  .category-content {
+    padding: 24px 22px;
+  }
+  .category-content h3 {
+    font-size: 24px;
+  }
+  .category-content p {
+    font-size: 15px;
   }
 }
 
+/* Mobile: Single column */
 @media (max-width: 599px) {
   .categories-grid { 
     grid-template-columns: 1fr; 
-    gap: 18px; 
+    gap: 18px;
+    padding: 0 5px;
   }
   .category-box { 
     min-height: 420px; 
@@ -206,6 +239,12 @@
   }
   .category-content { 
     padding: 22px; 
+  }
+  .category-content h3 {
+    font-size: 22px;
+  }
+  .category-content p {
+    font-size: 14px;
   }
   
   .trip-intro h2 {
@@ -230,9 +269,9 @@
     padding: 18px; 
   }
   .category-content h3 {
-    font-size: 22px;
+    font-size: 20px;
   }
   .category-content p {
-    font-size: 14px;
+    font-size: 13px;
   }
 }

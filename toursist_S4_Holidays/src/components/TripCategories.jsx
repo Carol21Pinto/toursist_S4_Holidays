@@ -19,6 +19,12 @@ function TripCategories() {
       path: "/international",
     },
     {
+      title: "Pilgrimage",
+      description: "Spiritual journeys to sacred places and holy destinations.",
+      image: "/images/pilgrimage.jpg",
+      path: "/pilgrimage",
+    },
+    {
       title: "Group Trip",
       description: "Enjoy travel with friends, family, or like-minded explorers.",
       image: "/images/group-trip.jpg",

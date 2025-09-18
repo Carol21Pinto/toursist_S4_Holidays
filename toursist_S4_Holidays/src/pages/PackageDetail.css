@@ -13,6 +13,53 @@
   min-height: 100vh;
 }
 
+/* FIXED: Back Button Styling - Left Corner Position */
+.package-detail-container .back-button-container {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.package-detail-container .back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #00695c, #00796b);
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 25px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 105, 92, 0.3);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.package-detail-container .back-button:hover {
+  background: linear-gradient(135deg, #004d40, #00695c);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 105, 92, 0.4);
+}
+
+.package-detail-container .back-button:active {
+  transform: translateY(0);
+}
+
+.package-detail-container .back-button .back-arrow {
+  font-size: 1.1rem;
+  transition: transform 0.2s ease;
+}
+
+.package-detail-container .back-button:hover .back-arrow {
+  transform: translateX(-2px);
+}
+
 /* UPDATED: Hero Section with Perfect Auto-Fit Image */
 .package-detail-container header {
   position: relative;
@@ -256,8 +303,18 @@
   border-radius: 0;
 }
 
-/* Responsive Design */
+/* Responsive Back Button */
 @media (max-width: 768px) {
+  .package-detail-container .back-button-container {
+    top: 15px;
+    left: 15px;
+  }
+  
+  .package-detail-container .back-button {
+    padding: 8px 14px;
+    font-size: 0.85rem;
+  }
+  
   .package-detail-container header {
     width: 95%;
     height: 35vh;
@@ -293,6 +350,20 @@
 }
 
 @media (max-width: 480px) {
+  .package-detail-container .back-button-container {
+    top: 10px;
+    left: 10px;
+  }
+  
+  .package-detail-container .back-button {
+    padding: 6px 12px;
+    font-size: 0.8rem;
+  }
+  
+  .package-detail-container .back-button .back-arrow {
+    font-size: 1rem;
+  }
+  
   .package-detail-container header {
     width: 100%;
     margin: 10px auto;

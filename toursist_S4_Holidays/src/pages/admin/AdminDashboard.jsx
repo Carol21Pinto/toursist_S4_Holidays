@@ -14,7 +14,8 @@ import {
   Home, 
   Flight, 
   Group, 
-  ArrowForward 
+  ArrowForward,
+  Church
 } from "@mui/icons-material";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
 
@@ -146,7 +147,7 @@ function CategoryCard({ icon: Icon, title, count, color }) {
 export default function AdminDashboard() {
   const location = useLocation();
   const navigate = useNavigate();
-  const [stats, setStats] = useState({ domestic:0, international:0, group:0, total:0 });
+  const [stats, setStats] = useState({ domestic:0, international:0, pilgrimage:0, group:0, total:0 });
   const [chartData, setChartData] = useState([]);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -163,7 +164,7 @@ export default function AdminDashboard() {
       
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
-        setStats(statsData || { domestic:0, international:0, group:0, total:0 });
+        setStats(statsData || { domestic:0, international:0, pilgrimage:0, group:0, total:0 });
       }
 
       // Load timeline data for chart
@@ -182,7 +183,7 @@ export default function AdminDashboard() {
 
     } catch (error) {
       console.error('Error loading dashboard data:', error);
-      setStats({ domestic:0, international:0, group:0, total:0 });
+      setStats({ domestic:0, international:0, pilgrimage:0, group:0, total:0 });
       setChartData([]);
     } finally {
       setLoading(false);
@@ -224,7 +225,7 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  // UPDATED: Removed Pilgrimage from categories
+  // UPDATED: Added Pilgrimage back to categories
   const categories = [
     { 
       icon: Home, 
@@ -237,6 +238,12 @@ export default function AdminDashboard() {
       title: 'International', 
       count: stats.international || 0, 
       color: '#3b82f6' 
+    },
+    { 
+      icon: Church, 
+      title: 'Pilgrimage', 
+      count: stats.pilgrimage || 0, 
+      color: '#f59e0b' 
     },
     { 
       icon: Group, 
@@ -281,7 +288,7 @@ export default function AdminDashboard() {
         />
       </Box>
 
-      {/* Package Categories - UPDATED: New Grid v2 API */}
+      {/* Package Categories - UPDATED: With Pilgrimage (4 cards) */}
       <Box sx={{ marginBottom: '32px' }}>
         <Typography 
           variant="h5" 
@@ -295,7 +302,7 @@ export default function AdminDashboard() {
         </Typography>
         <Grid container spacing={3}>
           {categories.map((category, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
+            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
               <CategoryCard {...category} />
             </Grid>
           ))}

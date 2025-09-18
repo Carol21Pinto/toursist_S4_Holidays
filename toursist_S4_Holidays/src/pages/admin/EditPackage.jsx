@@ -74,9 +74,9 @@ const EditPackage = () => {
     'Africa', 'Oceania', 'South America'
   ];
 
-  // UPDATED: Group types for Group category (removed Pilgrimage)
+  // UPDATED: Group types for Group category (added Pilgrimage back)
   const groupTypes = [
-    'Domestic', 'International'
+    'Domestic', 'International', 'Pilgrimage'
   ];
 
   // Snackbar state
@@ -402,6 +402,7 @@ const EditPackage = () => {
               >
                 <option value="Domestic">Domestic</option>
                 <option value="International">International</option>
+                <option value="Pilgrimage">Pilgrimage</option>
                 <option value="Group">Group</option>
               </select>
             </div>
@@ -475,6 +476,8 @@ const EditPackage = () => {
               </div>
             )}
 
+            {/* UPDATED: Pilgrimage - NO location selection required */}
+
             <div className="form-group">
               <label>Duration</label>
               <input
@@ -499,6 +502,14 @@ const EditPackage = () => {
             <div className="location-info">
               <span className="info-icon">🌍</span>
               <span>Selected Region: <strong>{formData.continent}</strong> - This will help users find your package easily!</span>
+            </div>
+          )}
+
+          {/* UPDATED: Simple Pilgrimage info (no location requirements) */}
+          {formData.category === 'Pilgrimage' && (
+            <div className="location-info">
+              <span className="info-icon">🕌</span>
+              <span>Pilgrimage package selected - Perfect for spiritual journeys and holy destinations!</span>
             </div>
           )}
 
@@ -737,22 +748,6 @@ const EditPackage = () => {
                   {existingImage ? 'Choose New Image' : 'Choose Image'}
                 </label>
               </div>
-
-              {/* Debug info - remove this after testing */}
-              {/* {existingImage && (
-                <div style={{ 
-                  marginTop: '10px', 
-                  padding: '8px', 
-                  background: '#f8f9fa', 
-                  fontSize: '0.8rem', 
-                  color: '#666',
-                  borderRadius: '4px'
-                }}>
-                  <strong>Debug:</strong><br/>
-                  Raw path: {existingImage}<br/>
-                  Full URL: {getImageUrl(existingImage)}
-                </div>
-              )} */}
             </div>
           </div>
         </div>
@@ -925,7 +920,7 @@ const EditPackage = () => {
                 >
                   Remove
                 </button>
-                )}
+              )}
             </div>
           ))}
           
