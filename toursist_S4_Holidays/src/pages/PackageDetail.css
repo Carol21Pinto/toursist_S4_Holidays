@@ -13,22 +13,26 @@
   min-height: 100vh;
 }
 
-/* Hero Section */
+/* UPDATED: Hero Section with Perfect Auto-Fit Image */
 .package-detail-container header {
   position: relative;
-  height: 40vh;
+  height: 50vh;
   width: 80%;
   margin: 20px auto;
   border-radius: 15px;
   overflow: hidden;
-  background: url("https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg") 
-              no-repeat center center/cover;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
   text-align: center;
   box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  
+  /* Perfect image auto-fit */
+  background-position: center center !important;
+  background-size: cover !important;
+  background-repeat: no-repeat !important;
+  background-attachment: scroll !important;
 }
 
 .package-detail-container header::after {
@@ -49,11 +53,13 @@
 .package-detail-container header h1 { 
   font-size: 2.5rem; 
   font-weight: 700; 
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
 }
 
 .package-detail-container header p { 
   font-size: 1.1rem; 
   font-weight: 500; 
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
 }
 
 /* Section Styling */
@@ -100,6 +106,63 @@
   border-radius: 8px;
   font-weight: bold;
   color: #fff;
+}
+
+/* NEW: Departure Dates Section */
+.package-detail-container .departure-section {
+  background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
+  border-left: 4px solid #4caf50;
+}
+
+.package-detail-container .departure-dates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.package-detail-container .departure-date {
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.package-detail-container .departure-date:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.package-detail-container .departure-date .date-icon {
+  font-size: 1.2rem;
+  background: linear-gradient(135deg, #4caf50, #45a049);
+  color: white;
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.package-detail-container .departure-date .date-text {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.95rem;
+}
+
+.package-detail-container .departure-note {
+  color: #666;
+  font-style: italic;
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 8px;
 }
 
 /* Itinerary */
@@ -197,7 +260,7 @@
 @media (max-width: 768px) {
   .package-detail-container header {
     width: 95%;
-    height: 30vh;
+    height: 35vh;
   }
   
   .package-detail-container header h1 {
@@ -222,6 +285,11 @@
   .package-detail-container .col {
     min-width: 100%;
   }
+  
+  /* Mobile departure dates */
+  .package-detail-container .departure-dates {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 480px) {
@@ -229,6 +297,7 @@
     width: 100%;
     margin: 10px auto;
     border-radius: 10px;
+    height: 30vh;
   }
   
   .package-detail-container header h1 {
@@ -258,7 +327,17 @@
     line-height: 18px;
     font-size: 12px;
   }
+  
+  .package-detail-container .departure-date {
+    padding: 12px 15px;
+  }
+  
+  .package-detail-container .departure-date .date-text {
+    font-size: 0.85rem;
+  }
 }
+
+/* Additional CSS for the duplicate classes (keeping your original) */
 .package-detail {
   font-family: "Segoe UI", sans-serif;
   color: #2c3e50;

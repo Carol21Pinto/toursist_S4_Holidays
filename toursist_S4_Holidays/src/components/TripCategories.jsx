@@ -6,7 +6,7 @@ function TripCategories() {
   // Only visibility for animation; no toggle/enlarge state needed
   const [visibleBoxes, setVisibleBoxes] = useState([]);
 
-  // Local default categories (fallback if API not available)
+  // UPDATED: Local default categories (REMOVED Pilgrimage - Only 3 cards)
   const defaultCategories = [
     {
       title: "Domestic",
@@ -19,12 +19,6 @@ function TripCategories() {
       description: "Travel across the globe with our curated packages.",
       image: "/images/international.jpg",
       path: "/international",
-    },
-    {
-      title: "Pilgrimage",
-      description: "Sacred journeys for spiritual fulfillment.",
-      image: "/images/pilgrimage.jpg",
-      path: "/pilgrimage",
     },
     {
       title: "Group Trip",
@@ -69,7 +63,7 @@ function TripCategories() {
     }
 
     // Call only if you want API-driven images.
-    // Comment out if you don’t have an API yet.
+    // Comment out if you don't have an API yet.
     // loadBanners();
   }, []);
 
@@ -107,8 +101,8 @@ function TripCategories() {
       <div className="trip-intro hidden" ref={introRef}>
         <h2>Our Travel Categories</h2>
         <p>
-          Whether you're seeking adventure, relaxation, spirituality, or new cultures,
-          we’ve got you covered with our specialized travel experiences.
+          Whether you're seeking adventure, relaxation, or new cultures,
+          we've got you covered with our specialized travel experiences.
         </p>
       </div>
 

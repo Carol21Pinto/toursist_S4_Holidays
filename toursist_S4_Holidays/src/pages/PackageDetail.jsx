@@ -83,7 +83,7 @@ const PackageDetail = () => {
   return (
     <div className="package-detail-container">
       
-      {/* Hero Section */}
+      {/* Hero Section with Auto-Fit Image */}
       <header style={{
         backgroundImage: `url("${getImageUrl(packageData.cardImage)}")`,
         backgroundPosition: 'center center',
@@ -105,6 +105,31 @@ const PackageDetail = () => {
           <div className="price">{renderPriceDisplay()}</div>
         </div>
       </section>
+
+      {/* NEW: Departure Dates Section */}
+      {packageData.departureDates && packageData.departureDates.length > 0 && packageData.departureDates.some(date => date.trim()) && (
+        <section className="section departure-section">
+          <h2>Available Departure Dates</h2>
+          <div className="departure-dates">
+            {packageData.departureDates.filter(date => date.trim()).map((date, index) => (
+              <div key={index} className="departure-date">
+                <span className="date-icon">📅</span>
+                <span className="date-text">
+                  {new Date(date).toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                  })}
+                </span>
+              </div>
+            ))}
+          </div>
+          <p className="departure-note">
+            <em>More dates may be available upon request. Contact us for flexible scheduling.</em>
+          </p>
+        </section>
+      )}
 
       {/* Itinerary */}
       <section className="section">
@@ -163,7 +188,9 @@ const PackageDetail = () => {
           </div>
         </div>
       </section>
-<ContactIcons />
+
+      <ContactIcons />
+      
       {/* Footer */}
       <footer className="footer">
         <p>&copy; 2025 Kerala Tours. All Rights Reserved.</p>

@@ -25,11 +25,13 @@
   line-height: 1.6;
 }
 
-/* Grid: desktop/tablet/mobile */
+/* UPDATED: Perfect 3-card grid layout */
 .categories-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 22px;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 /* GLOBAL banner card base styles (apply at ALL widths) */
@@ -73,7 +75,6 @@
 .category-bg {
   position: absolute;
   inset: 0;
-  background-image: var(--bg-image, linear-gradient(135deg, #c7d2fe 0%, #fbcfe8 100%)); /* fallback if no image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -181,26 +182,83 @@
   pointer-events: none;
 }
 
-/* Responsive columns and heights (layout only) */
-@media (max-width: 1280px) {
-  .categories-grid { grid-template-columns: repeat(3, 1fr); }
+/* UPDATED: Perfect responsive layout for 3 cards */
+
+/* Large Desktop: 3 cards in perfect row */
+@media (min-width: 1200px) {
+  .categories-grid { 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 32px;
+    max-width: 1400px;
+  }
 }
 
-@media (max-width: 1024px) {
-  .categories-grid { grid-template-columns: repeat(2, 1fr); }
-  .category-box { min-height: 460px; }
+/* Desktop: 3 cards with good spacing */
+@media (max-width: 1199px) and (min-width: 900px) {
+  .categories-grid { 
+    grid-template-columns: repeat(3, 1fr); 
+    gap: 24px;
+  }
 }
 
-@media (max-width: 768px) {
-  .categories-grid { grid-template-columns: 1fr; gap: 18px; }
-  .category-box { min-height: 420px; border-radius: 16px; }
-  .category-content { padding: 22px; }
+/* Tablet: 2 cards on top, 1 centered below */
+@media (max-width: 899px) and (min-width: 600px) {
+  .categories-grid { 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 20px;
+  }
+  .category-box { 
+    min-height: 460px; 
+  }
+  
+  /* Center the 3rd card (Group Trip) */
+  .category-box:nth-child(3) {
+    grid-column: 1 / -1;
+    max-width: 400px;
+    justify-self: center;
+  }
 }
 
-.category-bg {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
-  filter: brightness(0.7);
+/* Mobile: Single column stack */
+@media (max-width: 599px) {
+  .categories-grid { 
+    grid-template-columns: 1fr; 
+    gap: 18px; 
+  }
+  .category-box { 
+    min-height: 420px; 
+    border-radius: 16px; 
+  }
+  .category-content { 
+    padding: 22px; 
+  }
+  
+  .trip-intro h2 {
+    font-size: 24px;
+  }
+  
+  .trip-intro p {
+    font-size: 14px;
+    padding: 0 10px;
+  }
+  
+  .trip-categories {
+    padding: 32px 16px;
+  }
+}
+
+/* Extra Small Mobile: Smaller cards */
+@media (max-width: 400px) {
+  .category-box { 
+    min-height: 380px; 
+  }
+  .category-content { 
+    padding: 18px; 
+  }
+  .category-content h3 {
+    font-size: 22px;
+  }
+  .category-content p {
+    font-size: 14px;
+  }
 }

@@ -6,6 +6,23 @@ import './AddPackage.css';
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
+// FIXED: Add SERVER_BASE for image URLs
+const SERVER_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+
+// FIXED: Helper function to construct image URLs
+const getImageUrl = (imagePath) => {
+  if (!imagePath) return null;
+  
+  // If it's already a full URL, return as-is
+  if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    return imagePath;
+  }
+  
+  // If it's a relative path, construct full URL
+  const cleanPath = imagePath.startsWith('/') ? imagePath.slice(1) : imagePath;
+  return `${SERVER_BASE}/${cleanPath}`;
+};
+
 const EditPackage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -57,9 +74,9 @@ const EditPackage = () => {
     'Africa', 'Oceania', 'South America'
   ];
 
-  // Group types for Group category
+  // UPDATED: Group types for Group category (removed Pilgrimage)
   const groupTypes = [
-    'Domestic', 'International', 'Pilgrimage'
+    'Domestic', 'International'
   ];
 
   // Snackbar state
@@ -103,6 +120,14 @@ const EditPackage = () => {
         const response = await fetch(`${API_URL}/packages/${id}`);
         if (response.ok) {
           const packageData = await response.json();
+          
+          // FIXED: Debug logging for image paths
+          console.log('=== EDIT PACKAGE DEBUG ===');
+          console.log('Package data received:', packageData);
+          console.log('cardImage field:', packageData.cardImage);
+          console.log('SERVER_BASE:', SERVER_BASE);
+          console.log('Constructed image URL:', getImageUrl(packageData.cardImage));
+          console.log('=== END DEBUG ===');
           
           setFormData({
             name: packageData.title || '',
@@ -543,7 +568,6 @@ const EditPackage = () => {
           )}
         </div>
 
-        {/* Rest of your existing sections remain the same */}
         {/* Pricing Section */}
         <div className="form-section">
           <h2>Pricing</h2>
@@ -620,7 +644,7 @@ const EditPackage = () => {
           )}
         </div>
 
-        {/* Images Section */}
+        {/* FIXED: Images Section with Proper Image Display */}
         <div className="form-section">
           <h2>Images</h2>
           
@@ -628,32 +652,107 @@ const EditPackage = () => {
             <div className="form-group">
               <label>Card image</label>
               
+              {/* Show existing image if available and no new preview */}
               {existingImage && !imagePreview && (
                 <div className="image-preview">
-                  <img src={existingImage} alt="Current package" />
-                  <p>Current image (upload new image to replace)</p>
+                  <img 
+                    src={getImageUrl(existingImage)} 
+                    alt="Current package"
+                    onError={(e) => {
+                      console.log('Failed to load existing image:', getImageUrl(existingImage));
+                      e.target.style.display = 'none';
+                      e.target.nextElementSibling.textContent = '❌ Current image not found';
+                    }}
+                    style={{
+                      maxWidth: '300px',
+                      maxHeight: '200px',
+                      borderRadius: '8px',
+                      border: '2px solid #e9ecef'
+                    }}
+                  />
+                  <p style={{ color: '#666', fontSize: '0.9rem', margin: '8px 0' }}>
+                    Current image (upload new image to replace)
+                  </p>
                 </div>
               )}
               
+              {/* Show new image preview if user selected a file */}
               {imagePreview && (
                 <div className="image-preview">
-                  <img src={imagePreview} alt="New package" />
-                  <p>New image (will replace current image)</p>
+                  <img 
+                    src={imagePreview} 
+                    alt="New package"
+                    style={{
+                      maxWidth: '300px',
+                      maxHeight: '200px',
+                      borderRadius: '8px',
+                      border: '2px solid #4ecdc4'
+                    }}
+                  />
+                  <p style={{ color: '#4ecdc4', fontSize: '0.9rem', margin: '8px 0', fontWeight: '600' }}>
+                    ✅ New image selected (will replace current image)
+                  </p>
                 </div>
               )}
               
-              <div className="file-input-container">
+              {/* Show message if no existing image */}
+              {!existingImage && !imagePreview && (
+                <div className="no-image-placeholder" style={{
+                  padding: '40px 20px',
+                  background: '#f8f9fa',
+                  border: '2px dashed #dee2e6',
+                  borderRadius: '8px',
+                  textAlign: 'center',
+                  color: '#6c757d'
+                }}>
+                  <span style={{ fontSize: '2rem', display: 'block', marginBottom: '8px' }}>📷</span>
+                  No image uploaded yet
+                </div>
+              )}
+              
+              <div className="file-input-container" style={{ marginTop: '15px' }}>
                 <input
                   type="file"
                   accept="image/*"
                   onChange={handleCardImageChange}
                   id="cardImage"
                   className="file-input"
+                  style={{ display: 'none' }}
                 />
-                <label htmlFor="cardImage" className="file-input-label">
-                  Choose New Image
+                <label 
+                  htmlFor="cardImage" 
+                  className="file-input-label"
+                  style={{
+                    display: 'inline-block',
+                    padding: '12px 24px',
+                    background: '#4ecdc4',
+                    color: 'white',
+                    borderRadius: '8px',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    transition: 'all 0.3s ease',
+                    border: 'none'
+                  }}
+                >
+                  {existingImage ? 'Choose New Image' : 'Choose Image'}
                 </label>
               </div>
+
+              {/* Debug info - remove this after testing */}
+              {/* {existingImage && (
+                <div style={{ 
+                  marginTop: '10px', 
+                  padding: '8px', 
+                  background: '#f8f9fa', 
+                  fontSize: '0.8rem', 
+                  color: '#666',
+                  borderRadius: '4px'
+                }}>
+                  <strong>Debug:</strong><br/>
+                  Raw path: {existingImage}<br/>
+                  Full URL: {getImageUrl(existingImage)}
+                </div>
+              )} */}
             </div>
           </div>
         </div>

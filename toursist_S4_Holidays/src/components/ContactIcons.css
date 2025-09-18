@@ -2,54 +2,144 @@
 
 .contact-icons {
   position: fixed;
-  right: 15px;
+  right: 20px;
   top: 50%;
   transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  gap: 18px; /* more space between icons */
+  gap: 18px;
   z-index: 2000;
-}
-
-.contact-icons .icon {
-  font-size: 36px; /* bigger size */
-  cursor: pointer;
-  transition: transform 0.2s ease, filter 0.3s ease;
   
-  /* Glow effect for visibility */
-  filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.8));
+  /* Smooth transitions */
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease, visibility 0.4s ease, transform 0.4s ease;
 }
 
+/* Hidden state */
+.contact-icons.hide {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-50%) translateX(100px);
+}
+
+/* Visible state */
+.contact-icons.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(-50%) translateX(0);
+}
+
+/* Individual icon styling */
+.contact-icons .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  font-size: 24px;
+  cursor: pointer;
+  text-decoration: none;
+  color: white;
+  
+  /* Beautiful shadows */
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1);
+  
+  /* Smooth hover transitions */
+  transition: 
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+/* Hover effects */
 .contact-icons .icon:hover {
-  transform: scale(1.25);
-  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 1));
+  transform: scale(1.15) translateY(-3px);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
-/* Brand colors */
+/* WhatsApp */
 .whatsapp {
-  color: #25d366;
+  background: linear-gradient(135deg, #25d366 0%, #128c7e 100%);
 }
 
+.whatsapp:hover {
+  box-shadow: 
+    0 8px 30px rgba(37, 211, 102, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Instagram */
 .instagram {
-  color: #e4405f;
+  background: linear-gradient(135deg, #e4405f 0%, #833ab4 50%, #fcb045 100%);
 }
 
+.instagram:hover {
+  box-shadow: 
+    0 8px 30px rgba(228, 64, 95, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Email */
 .email {
-  color: #d44638;
+  background: linear-gradient(135deg, #d44638 0%, #b23121 100%);
 }
 
+.email:hover {
+  box-shadow: 
+    0 8px 30px rgba(212, 70, 56, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Phone */
 .phone {
-  color: #34b7f1;
+  background: linear-gradient(135deg, #34b7f1 0%, #1e88e5 100%);
 }
 
-/* Mobile-friendly sizing */
+.phone:hover {
+  box-shadow: 
+    0 8px 30px rgba(52, 183, 241, 0.5),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Mobile adjustments */
 @media (max-width: 768px) {
   .contact-icons {
-    right: 10px;
-    gap: 3px; /* reduced from 15px to 5px */
+    right: 15px;
+    gap: 15px;
   }
 
   .contact-icons .icon {
-    font-size: 32px; /* still large enough */
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .contact-icons {
+    right: 12px;
+    gap: 12px;
+  }
+
+  .contact-icons .icon {
+    width: 42px;
+    height: 42px;
+    font-size: 18px;
+  }
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .contact-icons {
+    transition: opacity 0.2s ease;
+  }
+  
+  .contact-icons.hide {
+    transform: translateY(-50%);
   }
 }

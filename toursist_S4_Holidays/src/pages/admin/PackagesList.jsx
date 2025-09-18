@@ -15,6 +15,8 @@ import {
   InputAdornment,
   Menu,
   MenuItem,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import {
   Search,
@@ -25,9 +27,10 @@ import {
   FilterList,
   Home,
   Flight,
-  Church,
   Group,
   AttachMoney,
+  Warning,
+  CheckCircle,
 } from "@mui/icons-material";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -40,7 +43,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
     switch (category?.toLowerCase()) {
       case 'domestic': return <Home sx={{ fontSize: '20px' }} />;
       case 'international': return <Flight sx={{ fontSize: '20px' }} />;
-      case 'pilgrimage': return <Church sx={{ fontSize: '20px' }} />;
       case 'group': return <Group sx={{ fontSize: '20px' }} />;
       default: return <Home sx={{ fontSize: '20px' }} />;
     }
@@ -50,7 +52,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
     switch (category?.toLowerCase()) {
       case 'domestic': return '#10b981';
       case 'international': return '#3b82f6';
-      case 'pilgrimage': return '#f59e0b';
       case 'group': return '#8b5cf6';
       default: return '#6b7280';
     }
@@ -168,7 +169,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
               <Edit sx={{ marginRight: 1, fontSize: '18px' }} />
               Edit Package
             </MenuItem>
-            <MenuItem onClick={() => { onDelete(pkg?._id); handleMenuClose(); }} sx={{ color: '#ef4444' }}>
+            <MenuItem onClick={() => { onDelete(pkg?._id, pkg?.title); handleMenuClose(); }} sx={{ color: '#ef4444' }}>
               <Delete sx={{ marginRight: 1, fontSize: '18px' }} />
               Delete Package
             </MenuItem>
@@ -256,7 +257,7 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           <Button
             size="small"
             startIcon={<Delete />}
-            onClick={() => onDelete(pkg?._id)}
+            onClick={() => onDelete(pkg?._id, pkg?.title)}
             variant="outlined"
             sx={{
               color: '#ef4444',
@@ -286,6 +287,20 @@ export default function PackagesList() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("all");
+
+  // ADDED: Snackbar states for delete confirmation
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: '',
+    severity: 'success',
+    action: null
+  });
+
+  // ADDED: Pending delete state
+  const [pendingDelete, setPendingDelete] = useState({
+    id: null,
+    title: ''
+  });
 
   const loadPackages = async () => {
     try {
@@ -319,17 +334,88 @@ export default function PackagesList() {
     navigate(`/admin/packages/edit/${id}`);
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this package?')) {
-      try {
-        const response = await fetch(`${API_URL}/packages/${id}`, { method: 'DELETE' });
-        if (response.ok) {
-          loadPackages(); // Reload packages after deletion
-        }
-      } catch (error) {
-        console.error('Error deleting package:', error);
+  // UPDATED: Beautiful delete confirmation with Snackbar
+  const handleDelete = async (id, title) => {
+    setPendingDelete({ id, title });
+    
+    setSnackbar({
+      open: true,
+      message: `Delete "${title || 'this package'}"?`,
+      severity: 'warning',
+      action: (
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button 
+            color="inherit" 
+            size="small" 
+            onClick={confirmDelete}
+            sx={{ 
+              fontWeight: 600,
+              color: '#fff',
+              background: 'rgba(239, 68, 68, 0.8)',
+              '&:hover': { background: 'rgba(220, 38, 38, 0.9)' }
+            }}
+          >
+            DELETE
+          </Button>
+          <Button 
+            color="inherit" 
+            size="small" 
+            onClick={cancelDelete}
+            sx={{ fontWeight: 600 }}
+          >
+            Cancel
+          </Button>
+        </Box>
+      )
+    });
+  };
+
+  // ADDED: Confirm delete action
+  const confirmDelete = async () => {
+    try {
+      const response = await fetch(`${API_URL}/packages/${pendingDelete.id}`, { 
+        method: 'DELETE' 
+      });
+      
+      if (response.ok) {
+        // Show success message
+        setSnackbar({
+          open: true,
+          message: `✅ "${pendingDelete.title}" deleted successfully!`,
+          severity: 'success',
+          action: null
+        });
+        
+        // Reload packages
+        loadPackages();
+      } else {
+        throw new Error('Failed to delete package');
       }
+    } catch (error) {
+      console.error('Error deleting package:', error);
+      setSnackbar({
+        open: true,
+        message: `❌ Failed to delete "${pendingDelete.title}". Please try again.`,
+        severity: 'error',
+        action: null
+      });
+    } finally {
+      setPendingDelete({ id: null, title: '' });
     }
+  };
+
+  // ADDED: Cancel delete action
+  const cancelDelete = () => {
+    setPendingDelete({ id: null, title: '' });
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  // ADDED: Close snackbar
+  const handleCloseSnackbar = (event, reason) => {
+    if (reason === 'clickaway' && snackbar.action) {
+      return; // Don't auto-close confirmation snackbars
+    }
+    setSnackbar({ ...snackbar, open: false });
   };
 
   // Filter packages - NO pricing mode filtering, shows ALL packages
@@ -355,11 +441,11 @@ export default function PackagesList() {
     return (a.title || '').localeCompare(b.title || '');
   });
 
+  // Categories without Pilgrimage
   const categories = [
     { value: 'all', label: 'All Categories', icon: FilterList },
     { value: 'domestic', label: 'Domestic', icon: Home },
     { value: 'international', label: 'International', icon: Flight },
-    { value: 'pilgrimage', label: 'Pilgrimage', icon: Church },
     { value: 'group', label: 'Group Trip', icon: Group },
   ];
 
@@ -507,7 +593,7 @@ export default function PackagesList() {
       ) : (
         <Grid container spacing={3}>
           {sortedPackages.map((pkg, index) => (
-            <Grid item xs={12} sm={6} md={4} key={pkg?._id || index}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg?._id || index}>
               <PackageCard 
                 package={pkg} 
                 onEdit={handleEdit} 
@@ -537,6 +623,43 @@ export default function PackagesList() {
           </Typography>
         </Box>
       )}
+
+      {/* ADDED: Beautiful Delete Confirmation Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={snackbar.action ? null : 4000} // Don't auto-close confirmation
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+        sx={{ zIndex: 9999 }}
+      >
+        <Alert
+          onClose={snackbar.action ? null : handleCloseSnackbar}
+          severity={snackbar.severity}
+          action={snackbar.action}
+          icon={
+            snackbar.severity === 'warning' ? <Warning /> :
+            snackbar.severity === 'success' ? <CheckCircle /> : undefined
+          }
+          sx={{
+            width: '100%',
+            fontSize: '1rem',
+            fontWeight: 500,
+            minWidth: '350px',
+            '& .MuiAlert-icon': { fontSize: '1.2rem' },
+            boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
+            backdropFilter: 'blur(10px)',
+            borderRadius: '12px',
+            ...(snackbar.severity === 'warning' && {
+              backgroundColor: '#fff3cd',
+              color: '#856404',
+              border: '1px solid #ffeaa7',
+              '& .MuiAlert-icon': { color: '#f39c12' }
+            })
+          }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
