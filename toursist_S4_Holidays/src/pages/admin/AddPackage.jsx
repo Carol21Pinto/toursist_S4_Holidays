@@ -25,6 +25,10 @@ const AddPackage = () => {
   
   const [inclusions, setInclusions] = useState(['']);
   const [exclusions, setExclusions] = useState(['']);
+  
+  // NEW: Departure dates state
+  const [departureDates, setDepartureDates] = useState(['']);
+  
   const [cardImage, setCardImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -165,6 +169,25 @@ const AddPackage = () => {
     }
   };
 
+  // NEW: Handle departure dates
+  const handleDepartureDateChange = (index, value) => {
+    const newDates = [...departureDates];
+    newDates[index] = value;
+    setDepartureDates(newDates);
+  };
+
+  const addDepartureDate = () => {
+    setDepartureDates([...departureDates, '']);
+  };
+
+  const removeDepartureDate = (index) => {
+    if (departureDates.length > 1) {
+      const newDates = [...departureDates];
+      newDates.splice(index, 1);
+      setDepartureDates(newDates);
+    }
+  };
+
   // Handle inclusions/exclusions
   const handleArrayChange = (index, value, type) => {
     if (type === 'inclusions') {
@@ -262,6 +285,7 @@ const AddPackage = () => {
           setItinerary([{ day: 1, title: '', activities: [''] }]);
           setInclusions(['']);
           setExclusions(['']);
+          setDepartureDates(['']); // Reset departure dates
           setCardImage(null);
           setImagePreview(null);
           setPricingMode('Structured');
@@ -289,7 +313,8 @@ const AddPackage = () => {
       pricingMode,
       itinerary: itinerary.filter(day => day.title && day.activities.some(act => act)),
       inclusions: inclusions.filter(inc => inc.trim()),
-      exclusions: exclusions.filter(exc => exc.trim())
+      exclusions: exclusions.filter(exc => exc.trim()),
+      departureDates: departureDates.filter(date => date.trim()) // Include departure dates
     };
 
     await addPackage(packageData, cardImage);
@@ -437,6 +462,65 @@ const AddPackage = () => {
           )}
         </div>
 
+        {/* NEW: Departure Dates Section */}
+        <div className="form-section">
+          <h2>Departure Dates <span style={{color: '#666', fontSize: '0.9rem', fontWeight: 'normal'}}>(Optional)</span></h2>
+          <p style={{color: '#666', fontSize: '0.9rem', margin: '0 0 20px 0'}}>
+            📅 Add multiple departure dates for your package. Leave empty if dates are flexible.
+          </p>
+          
+          {departureDates.map((date, index) => (
+            <div key={index} className="departure-date-row">
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => handleDepartureDateChange(index, e.target.value)}
+                  placeholder="Select departure date"
+                  className="departure-date-input"
+                />
+              </div>
+              {departureDates.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeDepartureDate(index)}
+                  className="remove-date-btn"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={addDepartureDate}
+            className="add-date-btn"
+          >
+            📅 Add Departure Date
+          </button>
+
+          {/* Show selected dates preview */}
+          {departureDates.some(date => date.trim()) && (
+            <div className="dates-preview">
+              <span className="preview-label">Selected Dates:</span>
+              <div className="dates-list">
+                {departureDates.filter(date => date.trim()).map((date, index) => (
+                  <span key={index} className="date-tag">
+                    {new Date(date).toLocaleDateString('en-US', { 
+                      weekday: 'short', 
+                      year: 'numeric', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    })}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Rest of your existing sections remain the same */}
         {/* Pricing Section */}
         <div className="form-section">
           <h2>Pricing</h2>
@@ -470,7 +554,6 @@ const AddPackage = () => {
                     value={formData.pricePerPerson}
                     onChange={handleInputChange}
                     placeholder="2000"
-                    // No required attribute - making it optional
                   />
                 </div>
                 
@@ -514,6 +597,7 @@ const AddPackage = () => {
           )}
         </div>
 
+        {/* Rest of your existing sections... */}
         {/* Images Section */}
         <div className="form-section">
           <h2>Images</h2>
@@ -594,7 +678,6 @@ const AddPackage = () => {
                       className="activity-input"
                       style={{ flex: 1 }}
                     />
-                    {/* Remove Activity Button - only show if more than 1 activity */}
                     {day.activities.length > 1 && (
                       <button
                         type="button"

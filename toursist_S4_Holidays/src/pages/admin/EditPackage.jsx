@@ -34,6 +34,10 @@ const EditPackage = () => {
   
   const [inclusions, setInclusions] = useState(['']);
   const [exclusions, setExclusions] = useState(['']);
+  
+  // NEW: Departure dates state
+  const [departureDates, setDepartureDates] = useState(['']);
+  
   const [cardImage, setCardImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [existingImage, setExistingImage] = useState('');
@@ -118,6 +122,10 @@ const EditPackage = () => {
           setItinerary(packageData.itinerary?.length ? packageData.itinerary : [{ day: 1, title: '', activities: [''] }]);
           setInclusions(packageData.inclusions?.length ? packageData.inclusions : ['']);
           setExclusions(packageData.exclusions?.length ? packageData.exclusions : ['']);
+          
+          // NEW: Load existing departure dates
+          setDepartureDates(packageData.departureDates?.length ? packageData.departureDates : ['']);
+          
           setExistingImage(packageData.cardImage || '');
         } else {
           showError('❌ Package not found. Redirecting to packages list...');
@@ -214,6 +222,25 @@ const EditPackage = () => {
     }
   };
 
+  // NEW: Handle departure dates
+  const handleDepartureDateChange = (index, value) => {
+    const newDates = [...departureDates];
+    newDates[index] = value;
+    setDepartureDates(newDates);
+  };
+
+  const addDepartureDate = () => {
+    setDepartureDates([...departureDates, '']);
+  };
+
+  const removeDepartureDate = (index) => {
+    if (departureDates.length > 1) {
+      const newDates = [...departureDates];
+      newDates.splice(index, 1);
+      setDepartureDates(newDates);
+    }
+  };
+
   const handleArrayChange = (index, value, type) => {
     if (type === 'inclusions') {
       const newInclusions = [...inclusions];
@@ -301,7 +328,8 @@ const EditPackage = () => {
       pricingMode,
       itinerary: itinerary.filter(day => day.title && day.activities.some(act => act)),
       inclusions: inclusions.filter(inc => inc.trim()),
-      exclusions: exclusions.filter(exc => exc.trim())
+      exclusions: exclusions.filter(exc => exc.trim()),
+      departureDates: departureDates.filter(date => date.trim()) // Include departure dates
     };
 
     await updatePackage(packageData, cardImage);
@@ -457,6 +485,65 @@ const EditPackage = () => {
           )}
         </div>
 
+        {/* NEW: Departure Dates Section */}
+        <div className="form-section">
+          <h2>Departure Dates <span style={{color: '#666', fontSize: '0.9rem', fontWeight: 'normal'}}>(Optional)</span></h2>
+          <p style={{color: '#666', fontSize: '0.9rem', margin: '0 0 20px 0'}}>
+            📅 Add multiple departure dates for your package. Leave empty if dates are flexible.
+          </p>
+          
+          {departureDates.map((date, index) => (
+            <div key={index} className="departure-date-row">
+              <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                <input
+                  type="date"
+                  value={date}
+                  onChange={(e) => handleDepartureDateChange(index, e.target.value)}
+                  placeholder="Select departure date"
+                  className="departure-date-input"
+                />
+              </div>
+              {departureDates.length > 1 && (
+                <button
+                  type="button"
+                  onClick={() => removeDepartureDate(index)}
+                  className="remove-date-btn"
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          ))}
+          
+          <button
+            type="button"
+            onClick={addDepartureDate}
+            className="add-date-btn"
+          >
+            📅 Add Departure Date
+          </button>
+
+          {/* Show selected dates preview */}
+          {departureDates.some(date => date.trim()) && (
+            <div className="dates-preview">
+              <span className="preview-label">Selected Dates:</span>
+              <div className="dates-list">
+                {departureDates.filter(date => date.trim()).map((date, index) => (
+                  <span key={index} className="date-tag">
+                    {new Date(date).toLocaleDateString('en-US', { 
+                      weekday: 'short', 
+                      year: 'numeric', 
+                      month: 'short', 
+                      day: 'numeric' 
+                    })}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Rest of your existing sections remain the same */}
         {/* Pricing Section */}
         <div className="form-section">
           <h2>Pricing</h2>
@@ -490,7 +577,6 @@ const EditPackage = () => {
                     value={formData.pricePerPerson}
                     onChange={handleInputChange}
                     placeholder="2000"
-                    // Removed required attribute - making it optional
                   />
                 </div>
                 
@@ -622,7 +708,6 @@ const EditPackage = () => {
                       className="activity-input"
                       style={{ flex: 1 }}
                     />
-                    {/* Remove Activity Button - only show if more than 1 activity */}
                     {day.activities.length > 1 && (
                       <button
                         type="button"
