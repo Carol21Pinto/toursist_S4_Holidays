@@ -1,14 +1,12 @@
 .description-section {
   width: 90%;
-  margin: 0 auto 150px auto; /* center + bottom space */
-  padding: 2.5rem;
-  min-height: 60vh;
+  margin: 0 auto;
+  padding: 2.5rem 2.5rem 1rem 2.5rem;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   font-family: 'Segoe UI', Arial, sans-serif;
   box-sizing: border-box;
-  margin-bottom: 0px;
 }
 
 .description-content h2 {
@@ -24,14 +22,13 @@
   font-size: clamp(1rem, 2vw, 1.15rem);
   line-height: 1.7;
   color: #444;
-  margin-bottom: 1rem; /* space between paragraphs */
+  margin-bottom: 0;
   text-align: justify;
 }
 
-/* Mobile adjustments */
 @media (max-width: 768px) {
   .description-section {
-    padding: 1.5rem;
+    padding: 1.5rem 1.5rem 0.5rem 1.5rem;
     border-radius: 8px;
   }
 

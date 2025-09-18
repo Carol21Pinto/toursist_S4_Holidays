@@ -1,8 +1,8 @@
 .trip-categories {
-  padding: 48px 20px;
+  padding: 10px 20px 48px 20px;
   background: #f6f7fb;
   position: relative;
-  isolation: isolate; /* prevents banner overlays from affecting other sections */
+  isolation: isolate;
   z-index: 0;
 }
 
@@ -25,7 +25,7 @@
   line-height: 1.6;
 }
 
-/* UPDATED: Perfect 3-card grid layout */
+/* All other CSS stays exactly the same */
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -34,27 +34,21 @@
   margin: 0 auto;
 }
 
-/* GLOBAL banner card base styles (apply at ALL widths) */
 .category-box {
   position: relative;
-  display: block; /* Link wrapper */
+  display: block;
   overflow: hidden;
   border-radius: 18px;
-  min-height: 480px; /* long by default so image + text breathe */
+  min-height: 480px;
   text-decoration: none;
   color: inherit;
-
-  /* Default gradient even before images load */
   background: linear-gradient(135deg, #ffe7c2 0%, #ffd1c9 100%);
-
   box-shadow:
     0 8px 18px rgba(17, 24, 39, 0.08),
     0 2px 6px rgba(17, 24, 39, 0.06);
-
-  /* Smooth, modern motion */
   transform: translateZ(0);
   will-change: transform, filter;
-  contain: paint; /* isolates paint to the card */
+  contain: paint;
   backface-visibility: hidden;
   transition:
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -62,7 +56,6 @@
     filter 180ms ease-out;
 }
 
-/* Hover: slightly larger, smooth and responsive */
 .category-box:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow:
@@ -71,18 +64,13 @@
   filter: saturate(1.04);
 }
 
-/* Full-bleed background image (inline style sets the URL) */
 .category-bg {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-
-  /* Slight dim for text readability */
   filter: brightness(0.86) saturate(1.02);
-
-  /* Subtle pre-zoom so hover feels extra smooth */
   transform: scale(1.01);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -91,18 +79,16 @@
   z-index: 0;
 }
 
-/* Hover: gentle image zoom + slight brighten */
 .category-box:hover .category-bg {
   transform: scale(1.045);
   filter: brightness(0.92) saturate(1.06);
 }
 
-/* Safe color overlay (no blend mode) for richer visuals; avoids bleed */
 .category-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1; /* above bg, below text */
+  z-index: 1;
   background:
     radial-gradient(100% 100% at 0% 0%, rgba(255, 152, 0, 0.26) 0%, rgba(255, 152, 0, 0.06) 38%, rgba(0,0,0,0) 70%),
     linear-gradient(135deg, rgba(255, 152, 0, 0.12) 0%, rgba(255, 87, 34, 0.14) 100%);
@@ -115,10 +101,9 @@
   opacity: 0.92;
 }
 
-/* Content overlay pinned to bottom with gradient for readability */
 .category-content {
   position: relative;
-  z-index: 2; /* above overlay and bg */
+  z-index: 2;
   height: 100%;
   padding: 26px 24px;
   display: flex;
@@ -132,10 +117,9 @@
     rgba(6, 8, 14, 0.08) 72%,
     rgba(6, 8, 14, 0.00) 100%
   );
-  pointer-events: none; /* makes the entire card area clickable via Link */
+  pointer-events: none;
 }
 
-/* Title and description */
 .category-content h3 {
   margin: 0 0 10px 0;
   font-size: 26px;
@@ -153,7 +137,6 @@
   text-shadow: 0 1.5px 4px rgba(0,0,0,0.35);
 }
 
-/* Scroll-in animation (kept) */
 .hidden {
   opacity: 0;
   transform: translateY(20px);
@@ -170,7 +153,6 @@
     filter 320ms ease-out;
 }
 
-/* Inner definition line for crisp edges */
 .category-box::after {
   content: "";
   position: absolute;
@@ -182,9 +164,6 @@
   pointer-events: none;
 }
 
-/* UPDATED: Perfect responsive layout for 3 cards */
-
-/* Large Desktop: 3 cards in perfect row */
 @media (min-width: 1200px) {
   .categories-grid { 
     grid-template-columns: repeat(3, 1fr); 
@@ -193,7 +172,6 @@
   }
 }
 
-/* Desktop: 3 cards with good spacing */
 @media (max-width: 1199px) and (min-width: 900px) {
   .categories-grid { 
     grid-template-columns: repeat(3, 1fr); 
@@ -201,7 +179,6 @@
   }
 }
 
-/* Tablet: 2 cards on top, 1 centered below */
 @media (max-width: 899px) and (min-width: 600px) {
   .categories-grid { 
     grid-template-columns: repeat(2, 1fr); 
@@ -211,7 +188,6 @@
     min-height: 460px; 
   }
   
-  /* Center the 3rd card (Group Trip) */
   .category-box:nth-child(3) {
     grid-column: 1 / -1;
     max-width: 400px;
@@ -219,7 +195,6 @@
   }
 }
 
-/* Mobile: Single column stack */
 @media (max-width: 599px) {
   .categories-grid { 
     grid-template-columns: 1fr; 
@@ -243,11 +218,10 @@
   }
   
   .trip-categories {
-    padding: 32px 16px;
+    padding: 5px 16px 32px 16px;
   }
 }
 
-/* Extra Small Mobile: Smaller cards */
 @media (max-width: 400px) {
   .category-box { 
     min-height: 380px; 
