@@ -14,53 +14,107 @@ export default function GroupTrip() {
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-  // Safe image handling
-  const SERVER_BASE = 'http://localhost:5000';
-  const FALLBACK = '/images/placeholder-card.jpg';
+  // FIXED: Simple data URL fallback that always works
+  const SERVER_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+  const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTllY2VmIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
 
   // Group types for filtering
   const groupTypes = ['Domestic', 'International', 'Pilgrimage'];
 
   const pickPrimaryImagePath = (pkg) => {
+    console.log(`Picking image for ${pkg.title}:`, {
+      cardImage: pkg.cardImage,
+      images: pkg.images
+    });
+
     const fromCard = Array.isArray(pkg?.cardImage)
       ? pkg.cardImage.find(p => typeof p === 'string' && p.trim())
       : (typeof pkg?.cardImage === 'string' && pkg.cardImage.trim() ? pkg.cardImage : null);
 
-    if (fromCard) return fromCard;
+    if (fromCard) {
+      console.log(`Using cardImage: ${fromCard}`);
+      return fromCard;
+    }
 
     const imgs = pkg?.images;
     if (Array.isArray(imgs)) {
       const first = imgs.find(p => typeof p === 'string' && p.trim());
-      if (first) return first;
+      if (first) {
+        console.log(`Using first image: ${first}`);
+        return first;
+      }
     } else if (typeof imgs === 'string' && imgs.trim()) {
+      console.log(`Using images string: ${imgs}`);
       return imgs;
     }
 
+    console.log(`No image found for ${pkg.title}, will use fallback`);
     return null;
   };
 
   const getImageUrl = (path) => {
-    if (typeof path !== 'string' || !path.trim()) return FALLBACK;
+    console.log(`Constructing URL for path: "${path}"`);
+    console.log(`SERVER_BASE: "${SERVER_BASE}"`);
+    
+    if (typeof path !== 'string' || !path.trim()) {
+      console.log(`Using fallback - invalid path`);
+      return FALLBACK;
+    }
+    
     const fixed = path.replace(/\\/g, '/');
-    if (/^https?:\/\//i.test(fixed)) return fixed;
-    return `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
+    
+    if (/^https?:\/\//i.test(fixed)) {
+      console.log(`Using external URL: ${fixed}`);
+      return fixed;
+    }
+    
+    const finalUrl = `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
+    console.log(`Final constructed URL: ${finalUrl}`);
+    
+    return finalUrl;
   };
 
   const applyFallback = (e) => {
+    console.log('Image failed to load:', e.currentTarget.src);
     e.currentTarget.onerror = null;
     e.currentTarget.src = FALLBACK;
+  };
+
+  // Format departure dates for display (simplified)
+  const formatDepartureDates = (dates) => {
+    if (!dates || !Array.isArray(dates) || dates.length === 0) {
+      return null;
+    }
+
+    const validDates = dates
+      .filter(date => date && date.trim())
+      .sort((a, b) => new Date(a) - new Date(b));
+
+    if (validDates.length === 0) return null;
+
+    const nextDate = validDates[0];
+    const dateObj = new Date(nextDate);
+    
+    return dateObj.toLocaleDateString('en-US', { 
+      month: 'short', 
+      day: 'numeric' 
+    });
+  };
+
+  // Get total departure dates count
+  const getDepartureDatesCount = (dates) => {
+    if (!dates || !Array.isArray(dates)) return 0;
+    return dates.filter(date => date && date.trim()).length;
   };
 
   // Strict filtering - only match exact groupType
   const isPackageInGroupType = (pkg, groupType) => {
     if (!groupType || groupType === '') return true;
     
-    // Only return true if the groupType matches exactly
     if (pkg.groupType) {
       return pkg.groupType.toLowerCase() === groupType.toLowerCase();
     }
     
-    // If no groupType is set, don't show it for any specific filter
     return false;
   };
 
@@ -96,9 +150,35 @@ export default function GroupTrip() {
       if (response.ok) {
         const data = await response.json();
         setPackages(data);
-        console.log('Fetched group packages:', data);
+        
+        // ENHANCED DEBUG: Show detailed package information
+        console.log('=== DETAILED PACKAGE DEBUG ===');
+        console.log('Total packages fetched:', data.length);
+        console.log('API_URL:', API_URL);
+        console.log('SERVER_BASE:', SERVER_BASE);
+        
+        data.forEach((pkg, index) => {
+          console.log(`\n--- Package ${index + 1}: ${pkg.title} ---`);
+          console.log('Package ID:', pkg._id);
+          console.log('cardImage:', pkg.cardImage);
+          console.log('images:', pkg.images);
+          console.log('category:', pkg.category);
+          console.log('groupType:', pkg.groupType);
+          console.log('pricePerPerson:', pkg.pricePerPerson);
+          console.log('pricingMode:', pkg.pricingMode);
+          console.log('priceText:', pkg.priceText);
+          console.log('departureDates:', pkg.departureDates);
+          
+          // Test image URL construction
+          const primaryPath = pickPrimaryImagePath(pkg);
+          const imgUrl = getImageUrl(primaryPath);
+          console.log('primaryPath:', primaryPath);
+          console.log('Final imgUrl:', imgUrl);
+        });
+        
+        console.log('=== END DETAILED DEBUG ===');
       } else {
-        console.error('Failed to fetch group packages');
+        console.error('Failed to fetch group packages - Status:', response.status);
       }
     } catch (error) {
       console.error('Error fetching group packages:', error);
@@ -131,7 +211,6 @@ export default function GroupTrip() {
     setShowAllTypes(false);
   };
 
-  const formatPrice = (price, currency) => `From ${currency}${price.toLocaleString()}/person`;
   const formatDuration = (pkg) =>
     (pkg.itinerary && pkg.itinerary.length > 0)
       ? `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}`
@@ -242,7 +321,7 @@ export default function GroupTrip() {
             <section className="group-destinations">
               <div className="container">
                 <h2 className="section-title">
-                   Group Destinations
+                  Group Destinations
                   {selectedGroupType && (
                     <span className="filter-info">
                       Showing results for: <strong>{selectedGroupType}</strong> 
@@ -281,6 +360,22 @@ export default function GroupTrip() {
                     {displayPackages.map((pkg) => {
                       const primaryPath = pickPrimaryImagePath(pkg);
                       const imgUrl = getImageUrl(primaryPath);
+                      
+                      // Get departure dates info (simplified)
+                      const formattedDate = formatDepartureDates(pkg.departureDates);
+                      const totalDates = getDepartureDatesCount(pkg.departureDates);
+
+                      // Format price display with debugging
+                      const formatPrice = () => {
+                        if (pkg.pricingMode === 'Text' && pkg.priceText) {
+                          return pkg.priceText;
+                        } else if (pkg.pricePerPerson) {
+                          return `From ₹${pkg.pricePerPerson.toLocaleString()}/person`;
+                        } else if (pkg.priceText) {
+                          return pkg.priceText;
+                        }
+                        return 'Price on request';
+                      };
 
                       return (
                         <div key={pkg._id} className="destination-card">
@@ -289,8 +384,11 @@ export default function GroupTrip() {
                               src={imgUrl}
                               alt={pkg.title}
                               onError={applyFallback}
+                              style={{
+                                backgroundColor: '#f8f9fa',
+                                border: '1px solid #e9ecef'
+                              }}
                             />
-                            {/* <div className="group-size-badge">6-15 people</div> */}
                             {pkg.groupType && (
                               <div className="group-type-badge">{pkg.groupType}</div>
                             )}
@@ -298,27 +396,30 @@ export default function GroupTrip() {
 
                           <div className="card-content">
                             <h3>{pkg.title}</h3>
-                            <div className="card-details">
-                              {/* <div className="price">
-                                {formatPrice(pkg.pricePerPerson, pkg.currency)}
-                              </div> */}
-                              <div className="duration">{formatDuration(pkg)}</div>
+                            
+                            {/* SIMPLIFIED: Duration, Price in one row */}
+                            <div className="card-info">
+                              <div className="duration-badge">{formatDuration(pkg)}</div>
+                              <div className="price-info">{formatPrice()}</div>
                             </div>
 
-                            {/* <div className="activities-list">
-                              {pkg.inclusions &&
-                                pkg.inclusions.slice(0, 3).map((inclusion, index) => (
-                                  <span key={index} className="activity-tag">
-                                    {inclusion}
-                                  </span>
-                                ))}
-                            </div> */}
+                            {/* SIMPLIFIED: Departure dates (single line) */}
+                            <div className="departure-info">
+                              <span className="calendar-icon">📅</span>
+                              {formattedDate ? (
+                                <span className="date-text">
+                                  {formattedDate}{totalDates > 1 && ` +${totalDates - 1} more`}
+                                </span>
+                              ) : (
+                                <span className="date-text flexible">Flexible dates</span>
+                              )}
+                            </div>
 
                             <button
-                              className="book-group-btn"
+                              className="explore-btn"
                               onClick={() => navigate(`/package/${pkg._id}`)}
                             >
-                              Explore Now
+                              Explore Package
                             </button>
                           </div>
                         </div>

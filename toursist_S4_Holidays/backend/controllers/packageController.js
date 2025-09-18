@@ -34,12 +34,13 @@ exports.createPackage = async (req, res) => {
     console.log('GroupType:', packageData.groupType);
     console.log('State:', packageData.state);
     console.log('Continent:', packageData.continent);
+    console.log('Departure Dates:', packageData.departureDates); // NEW: Log departure dates
     
     const newPackage = new Package({
       title: packageData.name,
       category: packageData.category.toLowerCase(),
       
-      // New location fields
+      // Location fields
       groupType: packageData.groupType || null,
       state: packageData.state || null,
       continent: packageData.continent || null,
@@ -50,6 +51,10 @@ exports.createPackage = async (req, res) => {
       duration: packageData.duration,
       pricingMode: packageData.pricingMode,
       priceText: packageData.priceText || '',
+      
+      // NEW: Add departure dates
+      departureDates: packageData.departureDates || [],
+      
       cardImage: cardImage,
       images: [],
       description: packageData.description || '',
@@ -69,6 +74,7 @@ exports.createPackage = async (req, res) => {
     console.log('GroupType:', newPackage.groupType);
     console.log('State:', newPackage.state);
     console.log('Continent:', newPackage.continent);
+    console.log('Departure Dates:', newPackage.departureDates); // NEW: Log saved departure dates
     console.log('=== END CREATE DEBUG ===');
     
     console.log('Package created successfully:', newPackage._id, 'at', newPackage.createdAt);
@@ -88,12 +94,13 @@ exports.updatePackage = async (req, res) => {
 
     const packageData = JSON.parse(req.body.data);
     console.log('Parsed package data:', packageData);
+    console.log('Departure Dates in update:', packageData.departureDates); // NEW: Log departure dates
 
     const updates = {
       title: packageData.name,
       category: packageData.category.toLowerCase(),
       
-      // New location fields
+      // Location fields
       groupType: packageData.groupType || null,
       state: packageData.state || null,
       continent: packageData.continent || null,
@@ -104,6 +111,10 @@ exports.updatePackage = async (req, res) => {
       currency: packageData.currency,
       priceNote: packageData.priceNote || '',
       priceText: packageData.priceText || '',
+      
+      // NEW: Add departure dates
+      departureDates: packageData.departureDates || [],
+      
       itinerary: packageData.itinerary || [],
       inclusions: packageData.inclusions || [],
       exclusions: packageData.exclusions || [],
@@ -135,6 +146,7 @@ exports.updatePackage = async (req, res) => {
     console.log('GroupType:', pkg.groupType);
     console.log('State:', pkg.state);
     console.log('Continent:', pkg.continent);
+    console.log('Departure Dates:', pkg.departureDates); // NEW: Log updated departure dates
 
     console.log('Package updated successfully:', pkg._id, 'at', pkg.updatedAt);
     return res.json(pkg);

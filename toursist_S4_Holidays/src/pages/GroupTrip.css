@@ -381,26 +381,28 @@
 
 .destinations-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 30px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 24px;
 }
 
+/* SIMPLIFIED: Clean card design */
 .destination-card {
   background: #fff;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #f0f0f0;
 }
 
 .destination-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .card-image {
   position: relative;
-  height: 220px;
+  height: 200px;
   overflow: hidden;
 }
 
@@ -412,65 +414,111 @@
 }
 
 .destination-card:hover .card-image img {
-  transform: scale(1.1);
-}
-
-.group-size-badge {
-  position: absolute;
-  top: 15px;
-  left: 15px;
-  background: #ff6b6b;
-  color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.85rem;
-  font-weight: 600;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
 }
 
 .group-type-badge {
   position: absolute;
-  top: 15px;
-  right: 15px;
-  background: linear-gradient(135deg, #4ecdc4 0%, #38a69b 100%);
+  top: 12px;
+  right: 12px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
   color: white;
-  padding: 0.3rem 0.6rem;
-  border-radius: 12px;
+  padding: 4px 12px;
+  border-radius: 20px;
   font-size: 0.75rem;
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(78, 205, 196, 0.3);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* SIMPLIFIED: Card content */
 .card-content {
   padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .card-content h3 {
-  font-size: 1.4rem;
+  margin: 0;
+  font-size: 1.2rem;
   font-weight: 700;
-  margin-bottom: 12px;
+  color: #2c3e50;
+  line-height: 1.3;
 }
 
-.card-details {
+/* NEW: Simple card info row */
+.card-info {
   display: flex;
   justify-content: space-between;
-  margin-bottom: 15px;
-  font-size: 0.95rem;
-  color: #666;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
 }
 
-.activities-list {
-  margin-bottom: 15px;
-}
-
-.activity-tag {
-  display: inline-block;
-  background: #f1f1f1;
-  color: #444;
-  font-size: 0.85rem;
+.duration-badge {
+  background: linear-gradient(135deg, #4ecdc4, #38a69b);
+  color: white;
   padding: 6px 12px;
-  border-radius: 12px;
-  margin: 4px 6px 0 0;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* NEW: Clean price display */
+.price-info {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #e74c3c;
+  text-align: right;
+  flex: 1;
+}
+
+/* SIMPLIFIED: Departure dates (one line) */
+.departure-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  border-left: 3px solid #4ecdc4;
+}
+
+.calendar-icon {
+  font-size: 1rem;
+  opacity: 0.8;
+}
+
+.date-text {
+  color: #495057;
+  font-weight: 500;
+}
+
+.date-text.flexible {
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* SIMPLIFIED: Explore button */
+.explore-btn {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 8px;
+}
+
+.explore-btn:hover {
+  background: linear-gradient(135deg, #764ba2, #667eea);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
 }
 
 /* Enhanced No Results */
@@ -527,26 +575,8 @@
   box-shadow: 0 6px 16px rgba(78, 205, 196, 0.4);
 }
 
-.book-group-btn {
-  background: #4ecdc4;
-  color: white;
-  padding: 12px 20px;
-  border: none;
-  border-radius: 30px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  width: 100%;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.book-group-btn:hover {
-  background: #38a69b;
-  transform: scale(1.05);
-}
-
 .simple-footer {
-  background: linear-gradient(90deg, #4ecdc4, #45b7d1); /* fresh travel vibe */
+  background: linear-gradient(90deg, #4ecdc4, #45b7d1);
   color: white;
   text-align: center;
   padding: 25px 15px;
@@ -557,8 +587,8 @@
   border-top-right-radius: 20px;
 }
 
-/* Mobile Styles (320px and up) */
-@media (max-width: 767px) {
+/* Mobile responsive adjustments */
+@media (max-width: 768px) {
   .main-content {
     display: block;
   }
@@ -584,6 +614,7 @@
   .destinations-grid {
     padding: 1rem;
     gap: 1.5rem;
+    grid-template-columns: 1fr;
   }
 
   .hero-title {
@@ -623,6 +654,35 @@
     font-size: 0.7rem;
     padding: 0.25rem 0.5rem;
   }
+
+  .card-info {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .price-info {
+    text-align: left;
+    font-size: 0.85rem;
+  }
+  
+  .duration-badge {
+    font-size: 0.75rem;
+    padding: 4px 10px;
+  }
+  
+  .departure-info {
+    padding: 8px 10px;
+    font-size: 0.8rem;
+  }
+  
+  .card-content {
+    padding: 16px;
+  }
+  
+  .card-content h3 {
+    font-size: 1.1rem;
+  }
 }
 
 /* Tablet Styles (768px to 1023px) */
@@ -638,7 +698,7 @@
   .filter-sidebar {
     position: relative;
     left: 0;
-    width: 300px;
+    width: 280px;
     height: auto;
     min-height: calc(100vh - 80vh);
     border-right: 1px solid #e9ecef;
@@ -677,7 +737,7 @@
   .filter-sidebar {
     position: relative;
     left: 0;
-    width: 320px;
+    width: 300px;
     height: auto;
     min-height: calc(100vh - 80vh);
     border-right: 1px solid #e9ecef;
@@ -710,7 +770,7 @@
 /* Large Desktop (1200px and up) */
 @media (min-width: 1200px) {
   .filter-sidebar {
-    width: 350px;
+    width: 320px;
   }
 
   .container {
@@ -719,16 +779,5 @@
 
   .destinations-grid {
     grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-/* Responsive */
-@media (max-width: 768px) {
-  .hero-title {
-    font-size: 2.2rem;
-  }
-
-  .group-destinations .section-title {
-    font-size: 2rem;
   }
 }

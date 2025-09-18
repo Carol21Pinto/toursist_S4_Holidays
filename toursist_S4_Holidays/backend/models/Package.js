@@ -3,23 +3,26 @@ const mongoose = require('mongoose');
 const PackageSchema = new mongoose.Schema({
   title: { type: String, required: true },
   category: { type: String, enum: ['domestic', 'international', 'pilgrimage', 'group'], required: true },
-  duration: { type: String }, // Added duration field
+  duration: { type: String },
   
-  // New location fields
+  // Location fields
   groupType: { type: String }, // For Group packages: "Domestic", "International", "Pilgrimage"
   state: { type: String },     // For Domestic packages  
   continent: { type: String }, // For International packages
   
   // Pricing fields
-  pricingMode: { type: String, enum: ['Structured', 'Text'], default: 'Structured' }, // New field
-  pricePerPerson: { type: Number }, // Removed required since Text mode won't have this
-  currency: { type: String, default: 'INR' }, // Removed required, added default
+  pricingMode: { type: String, enum: ['Structured', 'Text'], default: 'Structured' },
+  pricePerPerson: { type: Number },
+  currency: { type: String, default: 'INR' },
   priceNote: { type: String },
-  priceText: { type: String }, // New field for Text pricing mode
+  priceText: { type: String },
   
-  cardImage: { type: String }, // optional
+  // NEW: Departure dates field
+  departureDates: [{ type: String }], // Array of date strings
+  
+  cardImage: { type: String },
   images: [{ type: String }],
-  description: { type: String, default: '' }, // Removed required, added default
+  description: { type: String, default: '' },
   itinerary: [{
     day: Number,
     title: String,
