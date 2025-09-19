@@ -424,10 +424,11 @@ body {
   margin-top: 0.25rem;
 }
 
+
 /* Destinations Section */
 .destinations-section { 
   padding: 2rem 0; 
-  background: #fff; 
+  background: #ded8d8; 
 }
 
 /* Responsive Grid Layout */
