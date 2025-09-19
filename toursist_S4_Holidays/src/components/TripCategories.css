@@ -1,8 +1,8 @@
 .trip-categories {
-  padding: 10px 20px 48px 20px;
+  padding: 48px 20px;
   background: #f6f7fb;
   position: relative;
-  isolation: isolate;
+  isolation: isolate; /* prevents banner overlays from affecting other sections */
   z-index: 0;
 }
 
@@ -25,31 +25,34 @@
   line-height: 1.6;
 }
 
-/* UPDATED: Bigger cards with full width usage */
+/* Grid: desktop/tablet/mobile */
 .categories-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 24px;
-  max-width: 100%;
-  margin: 0 auto;
-  padding: 0 10px;
+  gap: 22px;
 }
 
+/* GLOBAL banner card base styles (apply at ALL widths) */
 .category-box {
   position: relative;
-  display: block;
+  display: block; /* Link wrapper */
   overflow: hidden;
   border-radius: 18px;
-  min-height: 520px;
+  min-height: 480px; /* long by default so image + text breathe */
   text-decoration: none;
   color: inherit;
+
+  /* Default gradient even before images load */
   background: linear-gradient(135deg, #ffe7c2 0%, #ffd1c9 100%);
+
   box-shadow:
     0 8px 18px rgba(17, 24, 39, 0.08),
     0 2px 6px rgba(17, 24, 39, 0.06);
+
+  /* Smooth, modern motion */
   transform: translateZ(0);
   will-change: transform, filter;
-  contain: paint;
+  contain: paint; /* isolates paint to the card */
   backface-visibility: hidden;
   transition:
     transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -57,6 +60,7 @@
     filter 180ms ease-out;
 }
 
+/* Hover: slightly larger, smooth and responsive */
 .category-box:hover {
   transform: translateY(-8px) scale(1.02);
   box-shadow:
@@ -65,13 +69,19 @@
   filter: saturate(1.04);
 }
 
+/* Full-bleed background image (inline style sets the URL) */
 .category-bg {
   position: absolute;
   inset: 0;
+  background-image: var(--bg-image, linear-gradient(135deg, #c7d2fe 0%, #fbcfe8 100%)); /* fallback if no image */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+
+  /* Slight dim for text readability */
   filter: brightness(0.86) saturate(1.02);
+
+  /* Subtle pre-zoom so hover feels extra smooth */
   transform: scale(1.01);
   transition:
     transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
@@ -80,16 +90,18 @@
   z-index: 0;
 }
 
+/* Hover: gentle image zoom + slight brighten */
 .category-box:hover .category-bg {
   transform: scale(1.045);
   filter: brightness(0.92) saturate(1.06);
 }
 
+/* Safe color overlay (no blend mode) for richer visuals; avoids bleed */
 .category-box::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 1; /* above bg, below text */
   background:
     radial-gradient(100% 100% at 0% 0%, rgba(255, 152, 0, 0.26) 0%, rgba(255, 152, 0, 0.06) 38%, rgba(0,0,0,0) 70%),
     linear-gradient(135deg, rgba(255, 152, 0, 0.12) 0%, rgba(255, 87, 34, 0.14) 100%);
@@ -102,11 +114,12 @@
   opacity: 0.92;
 }
 
+/* Content overlay pinned to bottom with gradient for readability */
 .category-content {
   position: relative;
-  z-index: 2;
+  z-index: 2; /* above overlay and bg */
   height: 100%;
-  padding: 30px 28px;
+  padding: 26px 24px;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -118,12 +131,13 @@
     rgba(6, 8, 14, 0.08) 72%,
     rgba(6, 8, 14, 0.00) 100%
   );
-  pointer-events: none;
+  pointer-events: none; /* makes the entire card area clickable via Link */
 }
 
+/* Title and description */
 .category-content h3 {
-  margin: 0 0 12px 0;
-  font-size: 28px;
+  margin: 0 0 10px 0;
+  font-size: 26px;
   line-height: 1.2;
   letter-spacing: 0.2px;
   text-shadow: 0 2px 6px rgba(0,0,0,0.35);
@@ -131,13 +145,14 @@
 
 .category-content p {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   line-height: 1.6;
   opacity: 0.98;
   max-width: 62ch;
   text-shadow: 0 1.5px 4px rgba(0,0,0,0.35);
 }
 
+/* Scroll-in animation (kept) */
 .hidden {
   opacity: 0;
   transform: translateY(20px);
@@ -154,6 +169,7 @@
     filter 320ms ease-out;
 }
 
+/* Inner definition line for crisp edges */
 .category-box::after {
   content: "";
   position: absolute;
@@ -165,113 +181,26 @@
   pointer-events: none;
 }
 
-/* UPDATED: Responsive layout for bigger cards */
-
-/* Large Desktop: 4 bigger cards */
-@media (min-width: 1400px) {
-  .categories-grid { 
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 30px;
-    max-width: 1600px;
-    padding: 0 20px;
-  }
-  .category-box {
-    min-height: 550px;
-  }
+/* Responsive columns and heights (layout only) */
+@media (max-width: 1280px) {
+  .categories-grid { grid-template-columns: repeat(3, 1fr); }
 }
 
-/* Desktop: 4 cards with full width */
-@media (max-width: 1399px) and (min-width: 1000px) {
-  .categories-grid { 
-    grid-template-columns: repeat(4, 1fr); 
-    gap: 20px;
-    max-width: 100%;
-    padding: 0 15px;
-  }
-  .category-box {
-    min-height: 500px;
-  }
+@media (max-width: 1024px) {
+  .categories-grid { grid-template-columns: repeat(2, 1fr); }
+  .category-box { min-height: 460px; }
 }
 
-/* Medium screens: 3 cards per row */
-@media (max-width: 999px) and (min-width: 768px) {
-  .categories-grid { 
-    grid-template-columns: repeat(3, 1fr); 
-    gap: 20px;
-    max-width: 100%;
-  }
-  .category-box { 
-    min-height: 480px; 
-  }
+@media (max-width: 768px) {
+  .categories-grid { grid-template-columns: 1fr; gap: 18px; }
+  .category-box { min-height: 420px; border-radius: 16px; }
+  .category-content { padding: 22px; }
 }
 
-/* Tablet: 2x2 grid */
-@media (max-width: 767px) and (min-width: 600px) {
-  .categories-grid { 
-    grid-template-columns: repeat(2, 1fr); 
-    gap: 18px;
-    padding: 0 10px;
-  }
-  .category-box { 
-    min-height: 460px; 
-  }
-  .category-content {
-    padding: 24px 22px;
-  }
-  .category-content h3 {
-    font-size: 24px;
-  }
-  .category-content p {
-    font-size: 15px;
-  }
-}
-
-/* Mobile: Single column */
-@media (max-width: 599px) {
-  .categories-grid { 
-    grid-template-columns: 1fr; 
-    gap: 18px;
-    padding: 0 5px;
-  }
-  .category-box { 
-    min-height: 420px; 
-    border-radius: 16px; 
-  }
-  .category-content { 
-    padding: 22px; 
-  }
-  .category-content h3 {
-    font-size: 22px;
-  }
-  .category-content p {
-    font-size: 14px;
-  }
-  
-  .trip-intro h2 {
-    font-size: 24px;
-  }
-  
-  .trip-intro p {
-    font-size: 14px;
-    padding: 0 10px;
-  }
-  
-  .trip-categories {
-    padding: 5px 16px 32px 16px;
-  }
-}
-
-@media (max-width: 400px) {
-  .category-box { 
-    min-height: 380px; 
-  }
-  .category-content { 
-    padding: 18px; 
-  }
-  .category-content h3 {
-    font-size: 20px;
-  }
-  .category-content p {
-    font-size: 13px;
-  }
+.category-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.7);
 }
