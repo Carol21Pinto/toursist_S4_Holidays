@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import Hero from "../components/Hero.jsx";
 import Description from "../components/Description.jsx";
 import TripCategories from "../components/TripCategories.jsx";
+import AboutSection from "../components/AboutSection.jsx";
 import ContactIcons from "../components/ContactIcons.jsx";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
       <Hero />
       <Description />
       <TripCategories />
+      <AboutSection />
       <ContactIcons />
     </>
   );

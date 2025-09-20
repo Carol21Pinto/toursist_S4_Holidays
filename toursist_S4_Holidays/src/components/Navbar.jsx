@@ -15,6 +15,19 @@ export default function Navbar() {
 
   const opacity = Math.min(scrollY / 200, 1);
 
+  // Smooth scroll to About section
+  const scrollToAbout = (e) => {
+    e.preventDefault();
+    const aboutSection = document.getElementById('about');
+    if (aboutSection) {
+      aboutSection.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+    setMenuOpen(false); // Close mobile menu
+  };
+
   return (
     <nav
       className="navbar"
@@ -48,20 +61,8 @@ export default function Navbar() {
             <Link to="/">Home</Link>
           </li>
           <li onClick={() => setMenuOpen(false)}>
-            <Link to="/about">About</Link>
+            <a href="#about" onClick={scrollToAbout}>About</a>
           </li>
-          {/* <li onClick={() => setMenuOpen(false)}>
-            <Link to="/destination">Destination</Link>
-          </li>
-          <li onClick={() => setMenuOpen(false)}>
-            <Link to="/hotel">Hotel</Link>
-          </li>
-          <li onClick={() => setMenuOpen(false)}>
-            <Link to="/blog">Blog</Link>
-          </li>
-          <li onClick={() => setMenuOpen(false)}>
-            <Link to="/contact">Contact</Link>
-          </li> */}
         </ul>
       </div>
     </nav>
