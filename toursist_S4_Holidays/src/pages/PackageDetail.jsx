@@ -103,11 +103,34 @@ const PackageDetail = () => {
     );
   }
 
-  // Helper function to render pricing
+  // FIXED: Helper function to render pricing
   const renderPriceDisplay = () => {
-    if (packageData.pricingMode === 'Structured' && packageData.pricePerPerson) {
-      return `₹${packageData.pricePerPerson} per person`;
-    } else if (packageData.pricingMode === 'Text' && packageData.priceText) {
+    // Check if structured pricing is used and has valid price
+    if (packageData.pricingMode === 'Structured' && 
+        packageData.pricePerPerson && 
+        packageData.pricePerPerson > 0) {
+      return `₹${packageData.pricePerPerson.toLocaleString()} per person`;
+    } 
+    // Check if text pricing is used and has valid text
+    else if (packageData.pricingMode === 'Text' && 
+             packageData.priceText && 
+             packageData.priceText.trim() !== '') {
+      return packageData.priceText;
+    }
+    // Default fallback when no valid pricing is provided
+    return 'Contact for pricing';
+  };
+
+  // FIXED: Helper function for hero section pricing (shorter version)
+  const renderHeroPricing = () => {
+    if (packageData.pricingMode === 'Structured' && 
+        packageData.pricePerPerson && 
+        packageData.pricePerPerson > 0) {
+      return `₹${packageData.pricePerPerson.toLocaleString()}/person`;
+    } 
+    else if (packageData.pricingMode === 'Text' && 
+             packageData.priceText && 
+             packageData.priceText.trim() !== '') {
       return packageData.priceText;
     }
     return 'Contact for pricing';
@@ -133,7 +156,7 @@ const PackageDetail = () => {
       }}>
         <div className="hero-text">
           <h1>{packageData.title || 'Travel Package'}</h1>
-          <p>{packageData.duration} | {renderPriceDisplay()}</p>
+          <p>{packageData.duration} | {renderHeroPricing()}</p>
         </div>
       </header>
 
@@ -142,7 +165,7 @@ const PackageDetail = () => {
         <h2>Package Overview</h2>
         <div className="overview">
           <div><strong>Duration:</strong> {packageData.duration || 'Not specified'}</div>
-          <div><strong>Cost:</strong> {packageData.priceNote || 'All inclusive'}</div>
+          <div><strong>Note:</strong> {packageData.priceNote || 'All inclusive'}</div>
           <div className="price">{renderPriceDisplay()}</div>
         </div>
       </section>
