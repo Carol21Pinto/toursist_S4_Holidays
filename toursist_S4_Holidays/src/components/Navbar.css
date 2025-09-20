@@ -83,7 +83,7 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  margin-right: -150px; /* Perfect balance - not too far, not too close */
+  margin-right: 40px; /* Perfect balance - not too far, not too close */
 }
 
 .nav-links li {
