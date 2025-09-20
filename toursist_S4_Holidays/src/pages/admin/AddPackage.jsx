@@ -583,7 +583,7 @@ const AddPackage = () => {
               </div>
 
               <div className="form-group full-width">
-                <label>Price note (optional)</label>
+                <label>Note:</label>
                 <input
                   type="text"
                   name="priceNote"

@@ -43,7 +43,7 @@ export default function ContactIcons() {
     <div className={`contact-icons ${isVisible ? 'show' : 'hide'}`}>
       {/* WhatsApp */}
       <a
-        href={`https://wa.me/916363275937?text=${whatsappMessage}`}
+        href={`https://wa.me/8904814416?text=${whatsappMessage}`}
         target="_blank"
         rel="noopener noreferrer"
         className="icon whatsapp"
@@ -54,7 +54,7 @@ export default function ContactIcons() {
 
       {/* Instagram */}
       <a
-        href="https://instagram.com/yourpage"
+        href="https://www.instagram.com/s4_holidays/?igsh=aHVyZDI3cDNiZ2o4#"
         target="_blank"
         rel="noopener noreferrer"
         className="icon instagram"
@@ -72,27 +72,14 @@ export default function ContactIcons() {
         <i className="fas fa-envelope"></i>
       </a>
 
-      {/* Phone */}
-      {isMobile ? (
-        <a 
-          href={`tel:${phoneNumber}`} 
-          className="icon phone"
-          title="Call Now"
-        >
-          <i className="fas fa-phone"></i>
-        </a>
-      ) : (
-        <div 
-          className="icon phone" 
-          title={`Call: ${phoneNumber}`}
-          onClick={() => {
-            navigator.clipboard.writeText(phoneNumber);
-            alert('Phone number copied!');
-          }}
-        >
-          <i className="fas fa-phone"></i>
-        </div>
-      )}
+      {/* Phone - FIXED: Always redirect to phone dialer */}
+      <a 
+        href={`tel:${phoneNumber}`} 
+        className="icon phone"
+        title={isMobile ? "Call Now" : `Call: ${phoneNumber}`}
+      >
+        <i className="fas fa-phone"></i>
+      </a>
     </div>
   );
 }
