@@ -32,7 +32,7 @@ const EditPackage = () => {
   // Form state with new location fields
   const [formData, setFormData] = useState({
     name: '',
-    category: 'Domestic',
+    category: 'Domestic', // Default value
     duration: '',
     pricePerPerson: '',
     currency: 'INR',
@@ -112,7 +112,7 @@ const EditPackage = () => {
     });
   };
 
-  // Fetch package data
+  // FIXED: Fetch package data with proper category handling
   useEffect(() => {
     const fetchPackage = async () => {
       try {
@@ -121,17 +121,27 @@ const EditPackage = () => {
         if (response.ok) {
           const packageData = await response.json();
           
-          // FIXED: Debug logging for image paths
+          // ENHANCED: Debug logging for category and all fields
           console.log('=== EDIT PACKAGE DEBUG ===');
           console.log('Package data received:', packageData);
+          console.log('Category from DB:', packageData.category);
+          console.log('Title field:', packageData.title);
           console.log('cardImage field:', packageData.cardImage);
           console.log('SERVER_BASE:', SERVER_BASE);
           console.log('Constructed image URL:', getImageUrl(packageData.cardImage));
           console.log('=== END DEBUG ===');
           
-          setFormData({
+          // FIXED: Ensure category is properly set with proper validation
+          let categoryValue = packageData.category;
+          if (!categoryValue || !['Domestic', 'International', 'Pilgrimage', 'Group'].includes(categoryValue)) {
+            categoryValue = 'Domestic'; // Fallback to default
+            console.warn('Invalid or missing category, defaulting to Domestic');
+          }
+          
+          // FIXED: Set form data with explicit category value
+          const newFormData = {
             name: packageData.title || '',
-            category: packageData.category || 'Domestic',
+            category: categoryValue, // Explicitly set the category
             duration: packageData.duration || '',
             pricePerPerson: packageData.pricePerPerson || '',
             currency: packageData.currency || 'INR',
@@ -141,14 +151,19 @@ const EditPackage = () => {
             state: packageData.state || '',
             continent: packageData.continent || '',
             groupType: packageData.groupType || ''
-          });
+          };
+
+          console.log('Setting form data:', newFormData);
+          console.log('Category being set:', newFormData.category);
+          
+          setFormData(newFormData);
 
           setPricingMode(packageData.pricingMode || 'Structured');
           setItinerary(packageData.itinerary?.length ? packageData.itinerary : [{ day: 1, title: '', activities: [''] }]);
           setInclusions(packageData.inclusions?.length ? packageData.inclusions : ['']);
           setExclusions(packageData.exclusions?.length ? packageData.exclusions : ['']);
           
-          // NEW: Load existing departure dates
+          // Load existing departure dates
           setDepartureDates(packageData.departureDates?.length ? packageData.departureDates : ['']);
           
           setExistingImage(packageData.cardImage || '');
@@ -170,8 +185,18 @@ const EditPackage = () => {
     }
   }, [id, navigate]);
 
+  // ADDED: Debug form data changes
+  useEffect(() => {
+    console.log('=== FORM DATA UPDATE ===');
+    console.log('Current formData:', formData);
+    console.log('Current category:', formData.category);
+    console.log('=== END FORM DATA DEBUG ===');
+  }, [formData]);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    console.log(`Changing ${name} to:`, value); // Debug log
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
@@ -181,6 +206,7 @@ const EditPackage = () => {
     if (name === 'category') {
       setFormData(prev => ({
         ...prev,
+        [name]: value, // Set the new category
         state: '',
         continent: '',
         groupType: ''
@@ -247,7 +273,7 @@ const EditPackage = () => {
     }
   };
 
-  // NEW: Handle departure dates
+  // Handle departure dates
   const handleDepartureDateChange = (index, value) => {
     const newDates = [...departureDates];
     newDates[index] = value;
@@ -354,7 +380,7 @@ const EditPackage = () => {
       itinerary: itinerary.filter(day => day.title && day.activities.some(act => act)),
       inclusions: inclusions.filter(inc => inc.trim()),
       exclusions: exclusions.filter(exc => exc.trim()),
-      departureDates: departureDates.filter(date => date.trim()) // Include departure dates
+      departureDates: departureDates.filter(date => date.trim())
     };
 
     await updatePackage(packageData, cardImage);
@@ -393,18 +419,27 @@ const EditPackage = () => {
               />
             </div>
             
+            {/* FIXED: Category dropdown with proper value binding */}
             <div className="form-group">
               <label>Category</label>
               <select
                 name="category"
-                value={formData.category}
+                value={formData.category} // This should now work correctly
                 onChange={handleInputChange}
+                style={{
+                  backgroundColor: formData.category !== 'Domestic' ? '#e8f5e8' : 'white',
+                  borderColor: formData.category !== 'Domestic' ? '#28a745' : '#e1e5e9'
+                }}
               >
                 <option value="Domestic">Domestic</option>
                 <option value="International">International</option>
                 <option value="Pilgrimage">Pilgrimage</option>
                 <option value="Group">Group</option>
               </select>
+              {/* DEBUG: Show current category value */}
+              <small style={{ color: '#666', fontSize: '0.8rem', marginTop: '4px', display: 'block' }}>
+                Current: {formData.category}
+              </small>
             </div>
           </div>
 
@@ -476,8 +511,6 @@ const EditPackage = () => {
               </div>
             )}
 
-            {/* UPDATED: Pilgrimage - NO location selection required */}
-
             <div className="form-group">
               <label>Duration</label>
               <input
@@ -505,7 +538,6 @@ const EditPackage = () => {
             </div>
           )}
 
-          {/* UPDATED: Simple Pilgrimage info (no location requirements) */}
           {formData.category === 'Pilgrimage' && (
             <div className="location-info">
               <span className="info-icon">🕌</span>
@@ -521,7 +553,7 @@ const EditPackage = () => {
           )}
         </div>
 
-        {/* NEW: Departure Dates Section */}
+        {/* Departure Dates Section */}
         <div className="form-section">
           <h2>Departure Dates <span style={{color: '#666', fontSize: '0.9rem', fontWeight: 'normal'}}>(Optional)</span></h2>
           <p style={{color: '#666', fontSize: '0.9rem', margin: '0 0 20px 0'}}>
@@ -655,7 +687,7 @@ const EditPackage = () => {
           )}
         </div>
 
-        {/* FIXED: Images Section with Proper Image Display */}
+        {/* Images Section with Proper Image Display */}
         <div className="form-section">
           <h2>Images</h2>
           
@@ -752,7 +784,7 @@ const EditPackage = () => {
           </div>
         </div>
 
-        {/* Day-wise Itinerary Section with Activities Remove Buttons */}
+        {/* Day-wise Itinerary Section */}
         <div className="form-section">
           <h2>Day-wise Itinerary</h2>
           
@@ -843,7 +875,7 @@ const EditPackage = () => {
           </button>
         </div>
 
-        {/* Inclusions Section with Remove Buttons */}
+        {/* Inclusions Section */}
         <div className="form-section">
           <h2>Inclusions</h2>
           
@@ -888,7 +920,7 @@ const EditPackage = () => {
           </button>
         </div>
 
-        {/* Exclusions Section with Remove Buttons */}
+        {/* Exclusions Section */}
         <div className="form-section">
           <h2>Exclusions</h2>
           
@@ -964,7 +996,7 @@ const EditPackage = () => {
         </div>
       </form>
 
-      {/* Beautiful Snackbar for Success/Error Messages */}
+      {/* Snackbar for Success/Error Messages */}
       <Snackbar 
         open={snackbar.open} 
         autoHideDuration={4000} 
