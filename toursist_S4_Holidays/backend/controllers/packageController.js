@@ -1,4 +1,6 @@
 const Package = require('../models/Package');
+const fs = require('fs');
+const path = require('path');
 
 // Safely parse JSON from multipart FormData
 function parseMaybeJSON(value, fallback) {
@@ -180,12 +182,70 @@ exports.getPackage = async (req, res) => {
   }
 };
 
-// Delete
+// UPDATED: Delete with File Cleanup
 exports.deletePackage = async (req, res) => {
   try {
-    const deletedPackage = await Package.findByIdAndDelete(req.params.id);
-    console.log('Package deleted:', req.params.id);
+    const { id } = req.params;
+    
+    // First, find the package to get image paths before deletion
+    const packageToDelete = await Package.findById(id);
+    
+    if (!packageToDelete) {
+      return res.status(404).json({ message: 'Package not found' });
+    }
+    
+    // Collect all image file paths from the package
+    const imagePaths = [];
+    
+    // Add cardImage (main package image)
+    if (packageToDelete.cardImage) {
+      imagePaths.push(packageToDelete.cardImage);
+    }
+    
+    // Add images array (gallery images)
+    if (packageToDelete.images && Array.isArray(packageToDelete.images)) {
+      imagePaths.push(...packageToDelete.images);
+    }
+    
+    // Add itinerary images if they exist
+    if (packageToDelete.itinerary && Array.isArray(packageToDelete.itinerary)) {
+      packageToDelete.itinerary.forEach(day => {
+        if (day.image) {
+          imagePaths.push(day.image);
+        }
+      });
+    }
+    
+    // Delete package from database first
+    const deletedPackage = await Package.findByIdAndDelete(id);
+    
+    // Now delete the associated image files
+    let deletedFilesCount = 0;
+    
+    for (const imagePath of imagePaths) {
+      if (!imagePath) continue;
+      
+      try {
+        // Your multer saves files as 'uploads/filename.jpg'
+        // Remove any duplicate 'uploads/' prefix and create full path
+        const cleanPath = imagePath.replace(/^uploads[\/\\]/, '');
+        const fullPath = path.join(__dirname, '../uploads', cleanPath);
+        
+        // Check if file exists and delete it
+        if (fs.existsSync(fullPath)) {
+          fs.unlinkSync(fullPath);
+          deletedFilesCount++;
+          console.log(`File deleted: ${fullPath}`);
+        }
+        
+      } catch (fileError) {
+        console.error(`Error deleting file ${imagePath}:`, fileError.message);
+      }
+    }
+    
+    console.log('Package deleted:', id, `(${deletedFilesCount} files cleaned up)`);
     return res.json({ message: 'Package deleted' });
+    
   } catch (err) {
     console.error('DELETE_ERR:', err);
     return res.status(500).json({ message: err.message });

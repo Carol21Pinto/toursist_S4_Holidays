@@ -24,15 +24,13 @@ export default function Navbar() {
       }}
     >
       <div className="navbar-container">
-      <Link to="/" className="logo" aria-label="S4 Holidays Home">
-        <img
-        src={logo}            // use the imported asset
-        alt="S4 Holidays"
-        className="logo-img"
-        />
-
-      </Link>
-
+        <Link to="/" className="logo" aria-label="S4 Holidays Home">
+          <img
+            src={logo}
+            alt="S4 Holidays"
+            className="logo-img"
+          />
+        </Link>
 
         {/* Hamburger menu icon */}
         <div
