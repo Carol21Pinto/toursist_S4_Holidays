@@ -256,9 +256,9 @@ const PackageDetail = () => {
       <ContactIcons />
       
       {/* Footer */}
-      <footer className="footer">
+      {/* <footer className="footer">
         <p>&copy; 2025 Kerala Tours. All Rights Reserved.</p>
-      </footer>
+      </footer> */}
 
     </div>
   );

@@ -2,8 +2,8 @@ import React, { useEffect } from "react";
 import Hero from "../components/Hero.jsx";
 import Description from "../components/Description.jsx";
 import TripCategories from "../components/TripCategories.jsx";
-import AboutSection from "../components/AboutSection.jsx";
 import ContactIcons from "../components/ContactIcons.jsx";
+import Footer from "../components/Footer.jsx";
 
 export default function Home() {
   useEffect(() => {
@@ -15,7 +15,7 @@ export default function Home() {
       <Hero />
       <Description />
       <TripCategories />
-      <AboutSection />
+      <Footer />
       <ContactIcons />
     </>
   );
