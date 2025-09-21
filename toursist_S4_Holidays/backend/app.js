@@ -24,4 +24,8 @@ const packageRoutes = require('./routes/packageRoutes');
 app.use('/api/packages', packageRoutes);
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log('🔐 Secure OTP system initialized');
+  console.log('📧 Email service configured for fernandesashith24@gmail.com');
+});
