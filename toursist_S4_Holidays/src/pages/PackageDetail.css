@@ -13,7 +13,7 @@
   min-height: 100vh;
 }
 
-/* FIXED: Back Button Styling - Left Corner Position */
+/* FIXED: Back Button - Only fixed on desktop, relative on mobile */
 .package-detail-container .back-button-container {
   position: fixed;
   top: 20px;
@@ -240,25 +240,36 @@
   margin-bottom: 10px; 
 }
 
-/* Custom bullet points */
+/* FIXED: Custom bullet points with better spacing and visibility */
 .package-detail-container .point {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 8px;
+  padding-right: 15px; /* Added padding to prevent cutoff */
+  min-height: 25px; /* Ensure minimum height */
 }
 
 .package-detail-container .point span {
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   width: 22px;
   height: 22px;
-  margin-right: 10px;
+  min-width: 22px; /* Prevent shrinking */
+  margin-right: 12px;
+  margin-top: 2px; /* Align with text */
   border-radius: 50%;
   background: #ff9800;
   color: white;
-  text-align: center;
-  line-height: 22px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: bold;
+  flex-shrink: 0; /* Prevent shrinking */
+}
+
+/* Ensure text doesn't overlap with bullet */
+.package-detail-container .point span + * {
+  flex: 1;
+  word-wrap: break-word;
 }
 
 /* Inclusions & Exclusions */
@@ -303,11 +314,15 @@
   border-radius: 0;
 }
 
-/* Responsive Back Button */
+/* FIXED: Responsive Design - Back Button behavior */
 @media (max-width: 768px) {
+  /* Make back button relative on mobile to prevent scroll issues */
   .package-detail-container .back-button-container {
-    top: 15px;
-    left: 15px;
+    position: relative;
+    top: auto;
+    left: auto;
+    margin: 15px;
+    z-index: auto;
   }
   
   .package-detail-container .back-button {
@@ -318,6 +333,7 @@
   .package-detail-container header {
     width: 95%;
     height: 35vh;
+    margin: 10px auto 20px auto;
   }
   
   .package-detail-container header h1 {
@@ -347,12 +363,17 @@
   .package-detail-container .departure-dates {
     grid-template-columns: 1fr;
   }
+
+  /* FIXED: Better mobile spacing for points */
+  .package-detail-container .point {
+    padding-right: 10px;
+    margin-bottom: 10px;
+  }
 }
 
 @media (max-width: 480px) {
   .package-detail-container .back-button-container {
-    top: 10px;
-    left: 10px;
+    margin: 10px;
   }
   
   .package-detail-container .back-button {
@@ -366,7 +387,7 @@
   
   .package-detail-container header {
     width: 100%;
-    margin: 10px auto;
+    margin: 5px auto 15px auto;
     border-radius: 10px;
     height: 30vh;
   }
@@ -381,22 +402,25 @@
   
   .package-detail-container .section {
     margin: 10px;
-    padding: 10px;
+    padding: 12px;
   }
   
   .package-detail-container .day-card {
-    padding: 10px;
+    padding: 12px;
   }
   
   .package-detail-container .point {
     font-size: 0.9rem;
+    padding-right: 8px;
+    margin-bottom: 12px;
   }
   
   .package-detail-container .point span {
-    width: 18px;
-    height: 18px;
-    line-height: 18px;
-    font-size: 12px;
+    width: 20px;
+    height: 20px;
+    min-width: 20px;
+    font-size: 11px;
+    margin-right: 10px;
   }
   
   .package-detail-container .departure-date {

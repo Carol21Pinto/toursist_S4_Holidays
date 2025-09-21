@@ -148,10 +148,10 @@ export default function Pilgrimage() {
 
                     <div className="card-details">
                       <div className="price">
-                        <span className="from">From</span>
-                        <span className="amount">
+                        {/* <span className="from">From</span> */}
+                        {/* <span className="amount">
                           {pkg.currency}{pkg.pricePerPerson.toLocaleString()}
-                        </span>
+                        </span> */}
                       </div>
                       <div className="duration">{formatDuration(pkg)}</div>
                     </div>
