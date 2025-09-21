@@ -21,27 +21,33 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianG
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-// Modern Stat Card Component
-function ModernStatCard({ icon: Icon, label, value, color, trend }) {
+// Clean Static Stat Card Component
+function CleanStatCard({ icon: Icon, label, value, color }) {
   return (
-    <Card sx={{
+    <Card className="static-hover" sx={{
       background: 'rgba(255, 255, 255, 0.95)',
       backdropFilter: 'blur(10px)',
-      borderRadius: '20px',
+      borderRadius: '16px',
       border: '1px solid rgba(255, 255, 255, 0.2)',
-      boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)',
-      transition: 'all 0.3s ease',
+      boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
       height: '100%',
-      '&:hover': {
-        transform: 'translateY(-8px)',
-        boxShadow: '0 20px 40px rgba(31, 38, 135, 0.2)',
+      position: 'relative',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '4px',
+        background: 'linear-gradient(90deg, #0ea5e9, #06b6d4, #10b981)',
+        borderRadius: '16px 16px 0 0',
       }
     }}>
       <CardContent sx={{ padding: '24px !important' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <Box sx={{
-            background: `linear-gradient(45deg, ${color}, ${color}90)`,
-            borderRadius: '16px',
+            background: color,
+            borderRadius: '12px',
             padding: '12px',
             display: 'flex',
             alignItems: 'center',
@@ -55,36 +61,25 @@ function ModernStatCard({ icon: Icon, label, value, color, trend }) {
               variant="h3" 
               sx={{ 
                 fontWeight: 800, 
-                color: '#1f2937',
-                marginBottom: '4px',
-                fontSize: '2.5rem'
+                color: '#0f172a',
+                marginBottom: '8px',
+                fontSize: '3rem',
+                lineHeight: 1
               }}
             >
               {value}
             </Typography>
             <Typography 
               sx={{ 
-                color: '#6b7280', 
+                color: '#64748b', 
                 fontSize: '1rem',
-                fontWeight: 500 
+                fontWeight: 500,
+                textTransform: 'uppercase',
+                letterSpacing: '0.5px'
               }}
             >
               {label}
             </Typography>
-            {trend && (
-              <Chip 
-                icon={<TrendingUp sx={{ fontSize: '14px !important' }} />}
-                label={trend}
-                size="small"
-                sx={{
-                  marginTop: '8px',
-                  background: 'rgba(16, 185, 129, 0.1)',
-                  color: '#10b981',
-                  fontWeight: 600,
-                  fontSize: '0.75rem'
-                }}
-              />
-            )}
           </Box>
         </Box>
       </CardContent>
@@ -92,32 +87,33 @@ function ModernStatCard({ icon: Icon, label, value, color, trend }) {
   );
 }
 
-// Category Card Component
-function CategoryCard({ icon: Icon, title, count, color }) {
+// Clean Category Card Component
+function CleanCategoryCard({ icon: Icon, title, count, theme }) {
   return (
-    <Card sx={{
-      background: 'rgba(255, 255, 255, 0.95)',
-      backdropFilter: 'blur(10px)',
-      borderRadius: '16px',
-      border: '1px solid rgba(255, 255, 255, 0.2)',
-      boxShadow: '0 4px 20px rgba(31, 38, 135, 0.1)',
-      transition: 'all 0.3s ease',
+    <Card className="static-hover" sx={{
+      background: 'rgba(255, 255, 255, 0.92)',
+      backdropFilter: 'blur(8px)',
+      borderRadius: '12px',
+      border: '1px solid rgba(255, 255, 255, 0.15)',
+      boxShadow: '0 2px 12px rgba(0, 0, 0, 0.05)',
       cursor: 'pointer',
+      textAlign: 'center',
       '&:hover': {
-        transform: 'translateY(-4px)',
-        boxShadow: '0 8px 30px rgba(31, 38, 135, 0.2)',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+        background: 'rgba(255, 255, 255, 0.98)',
       }
     }}>
-      <CardContent sx={{ padding: '20px !important', textAlign: 'center' }}>
+      <CardContent sx={{ padding: '20px !important' }}>
         <Box sx={{
-          background: `linear-gradient(45deg, ${color}, ${color}90)`,
+          width: '48px',
+          height: '48px',
           borderRadius: '12px',
-          padding: '12px',
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          color: 'white',
-          marginBottom: '12px'
+          marginBottom: '12px',
+          background: theme,
+          color: 'white'
         }}>
           <Icon sx={{ fontSize: '24px' }} />
         </Box>
@@ -125,7 +121,7 @@ function CategoryCard({ icon: Icon, title, count, color }) {
           variant="h6" 
           sx={{ 
             fontWeight: 600, 
-            color: '#1f2937',
+            color: '#0f172a',
             marginBottom: '4px'
           }}
         >
@@ -133,7 +129,7 @@ function CategoryCard({ icon: Icon, title, count, color }) {
         </Typography>
         <Typography 
           sx={{ 
-            color: '#6b7280', 
+            color: '#64748b', 
             fontSize: '0.9rem' 
           }}
         >
@@ -225,170 +221,173 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  // UPDATED: Added Pilgrimage back to categories
+  // Travel categories with themes
   const categories = [
     { 
       icon: Home, 
       title: 'Domestic', 
       count: stats.domestic || 0, 
-      color: '#10b981' 
+      theme: 'linear-gradient(45deg, #10b981, #059669)' 
     },
     { 
       icon: Flight, 
       title: 'International', 
       count: stats.international || 0, 
-      color: '#3b82f6' 
+      theme: 'linear-gradient(45deg, #3b82f6, #2563eb)' 
     },
     { 
       icon: Church, 
       title: 'Pilgrimage', 
       count: stats.pilgrimage || 0, 
-      color: '#f59e0b' 
+      theme: 'linear-gradient(45deg, #f59e0b, #d97706)' 
     },
     { 
       icon: Group, 
       title: 'Group Trip', 
       count: stats.group || 0, 
-      color: '#8b5cf6' 
+      theme: 'linear-gradient(45deg, #8b5cf6, #7c3aed)' 
     }
   ];
 
   return (
-    <Box sx={{ padding: '0' }}>
+    <Box sx={{ padding: '0', minHeight: '100vh' }}>
       {/* Welcome Header */}
-      <Box sx={{ marginBottom: '32px' }}>
-        <Typography 
-          variant="h4" 
-          sx={{ 
-            fontWeight: 800,
-            color: '#1f2937',
-            marginBottom: '8px'
-          }}
-        >
-          Dashboard
-        </Typography>
-        <Typography 
-          sx={{ 
-            color: '#6b7280',
-            fontSize: '1.1rem'
-          }}
-        >
-          Welcome! Quick overview of all packages.
-        </Typography>
-      </Box>
+      <Card sx={{
+        background: 'rgba(255, 255, 255, 0.9)',
+        backdropFilter: 'blur(10px)',
+        borderRadius: '16px',
+        border: '1px solid rgba(255, 255, 255, 0.2)',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.06)',
+        marginBottom: '28px'
+      }}>
+        <CardContent sx={{ padding: '24px !important' }}>
+          <Typography 
+            variant="h4" 
+            sx={{ 
+              fontWeight: 700,
+              color: '#0f172a',
+              marginBottom: '8px',
+              fontSize: '2rem'
+            }}
+          >
+            🏖️ Travel Dashboard
+          </Typography>
+          <Typography 
+            sx={{ 
+              color: '#64748b',
+              fontSize: '1.1rem',
+              fontWeight: 400
+            }}
+          >
+            Welcome to S4 Holidays Admin! Quick overview of all travel packages.
+          </Typography>
+        </CardContent>
+      </Card>
 
       {/* Main Stats */}
       <Box sx={{ marginBottom: '32px' }}>
-        <ModernStatCard 
+        <CleanStatCard 
           icon={TrendingUp}
-          label="Total Packages"
+          label="Total Travel Packages"
           value={stats.total || 0}
-          color="#667eea"
-          trend="+12%"
+          color="linear-gradient(45deg, #0ea5e9, #06b6d4)"
         />
       </Box>
 
-      {/* Package Categories - UPDATED: With Pilgrimage (4 cards) */}
+      {/* Package Categories */}
       <Box sx={{ marginBottom: '32px' }}>
         <Typography 
           variant="h5" 
           sx={{ 
             fontWeight: 700,
-            color: '#1f2937',
+            color: '#0f172a',
             marginBottom: '20px'
           }}
         >
-          Package Categories
+          📦 Package Categories
         </Typography>
         <Grid container spacing={3}>
           {categories.map((category, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
-              <CategoryCard {...category} />
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <CleanCategoryCard {...category} />
             </Grid>
           ))}
         </Grid>
       </Box>
 
-      {/* Beautiful Chart Section - YOUR GRAPH IS HERE! */}
+      {/* Clean Chart Section */}
       <Card sx={{
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
-        borderRadius: '25px',
+        borderRadius: '20px',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
         marginBottom: '32px',
         position: 'relative',
-        overflow: 'hidden',
         '&::before': {
           content: '""',
           position: 'absolute',
           top: 0,
           left: 0,
           right: 0,
-          height: '6px',
-          background: 'linear-gradient(90deg, #667eea, #764ba2, #f093fb, #f5576c)',
+          height: '5px',
+          background: 'linear-gradient(90deg, #f59e0b, #ef4444, #8b5cf6, #06b6d4)',
+          borderRadius: '20px 20px 0 0',
         }
       }}>
-        <CardContent sx={{ padding: '35px !important' }}>
+        <CardContent sx={{ padding: '32px !important' }}>
           <Typography 
             variant="h5" 
             sx={{ 
-              fontSize: '1.6rem !important',
-              fontWeight: '700 !important',
-              color: '#1f2937 !important',
-              marginBottom: '5px !important',
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              color: '#0f172a',
+              marginBottom: '8px',
             }}
           >
-            Package Growth Timeline ({chartData.length} data points)
+            📈 Package Growth Timeline ({chartData.length} data points)
           </Typography>
           <Typography 
             variant="body2" 
             sx={{ 
-              color: '#6b7280 !important',
-              fontSize: '1rem !important',
-              marginBottom: '25px !important',
+              color: '#64748b',
+              fontSize: '0.95rem',
+              marginBottom: '24px',
               lineHeight: 1.5,
             }}
           >
-            Shows your total package count over time - updates immediately when you add packages!
+            Track your travel package growth over time - updates when you add new packages!
           </Typography>
           
           <Box 
             sx={{ 
               height: 300,
-              borderRadius: '15px',
-              background: 'rgba(102, 126, 234, 0.02)',
-              padding: '15px',
+              borderRadius: '12px',
+              background: 'rgba(59, 130, 246, 0.02)',
+              padding: '12px',
             }}
           >
             {chartData.length > 0 ? (
-              <ResponsiveContainer 
-                width="100%" 
-                height="100%"
-                key={`chart_${refreshTrigger}_${chartData.length}`}
-              >
-                <AreaChart 
-                  data={chartData} 
-                  margin={{ top: 10, right: 20, left: 0, bottom: 0 }}
-                >
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
                   <defs>
-                    <linearGradient id="modernGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#667eea" stopOpacity={0.8}/>
-                      <stop offset="50%" stopColor="#764ba2" stopOpacity={0.4}/>
-                      <stop offset="95%" stopColor="#f093fb" stopOpacity={0.1}/>
+                    <linearGradient id="travelGradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.8}/>
+                      <stop offset="50%" stopColor="#06b6d4" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.1}/>
                     </linearGradient>
                   </defs>
                   <XAxis 
                     dataKey="name"
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tick={{ fontSize: 12, fill: '#64748b' }}
                   />
                   <YAxis 
                     allowDecimals={false}
                     axisLine={false}
                     tickLine={false}
-                    tick={{ fontSize: 12, fill: '#6b7280' }}
+                    tick={{ fontSize: 12, fill: '#64748b' }}
                   />
                   <Tooltip 
                     formatter={(value, name) => [value, 'Total Packages']}
@@ -398,18 +397,16 @@ export default function AdminDashboard() {
                       backdropFilter: 'blur(10px)',
                       border: 'none',
                       borderRadius: '10px',
-                      boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)',
                     }}
                   />
                   <CartesianGrid strokeDasharray="3 3" opacity={0.3} />
                   <Area 
                     type="monotone" 
                     dataKey="packages" 
-                    stroke="#667eea"
+                    stroke="#0ea5e9"
                     strokeWidth={3}
-                    fill="url(#modernGradient)"
-                    animationDuration={1000}
-                    key={`line_${refreshTrigger}`}
+                    fill="url(#travelGradient)"
                   />
                 </AreaChart>
               </ResponsiveContainer>
@@ -421,16 +418,16 @@ export default function AdminDashboard() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   justifyContent: 'center',
-                  color: '#9ca3af',
-                  fontSize: '1.1rem',
+                  color: '#94a3b8',
+                  fontSize: '1rem',
                   fontWeight: '500',
                 }}
               >
-                <Typography sx={{ fontSize: '4rem', marginBottom: '15px', opacity: 0.5 }}>
-                  📊
+                <Typography sx={{ fontSize: '3.5rem', marginBottom: '12px', opacity: 0.6 }}>
+                  ✈️
                 </Typography>
                 <Typography>
-                  {loading ? 'Loading timeline data...' : 'No packages found - add your first package to see the chart!'}
+                  {loading ? 'Loading travel data...' : 'No packages yet - add your first travel package!'}
                 </Typography>
               </Box>
             )}
@@ -444,7 +441,7 @@ export default function AdminDashboard() {
         backdropFilter: 'blur(10px)',
         borderRadius: '20px',
         border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)',
+        boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
       }}>
         <CardContent sx={{ padding: '32px !important' }}>
           <Box sx={{ 
@@ -457,19 +454,19 @@ export default function AdminDashboard() {
               variant="h5" 
               sx={{ 
                 fontWeight: 700,
-                color: '#1f2937'
+                color: '#0f172a'
               }}
             >
-              Recent Packages
+              🎒 Recent Packages
             </Typography>
             <Button
               endIcon={<ArrowForward />}
               sx={{
-                color: '#667eea',
+                color: '#3b82f6',
                 fontWeight: 600,
                 textTransform: 'none',
                 '&:hover': {
-                  background: 'rgba(102, 126, 234, 0.1)',
+                  background: 'rgba(59, 130, 246, 0.1)',
                 }
               }}
               onClick={() => navigate('/admin/packages')}
@@ -483,24 +480,27 @@ export default function AdminDashboard() {
             <Box sx={{ 
               textAlign: 'center', 
               padding: '40px',
-              color: '#6b7280'
+              color: '#64748b'
             }}>
               <Typography variant="h6" sx={{ marginBottom: '8px' }}>
-                No packages yet
+                🌍 No travel packages yet
               </Typography>
               <Typography sx={{ marginBottom: '20px' }}>
-                Create your first package to get started
+                Create your first amazing travel package to get started
               </Typography>
               <Button
                 variant="contained"
                 startIcon={<ArrowForward />}
                 onClick={() => navigate('/admin/add')}
                 sx={{
-                  background: 'linear-gradient(45deg, #667eea, #764ba2)',
-                  borderRadius: '25px',
+                  background: 'linear-gradient(45deg, #0ea5e9, #06b6d4)',
+                  borderRadius: '12px',
                   textTransform: 'none',
                   fontWeight: 600,
                   padding: '12px 24px',
+                  '&:hover': {
+                    background: 'linear-gradient(45deg, #0284c7, #0891b2)',
+                  }
                 }}
               >
                 Add First Package
