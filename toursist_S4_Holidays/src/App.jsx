@@ -19,8 +19,9 @@ import PackagesList from "./pages/admin/PackagesList";
 import PackageDetail from './pages/PackageDetail';
 import EditPackage from './pages/admin/EditPackage';
 import ForgotPassword from "./pages/admin/ForgotPassword.jsx";
+import About from "./pages/About.jsx";
 
-const About = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>About Page - Coming Soon</h1></div>;
+// const About = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>About Page - Coming Soon</h1></div>;
 const Destination = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Destination Page - Coming Soon</h1></div>;
 const Hotel = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Hotel Page - Coming Soon</h1></div>;
 const Blog = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Blog Page - Coming Soon</h1></div>;

@@ -12,10 +12,19 @@ export default function Domestic() {
   const [showAllStates, setShowAllStates] = useState(false);
   const navigate = useNavigate();
 
-  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocalhost 
+  ? "http://localhost:5000/api"
+  : "http://192.168.1.5:5000/api";  // Changed to .5
 
-  // Constants
-  const SERVER_BASE = 'http://localhost:5000';
+const SERVER_BASE = isLocalhost
+  ? 'http://localhost:5000'
+  : 'http://192.168.1.5:5000';      // Changed to .5
+
+
+
+
+
   const FALLBACK = '/images/placeholder-card.jpg';
 
   // All 28 Indian States with their major cities/destinations (for fallback text search)

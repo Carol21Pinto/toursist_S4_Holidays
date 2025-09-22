@@ -3,7 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './PackageDetail.css';
 import ContactIcons from '../components/ContactIcons'; // adjust path if needed
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+// FIXED: Smart API URL detection for mobile compatibility
+const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+const API_URL = isLocalhost 
+  ? (import.meta.env.VITE_API_URL || "http://localhost:5000/api")
+  : "http://192.168.1.5:5000/api";
 
 const PackageDetail = () => {
   const { id } = useParams();
@@ -12,11 +16,15 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // FIXED: Smart image URL generation for mobile compatibility
   const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg';
     const fixedPath = imagePath.replace(/\\/g, '/');
     if (fixedPath.startsWith('http')) return fixedPath;
-    return `http://localhost:5000/${fixedPath}`;
+    
+    // Smart server base URL
+    const serverBase = isLocalhost ? 'http://localhost:5000' : 'http://192.168.1.5:5000';
+    return `${serverBase}/${fixedPath}`;
   };
 
   // Handle back navigation

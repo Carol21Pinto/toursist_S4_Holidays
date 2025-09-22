@@ -14,7 +14,8 @@
   display: block;
   border-radius: 100%;
   background: transparent;
-  opacity: 0.3;
+  opacity: 0.9; /* Enhanced visibility */
+  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.8)); /* Better contrast */
 }
 
 /* Optional: scale with viewport but cap the extremes */
@@ -38,7 +39,7 @@
 
 .logo:hover .logo-img,
 .logo:hover .logo-svg {
-  opacity: 0.9;
+  opacity: 1;
 }
 
 .navbar {
@@ -98,11 +99,14 @@
   text-decoration: none;
   font-size: 22px;
   transition: color 0.3s, transform 0.3s;
+  /* Enhanced text shadow for better visibility */
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 .nav-links a:hover {
   color: #ff9800;
   transform: scale(1.05);
+  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9);
 }
 
 /* Hamburger Icon (hidden on desktop) */
@@ -125,6 +129,8 @@
   background: white;
   border-radius: 2px;
   transition: 0.3s ease;
+  /* Enhanced visibility with shadow */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
 }
 
 /* Transform into X when open */
