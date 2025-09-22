@@ -9,25 +9,25 @@ function TripCategories() {
     {
       title: "Domestic",
       description: "Explore beautiful destinations within the country.",
-      image: "/images/domestic.jpg",
+      image: "/images/tajmahal.jpg",
       path: "/domestic",
     },
     {
       title: "International",
       description: "Travel across the globe with our curated packages.",
-      image: "/images/international.jpg",
+      image: "/images/Rome.jpg",
       path: "/international",
     },
     {
       title: "Pilgrimage",
       description: "Spiritual journeys to sacred places and holy destinations.",
-      image: "/images/pilgrimage.jpg",
+      image: "/images/temple.jpg",
       path: "/pilgrimage",
     },
     {
       title: "Group Trip",
       description: "Enjoy travel with friends, family, or like-minded explorers.",
-      image: "/images/group-trip.jpg",
+      image: "/images/group1.jpg",
       path: "/group-trip",
     },
   ];
