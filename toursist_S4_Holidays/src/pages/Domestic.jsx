@@ -21,8 +21,9 @@ export default function Domestic() {
 
   const FALLBACK = '/images/placeholder-card.jpg';
 
-  // All 28 Indian States with their major cities/destinations (for fallback text search)
+  // ✅ COMPLETE: All 28 States + 8 Union Territories with their major cities/destinations
   const stateWithCities = {
+    // 28 STATES
     'Andhra Pradesh': ['Hyderabad', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati', 'Amaravati'],
     'Arunachal Pradesh': ['Itanagar', 'Naharlagun', 'Pasighat', 'Tawang', 'Ziro', 'Bomdila', 'Tezu', 'Seppa'],
     'Assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur', 'Barpeta', 'Kaziranga', 'Majuli'],
@@ -50,10 +51,20 @@ export default function Domestic() {
     'Tripura': ['Agartala', 'Dharmanagar', 'Udaipur', 'Kailashahar', 'Belonia', 'Khowai', 'Pratapgarh', 'Ranir Bazar'],
     'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Allahabad', 'Bareilly', 'Aligarh', 'Moradabad', 'Mathura', 'Ayodhya'],
     'Uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rudrapur', 'Kashipur', 'Rishikesh', 'Nainital', 'Mussoorie', 'Jim Corbett'],
-    'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Malda', 'Bardhaman', 'Barasat', 'Raiganj', 'Kharagpur', 'Darjeeling']
+    'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Malda', 'Bardhaman', 'Barasat', 'Raiganj', 'Kharagpur', 'Darjeeling'],
+
+    // 8 UNION TERRITORIES
+    'Andaman and Nicobar Islands': ['Port Blair', 'Car Nicobar', 'Mayabunder', 'Rangat', 'Diglipur', 'Havelock Island', 'Neil Island'],
+    'Chandigarh': ['Chandigarh', 'Sector 17', 'Rock Garden', 'Sukhna Lake', 'Rose Garden'],
+    'Dadra and Nagar Haveli and Daman and Diu': ['Daman', 'Diu', 'Silvassa', 'Vapi', 'Dadra', 'Nagar Haveli'],
+    'Delhi': ['New Delhi', 'Old Delhi', 'Connaught Place', 'Karol Bagh', 'Lajpat Nagar', 'Dwarka', 'Rohini', 'India Gate', 'Red Fort', 'Qutub Minar'],
+    'Jammu and Kashmir': ['Jammu', 'Kashmir', 'Srinagar', 'Leh', 'Gulmarg', 'Pahalgam', 'Sonamarg', 'Amarnath', 'Vaishno Devi', 'Dal Lake'],
+    'Ladakh': ['Leh', 'Kargil', 'Nubra Valley', 'Pangong Lake', 'Tso Moriri', 'Hemis', 'Alchi', 'Lamayuru'],
+    'Lakshadweep': ['Kavaratti', 'Agatti', 'Minicoy', 'Bangaram', 'Kadmat', 'Kalpeni'],
+    'Puducherry': ['Puducherry', 'Karaikal', 'Mahe', 'Yanam', 'Pondicherry', 'Auroville']
   };
 
-  const indianStates = Object.keys(stateWithCities);
+  const allStatesAndUTs = Object.keys(stateWithCities);
 
   // Enhanced filter function that uses database-stored state field first, then fallback to text search
   const isPackageInState = (pkg, stateName) => {
@@ -88,15 +99,15 @@ export default function Domestic() {
     );
   };
 
-  // Calculate package count for each state
+  // Calculate package count for each state/UT
   const getPackageCountForState = (stateName) => {
     if (stateName === '') return packages.length;
     return packages.filter(pkg => isPackageInState(pkg, stateName)).length;
   };
 
-  // Get sorted states by package count (highest to lowest) - SHOW ALL STATES
+  // Get sorted states/UTs by package count (highest to lowest) - SHOW ALL STATES/UTs
   const getSortedStates = () => {
-    return indianStates
+    return allStatesAndUTs
       .map(state => ({
         name: state,
         count: getPackageCountForState(state)
@@ -167,7 +178,7 @@ export default function Domestic() {
   const applyFilters = () => {
     let filtered = [...packages];
 
-    // Filter by state using enhanced matching
+    // Filter by state/UT using enhanced matching
     if (selectedState) {
       filtered = filtered.filter(pkg => isPackageInState(pkg, selectedState));
     }
@@ -177,7 +188,7 @@ export default function Domestic() {
 
   const handleStateSelect = (state) => {
     setSelectedState(state);
-    console.log(`Selected state: ${state}, filtering packages...`);
+    console.log(`Selected state/UT: ${state}, filtering packages...`);
     
     // Close sidebar on mobile after selection
     if (window.innerWidth < 768) {
@@ -194,9 +205,9 @@ export default function Domestic() {
   const sortedStates = getSortedStates();
   const visibleStates = showAllStates ? sortedStates : sortedStates.slice(0, 5);
 
-  console.log('Total states:', sortedStates.length);
-  console.log('Visible states:', visibleStates.length);
-  console.log('Show all states:', showAllStates);
+  console.log('Total states/UTs:', sortedStates.length);
+  console.log('Visible states/UTs:', visibleStates.length);
+  console.log('Show all states/UTs:', showAllStates);
 
   return (
     <div className="domestic-tours">
@@ -249,21 +260,21 @@ export default function Domestic() {
           </div>
 
           <div className="sidebar-content">
-            {/* State Filter Section */}
+            {/* State/UT Filter Section */}
             <div className="filter-section">
-              <h4 className="filter-section-title">Select State</h4>
+              <h4 className="filter-section-title">Select State/UT</h4>
               
               <div className="states-list">
-                {/* All States Option */}
+                {/* All States/UTs Option */}
                 <button
                   className={`state-option ${selectedState === '' ? 'active' : ''}`}
                   onClick={() => handleStateSelect('')}
                 >
-                  <span className="state-name">All States</span>
+                  <span className="state-name">All States & UTs</span>
                   <span className="package-count">({packages.length})</span>
                 </button>
 
-                {/* Individual States (Sorted by Package Count) */}
+                {/* Individual States/UTs (Sorted by Package Count) */}
                 {visibleStates.map(state => (
                   <button
                     key={state.name}
@@ -319,7 +330,7 @@ export default function Domestic() {
                     <p>
                       No packages found for <strong>{selectedState}</strong>. 
                       <br />
-                      Try selecting a different state or view all packages!
+                      Try selecting a different state/UT or view all packages!
                     </p>
                     <button className="reset-btn" onClick={clearFilters}>
                       View All Packages
