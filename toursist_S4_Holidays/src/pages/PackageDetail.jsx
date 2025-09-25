@@ -3,12 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './PackageDetail.css';
 import ContactIcons from '../components/ContactIcons'; // adjust path if needed
 
-// FIXED: Smart API URL detection for mobile compatibility
-const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const API_URL = isLocalhost 
-  ? (import.meta.env.VITE_API_URL || "http://localhost:5000/api")
-  : "http://192.168.1.5:5000/api";
-
 const PackageDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate(); // Add navigate hook
@@ -16,14 +10,20 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // FIXED: Smart image URL generation for mobile compatibility
+  // ✅ SMART IP DETECTION - Works with ANY IP automatically!
+  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+  const currentIP = isLocalhost ? 'localhost' : window.location.hostname;
+
+  const API_URL = import.meta.env.VITE_API_URL || `http://${currentIP}:5000/api`;
+
+  // ✅ SMART image URL generation for mobile compatibility
   const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg';
     const fixedPath = imagePath.replace(/\\/g, '/');
     if (fixedPath.startsWith('http')) return fixedPath;
     
-    // Smart server base URL
-    const serverBase = isLocalhost ? 'http://localhost:5000' : 'http://192.168.1.5:5000';
+    // Smart server base URL - works with any IP!
+    const serverBase = `http://${currentIP}:5000`;
     return `${serverBase}/${fixedPath}`;
   };
 

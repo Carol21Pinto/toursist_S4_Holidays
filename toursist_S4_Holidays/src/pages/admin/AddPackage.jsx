@@ -33,14 +33,47 @@ const AddPackage = () => {
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Location data
+  // ✅ COMPLETE LIST: All 28 States + 8 Union Territories
   const indianStates = [
-    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
-    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
-    'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
-    'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
-    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
-    'Uttar Pradesh', 'Uttarakhand', 'West Bengal'
+    // 28 States (in alphabetical order)
+    'Andhra Pradesh',
+    'Arunachal Pradesh', 
+    'Assam',
+    'Bihar',
+    'Chhattisgarh',
+    'Goa',
+    'Gujarat',
+    'Haryana',
+    'Himachal Pradesh',
+    'Jharkhand',
+    'Karnataka',
+    'Kerala',
+    'Madhya Pradesh',
+    'Maharashtra',
+    'Manipur',
+    'Meghalaya',
+    'Mizoram',
+    'Nagaland',
+    'Odisha',
+    'Punjab',
+    'Rajasthan',
+    'Sikkim',
+    'Tamil Nadu',
+    'Telangana',
+    'Tripura',
+    'Uttar Pradesh',
+    'Uttarakhand',
+    'West Bengal',
+    
+    // 8 Union Territories (in alphabetical order)
+    'Andaman and Nicobar Islands',
+    'Chandigarh',
+    'Dadra and Nagar Haveli and Daman and Diu',
+    'Delhi',
+    'Jammu and Kashmir',
+    'Ladakh',
+    'Lakshadweep',
+    'Puducherry'
   ];
 
   const continents = [
@@ -388,7 +421,7 @@ const AddPackage = () => {
           <div className="form-row">
             {formData.category === 'Domestic' && (
               <div className="form-group">
-                <label>Select State <span style={{color: '#e74c3c'}}>*</span></label>
+                <label>Select State/UT <span style={{color: '#e74c3c'}}>*</span></label>
                 <select
                   name="state"
                   value={formData.state}
@@ -399,7 +432,7 @@ const AddPackage = () => {
                     borderColor: formData.state ? '#28a745' : '#e1e5e9'
                   }}
                 >
-                  <option value="">Choose State...</option>
+                  <option value="">Choose State/Union Territory...</option>
                   {indianStates.map(state => (
                     <option key={state} value={state}>{state}</option>
                   ))}
@@ -446,13 +479,13 @@ const AddPackage = () => {
           {formData.category === 'Domestic' && formData.state && (
             <div className="location-info">
               <span className="info-icon">ℹ️</span>
-              <span>Selected State: <strong>{formData.state}</strong> - This will help users find your package easily!</span>
+              <span>Selected {indianStates.includes(formData.state) && formData.state.includes('and') ? 'Union Territory' : 'State'}: <strong>{formData.state}</strong> - This will help users find your package easily!</span>
             </div>
           )}
 
           {formData.category === 'International' && formData.continent && (
             <div className="location-info">
-              <span className="info-icon">🌍</span>
+              <span className="info-icon">🌍</span>  
               <span>Selected Region: <strong>{formData.continent}</strong> - This will help users find your package easily!</span>
             </div>
           )}
