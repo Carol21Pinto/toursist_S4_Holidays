@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './PackageDetail.css';
-import ContactIcons from '../components/ContactIcons'; // adjust path if needed
+import ContactIcons from '../components/ContactIcons';
 
 const PackageDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // Add navigate hook
+  const navigate = useNavigate();
   const [packageData, setPackageData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,7 +29,29 @@ const PackageDetail = () => {
 
   // Handle back navigation
   const handleGoBack = () => {
-    navigate(-1); // Goes back to previous page in history
+    navigate(-1);
+  };
+
+  // NEW: Helper function to get pricing notes
+  const getPricingNotes = () => {
+    // First check for new array format
+    if (packageData.pricingNotes && Array.isArray(packageData.pricingNotes)) {
+      return packageData.pricingNotes.filter(note => note && note.trim());
+    }
+    
+    // Then check for legacy single note or pipe-separated format
+    if (packageData.priceNote && packageData.priceNote.trim()) {
+      // Split by pipe separator and filter empty notes
+      return packageData.priceNote.split(' | ').filter(note => note && note.trim());
+    }
+    
+    return [];
+  };
+
+  // NEW: Check if pricing notes should be displayed
+  const shouldShowPricingNotes = () => {
+    const notes = getPricingNotes();
+    return notes.length > 0;
   };
 
   useEffect(() => {
@@ -59,7 +81,6 @@ const PackageDetail = () => {
   if (loading) {
     return (
       <div className="package-detail-container">
-        {/* Back Button for Loading State */}
         <div className="back-button-container">
           <button className="back-button" onClick={handleGoBack}>
             <span className="back-arrow">←</span>
@@ -77,7 +98,6 @@ const PackageDetail = () => {
   if (error) {
     return (
       <div className="package-detail-container">
-        {/* Back Button for Error State */}
         <div className="back-button-container">
           <button className="back-button" onClick={handleGoBack}>
             <span className="back-arrow">←</span>
@@ -97,7 +117,6 @@ const PackageDetail = () => {
   if (!packageData) {
     return (
       <div className="package-detail-container">
-        {/* Back Button for No Data State */}
         <div className="back-button-container">
           <button className="back-button" onClick={handleGoBack}>
             <span className="back-arrow">←</span>
@@ -113,19 +132,16 @@ const PackageDetail = () => {
 
   // FIXED: Helper function to render pricing
   const renderPriceDisplay = () => {
-    // Check if structured pricing is used and has valid price
     if (packageData.pricingMode === 'Structured' && 
         packageData.pricePerPerson && 
         packageData.pricePerPerson > 0) {
       return `₹${packageData.pricePerPerson.toLocaleString()} per person`;
     } 
-    // Check if text pricing is used and has valid text
     else if (packageData.pricingMode === 'Text' && 
              packageData.priceText && 
              packageData.priceText.trim() !== '') {
       return packageData.priceText;
     }
-    // Default fallback when no valid pricing is provided
     return 'Contact for pricing';
   };
 
@@ -147,7 +163,7 @@ const PackageDetail = () => {
   return (
     <div className="package-detail-container">
       
-      {/* NEW: Back Button at the Top */}
+      {/* Back Button at the Top */}
       <div className="back-button-container">
         <button className="back-button" onClick={handleGoBack}>
           <span className="back-arrow">←</span>
@@ -173,12 +189,12 @@ const PackageDetail = () => {
         <h2>Package Overview</h2>
         <div className="overview">
           <div><strong>Duration:</strong> {packageData.duration || 'Not specified'}</div>
-          <div><strong>Note:</strong> {packageData.priceNote || 'All inclusive'}</div>
+          {/* <div><strong>Note:</strong> {packageData.priceNote || 'All inclusive'}</div> */}
           <div className="price">{renderPriceDisplay()}</div>
         </div>
       </section>
 
-      {/* NEW: Departure Dates Section */}
+      {/* Departure Dates Section */}
       {packageData.departureDates && packageData.departureDates.length > 0 && packageData.departureDates.some(date => date.trim()) && (
         <section className="section departure-section">
           <h2>Available Departure Dates</h2>
@@ -261,13 +277,22 @@ const PackageDetail = () => {
         </div>
       </section>
 
+      {/* NEW: Compact Height Pricing Notes Box - Full Width */}
+      {shouldShowPricingNotes() && (
+        <section className="section pricing-notes-compact">
+          <h3>💰Notes:</h3>
+          <div className="compact-notes-grid">
+            {getPricingNotes().map((note, index) => (
+              <div key={index} className="compact-note">
+                {note}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <ContactIcons />
       
-      {/* Footer */}
-      {/* <footer className="footer">
-        <p>&copy; 2025 Kerala Tours. All Rights Reserved.</p>
-      </footer> */}
-
     </div>
   );
 };

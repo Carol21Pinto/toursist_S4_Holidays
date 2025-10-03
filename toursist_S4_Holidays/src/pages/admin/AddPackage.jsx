@@ -3,14 +3,13 @@ import { Snackbar, Alert } from '@mui/material';
 import './AddPackage.css';
 
 const AddPackage = () => {
-  // Form state with new location fields
+  // Form state with new location fields and pricing notes
   const [formData, setFormData] = useState({
     name: '',
     category: 'Domestic',
     duration: '',
     pricePerPerson: '',
     currency: 'INR',
-    priceNote: '',
     priceText: '',
     // New location fields
     state: '',        // For Domestic packages
@@ -19,6 +18,10 @@ const AddPackage = () => {
   });
 
   const [pricingMode, setPricingMode] = useState('Structured');
+  
+  // NEW: Multiple pricing notes array instead of single priceNote
+  const [pricingNotes, setPricingNotes] = useState(['']);
+  
   const [itinerary, setItinerary] = useState([
     { day: 1, title: '', activities: [''] }
   ]);
@@ -141,6 +144,25 @@ const AddPackage = () => {
   // Handle pricing mode change
   const handlePricingModeChange = (mode) => {
     setPricingMode(mode);
+  };
+
+  // NEW: Handle pricing notes functions
+  const handlePricingNoteChange = (index, value) => {
+    const newNotes = [...pricingNotes];
+    newNotes[index] = value;
+    setPricingNotes(newNotes);
+  };
+
+  const addPricingNote = () => {
+    setPricingNotes([...pricingNotes, '']);
+  };
+
+  const removePricingNote = (index) => {
+    if (pricingNotes.length > 1) {
+      const newNotes = [...pricingNotes];
+      newNotes.splice(index, 1);
+      setPricingNotes(newNotes);
+    }
   };
 
   // Handle card image upload and preview
@@ -309,7 +331,6 @@ const AddPackage = () => {
             duration: '',
             pricePerPerson: '',
             currency: 'INR',
-            priceNote: '',
             priceText: '',
             state: '',
             continent: '',
@@ -319,6 +340,7 @@ const AddPackage = () => {
           setInclusions(['']);
           setExclusions(['']);
           setDepartureDates(['']); // Reset departure dates
+          setPricingNotes(['']); // Reset pricing notes
           setCardImage(null);
           setImagePreview(null);
           setPricingMode('Structured');
@@ -344,6 +366,9 @@ const AddPackage = () => {
     const packageData = {
       ...formData,
       pricingMode,
+      // Convert pricing notes array to formatted string for backend compatibility
+      priceNote: pricingNotes.filter(note => note.trim()).join(' | '),
+      pricingNotes: pricingNotes.filter(note => note.trim()), // Also send as array
       itinerary: itinerary.filter(day => day.title && day.activities.some(act => act)),
       inclusions: inclusions.filter(inc => inc.trim()),
       exclusions: exclusions.filter(exc => exc.trim()),
@@ -461,8 +486,6 @@ const AddPackage = () => {
               </div>
             )}
 
-            {/* UPDATED: Pilgrimage - NO location selection required */}
-
             <div className="form-group">
               <label>Duration</label>
               <input
@@ -490,7 +513,6 @@ const AddPackage = () => {
             </div>
           )}
 
-          {/* UPDATED: Simple Pilgrimage info (no location requirements) */}
           {formData.category === 'Pilgrimage' && (
             <div className="location-info">
               <span className="info-icon">🕌</span>
@@ -564,8 +586,7 @@ const AddPackage = () => {
           )}
         </div>
 
-        {/* Rest of your existing sections remain the same */}
-        {/* Pricing Section */}
+        {/* Enhanced Pricing Section */}
         <div className="form-section">
           <h2>Pricing</h2>
           
@@ -615,15 +636,93 @@ const AddPackage = () => {
                 </div>
               </div>
 
+              {/* NEW: Multiple Pricing Notes Section */}
               <div className="form-group full-width">
-                <label>Note:</label>
-                <input
-                  type="text"
-                  name="priceNote"
-                  value={formData.priceNote}
-                  onChange={handleInputChange}
-                  placeholder="e.g., With flights ex Bangalore"
-                />
+                <label>
+                  Pricing Notes <span style={{color: '#666', fontSize: '0.9rem', fontWeight: 'normal'}}>(Multiple bullet points)</span>
+                </label>
+                <p style={{color: '#666', fontSize: '0.9rem', margin: '0 0 15px 0'}}>
+                  💡 Add multiple pricing notes as bullet points (e.g., "With flights ex Bangalore", "Excludes GST", etc.)
+                </p>
+                
+                {pricingNotes.map((note, index) => (
+                  <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+                    <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                      <input
+                        type="text"
+                        value={note}
+                        onChange={(e) => handlePricingNoteChange(index, e.target.value)}
+                        placeholder={`e.g., ${index === 0 ? 'With flights ex Bangalore' : index === 1 ? 'Excludes GST & service charges' : 'Based on twin sharing'}`}
+                        className="pricing-note-input"
+                      />
+                    </div>
+                    {pricingNotes.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => removePricingNote(index)}
+                        style={{
+                          background: '#ffebee',
+                          color: '#d32f2f',
+                          border: 'none',
+                          padding: '8px 16px',
+                          borderRadius: '6px',
+                          fontSize: '0.9rem',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          alignSelf: 'center'
+                        }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                ))}
+                
+                <button
+                  type="button"
+                  onClick={addPricingNote}
+                  className="add-btn"
+                  style={{
+                    background: '#e8f5e8',
+                    color: '#2e7d32',
+                    border: '1px solid #4caf50',
+                    padding: '10px 20px',
+                    borderRadius: '6px',
+                    fontSize: '0.9rem',
+                    cursor: 'pointer',
+                    fontWeight: '600',
+                    marginTop: '10px'
+                  }}
+                >
+                  ➕ Add Pricing Note
+                </button>
+
+                {/* Show pricing notes preview */}
+                {pricingNotes.some(note => note.trim()) && (
+                  <div className="pricing-notes-preview" style={{
+                    background: '#f8f9fa',
+                    border: '1px solid #dee2e6',
+                    borderRadius: '8px',
+                    padding: '15px',
+                    marginTop: '15px'
+                  }}>
+                    <span className="preview-label" style={{ 
+                      fontWeight: '600', 
+                      color: '#495057',
+                      display: 'block',
+                      marginBottom: '10px'
+                    }}>
+                      📝 Preview Notes:
+                    </span>
+                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#666' }}>
+                      {pricingNotes.filter(note => note.trim()).map((note, index) => (
+                        <li key={index} style={{ marginBottom: '5px' }}>
+                          {note}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </>
           ) : (
