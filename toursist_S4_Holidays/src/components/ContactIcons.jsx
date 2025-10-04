@@ -65,7 +65,7 @@ export default function ContactIcons() {
 
       {/* Email */}
       <a
-        href="mailto:company@example.com"
+        href="mailto:s4holidaysblr@gmail.com"
         className="icon email"
         title="Send Email"
       >

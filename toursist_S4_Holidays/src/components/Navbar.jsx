@@ -48,9 +48,9 @@ export default function Navbar() {
           <li onClick={() => setMenuOpen(false)}>
             <Link to="/">Home</Link>
           </li>
-          <li onClick={() => setMenuOpen(false)}>
+          {/* <li onClick={() => setMenuOpen(false)}>
             <Link to="/about">About</Link>
-          </li>
+          </li> */}
         </ul>
       </div>
     </nav>

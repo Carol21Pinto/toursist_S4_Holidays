@@ -115,6 +115,17 @@ export default function Domestic() {
       .sort((a, b) => b.count - a.count); // Sort by count (highest first) - DON'T filter out 0-count states
   };
 
+  // ✅ NEW: Sort packages alphabetically by title (A-Z)
+  const sortPackagesAlphabetically = (packagesArray) => {
+    return [...packagesArray].sort((a, b) => {
+      // Using localeCompare for proper alphabetical sorting with case-insensitive comparison
+      return a.title.localeCompare(b.title, undefined, { 
+        sensitivity: 'base',
+        numeric: true 
+      });
+    });
+  };
+
   // Safely pick a primary image path from a package (string only)
   const pickPrimaryImagePath = (pkg) => {
     const fromCard = Array.isArray(pkg?.cardImage)
@@ -163,8 +174,13 @@ export default function Domestic() {
       const response = await fetch(`${API_URL}/packages/category/domestic`);
       if (response.ok) {
         const data = await response.json();
-        setPackages(data);
-        console.log('Fetched domestic packages:', data);
+        
+        // ✅ NEW: Sort packages alphabetically before setting state
+        const sortedData = sortPackagesAlphabetically(data);
+        setPackages(sortedData);
+        
+        console.log('Fetched domestic packages:', sortedData);
+        console.log('Packages sorted alphabetically by title');
       } else {
         console.error('Failed to fetch packages');
       }
@@ -183,7 +199,9 @@ export default function Domestic() {
       filtered = filtered.filter(pkg => isPackageInState(pkg, selectedState));
     }
 
-    setFilteredPackages(filtered);
+    // ✅ NEW: Ensure filtered packages are also sorted alphabetically
+    const sortedFiltered = sortPackagesAlphabetically(filtered);
+    setFilteredPackages(sortedFiltered);
   };
 
   const handleStateSelect = (state) => {
@@ -201,7 +219,10 @@ export default function Domestic() {
     setShowAllStates(false);
   };
 
-  const displayPackages = filteredPackages.length > 0 ? filteredPackages : packages;
+  // ✅ NEW: Always ensure display packages are sorted alphabetically
+  const displayPackages = sortPackagesAlphabetically(
+    filteredPackages.length > 0 ? filteredPackages : packages
+  );
   const sortedStates = getSortedStates();
   const visibleStates = showAllStates ? sortedStates : sortedStates.slice(0, 5);
 
@@ -216,7 +237,7 @@ export default function Domestic() {
         <div className="hero-content hero-chip">
           <div className="namaste-greeting">S4 HOLIDAYS</div>
           <h1 className="hero-title">
-            <span className="hindi-text">भारत भ्रमण</span>
+            <span className="hindi-text">[translate:भारत भ्रमण]</span>
             <span className="english-text">Incredible India Tours</span>
           </h1>
         </div>
@@ -307,7 +328,7 @@ export default function Domestic() {
           <section className="destinations-section">
             <div className="container">
               <h2 className="section-title">
-                <span className="title-hindi">लोकप्रिय गंतव्य</span>
+                <span className="title-hindi">[translate:लोकप्रिय गंतव्य]</span>
                 <span className="title-english">Destinations</span>
                 {selectedState && (
                   <span className="filter-info">
@@ -315,6 +336,7 @@ export default function Domestic() {
                     <span className="results-count">({displayPackages.length} packages found)</span>
                   </span>
                 )}
+                <small className="sort-info">Sorted A-Z</small>
               </h2>
 
               <div className="destinations-grid">
@@ -393,7 +415,7 @@ export default function Domestic() {
         <div className="container">
           <div className="cta-content">
             <h2>
-              <span className="cta-hindi">अपनी भारत यात्रा शुरू करें</span>
+              <span className="cta-hindi">[translate:अपनी भारत यात्रा शुरू करें]</span>
               <br />
               <span className="cta-english">Start Your India Journey Now</span>
             </h2>

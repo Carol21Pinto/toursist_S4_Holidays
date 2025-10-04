@@ -137,6 +137,17 @@ export default function GroupTrip() {
       .sort((a, b) => b.count - a.count);
   };
 
+  // ✅ NEW: Sort packages alphabetically by title (A-Z)
+  const sortPackagesAlphabetically = (packagesArray) => {
+    return [...packagesArray].sort((a, b) => {
+      // Using localeCompare for proper alphabetical sorting
+      return a.title.localeCompare(b.title, undefined, { 
+        sensitivity: 'base',
+        numeric: true 
+      });
+    });
+  };
+
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchPackages();
@@ -152,15 +163,19 @@ export default function GroupTrip() {
       const response = await fetch(`${API_URL}/packages/category/group`);
       if (response.ok) {
         const data = await response.json();
-        setPackages(data);
+        
+        // ✅ NEW: Sort packages alphabetically before setting state
+        const sortedData = sortPackagesAlphabetically(data);
+        setPackages(sortedData);
         
         // ENHANCED DEBUG: Show detailed package information
         console.log('=== DETAILED PACKAGE DEBUG ===');
-        console.log('Total packages fetched:', data.length);
+        console.log('Total packages fetched:', sortedData.length);
         console.log('API_URL:', API_URL);
         console.log('SERVER_BASE:', SERVER_BASE);
+        console.log('Packages sorted alphabetically by title');
         
-        data.forEach((pkg, index) => {
+        sortedData.forEach((pkg, index) => {
           console.log(`\n--- Package ${index + 1}: ${pkg.title} ---`);
           console.log('Package ID:', pkg._id);
           console.log('cardImage:', pkg.cardImage);
@@ -197,7 +212,9 @@ export default function GroupTrip() {
       filtered = filtered.filter(pkg => isPackageInGroupType(pkg, selectedGroupType));
     }
 
-    setFilteredPackages(filtered);
+    // ✅ NEW: Ensure filtered packages are also sorted alphabetically
+    const sortedFiltered = sortPackagesAlphabetically(filtered);
+    setFilteredPackages(sortedFiltered);
   };
 
   const handleGroupTypeSelect = (type) => {
@@ -219,7 +236,10 @@ export default function GroupTrip() {
       ? `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}`
       : '4 Days';
 
-  const displayPackages = filteredPackages.length > 0 ? filteredPackages : packages;
+  // ✅ NEW: Always ensure display packages are sorted alphabetically
+  const displayPackages = sortPackagesAlphabetically(
+    filteredPackages.length > 0 ? filteredPackages : packages
+  );
   const sortedGroupTypes = getSortedGroupTypes();
   const visibleGroupTypes = showAllTypes ? sortedGroupTypes : sortedGroupTypes.slice(0, 3);
 
@@ -331,6 +351,7 @@ export default function GroupTrip() {
                       <span className="results-count">({displayPackages.length} packages found)</span>
                     </span>
                   )}
+                  <small className="sort-info">Sorted A-Z</small>
                 </h2>
 
                 {loading ? (
@@ -373,7 +394,7 @@ export default function GroupTrip() {
                         if (pkg.pricingMode === 'Text' && pkg.priceText) {
                           return pkg.priceText;
                         } else if (pkg.pricePerPerson) {
-                          return `From ₹${pkg.pricePerPerson.toLocaleString()}/person`;
+                          return ` ₹${pkg.pricePerPerson.toLocaleString()}/person`;
                         } else if (pkg.priceText) {
                           return pkg.priceText;
                         }

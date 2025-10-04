@@ -97,6 +97,17 @@ export default function International() {
       .sort((a, b) => b.count - a.count); // Sort by count (highest first) - DON'T filter out 0-count regions
   };
 
+  // ✅ NEW: Sort packages alphabetically by title (A-Z)
+  const sortPackagesAlphabetically = (packagesArray) => {
+    return [...packagesArray].sort((a, b) => {
+      // Using localeCompare for proper alphabetical sorting with case-insensitive comparison
+      return a.title.localeCompare(b.title, undefined, { 
+        sensitivity: 'base',
+        numeric: true 
+      });
+    });
+  };
+
   // Helper functions
   const pickPrimaryImagePath = (pkg) => {
     const extract = (p) =>
@@ -137,7 +148,13 @@ export default function International() {
         setLoading(true);
         const res = await fetch(`${API_URL}/packages/category/international`);
         const data = res.ok ? await res.json() : [];
-        setPackages(data);
+        
+        // ✅ NEW: Sort packages alphabetically before setting state
+        const sortedData = sortPackagesAlphabetically(data);
+        setPackages(sortedData);
+        
+        console.log('Fetched international packages:', sortedData);
+        console.log('Packages sorted alphabetically by title');
       } catch (err) {
         console.error(err);
       } finally {
@@ -147,11 +164,13 @@ export default function International() {
   }, []);
 
   useEffect(() => {
-    setFilteredPackages(
-      selectedRegion
-        ? packages.filter((p) => isPackageInRegion(p, selectedRegion))
-        : packages
-    );
+    const filtered = selectedRegion
+      ? packages.filter((p) => isPackageInRegion(p, selectedRegion))
+      : packages;
+    
+    // ✅ NEW: Ensure filtered packages are also sorted alphabetically
+    const sortedFiltered = sortPackagesAlphabetically(filtered);
+    setFilteredPackages(sortedFiltered);
   }, [packages, selectedRegion]);
 
   // UI handlers
@@ -170,7 +189,10 @@ export default function International() {
     }
   };
 
-  const displayPackages = filteredPackages.length > 0 ? filteredPackages : packages;
+  // ✅ NEW: Always ensure display packages are sorted alphabetically
+  const displayPackages = sortPackagesAlphabetically(
+    filteredPackages.length > 0 ? filteredPackages : packages
+  );
   const sortedRegions = getSortedRegions();
   const visibleRegions = showAllRegions ? sortedRegions : sortedRegions.slice(0, 5);
 
@@ -272,7 +294,7 @@ export default function International() {
           <section className="destinations-section">
             <div className="container">
               <div className="section-header">
-                <h2 className="section-title"> International Destinations</h2>
+                <h2 className="section-title">International Destinations</h2>
                 <p className="section-subtitle">Explore our handpicked destinations around the globe</p>
                 {selectedRegion && (
                   <div className="filter-info">
@@ -280,6 +302,7 @@ export default function International() {
                     <span className="results-count">({displayPackages.length} packages found)</span>
                   </div>
                 )}
+                <small className="sort-info">Sorted A-Z</small>
               </div>
 
               {loading ? (

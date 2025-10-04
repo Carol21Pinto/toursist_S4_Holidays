@@ -1,69 +1,127 @@
+/* ===== ENHANCED S4 HOLIDAYS LOGO - BIG & CLEAR ===== */
+
 /* Brand container */
 .logo {
   display: inline-flex;
   align-items: center;
   text-decoration: none;
-  color: white;
+  transition: all 0.3s ease;
 }
 
-/* brand container already .logo */
+/* ENHANCED: Much bigger and clearer logo */
 .logo-img {
-  height: 40px;
+  height: 65px; /* Significantly increased from 32px - 100% bigger! */
   width: auto;
   object-fit: contain;
   display: block;
-  border-radius: 100%;
-  background: transparent;
-  opacity: 0.9; /* Enhanced visibility */
-  filter: drop-shadow(1px 1px 3px rgba(0, 0, 0, 0.8)); /* Better contrast */
+  border-radius: 50%; /* Perfect circle for professional look */
+  background: rgba(255, 255, 255, 0.1); /* Subtle white background for clarity */
+  opacity: 1; /* Full opacity for maximum visibility */
+  padding: 3px; /* Small padding inside for better appearance */
+  
+  /* Multiple shadow layers for maximum contrast and visibility */
+  /* filter: 
+    drop-shadow(0 0 10px rgba(0, 0, 0, 0.9)) 
+    drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.8))
+    drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
+   */
+  /* Clean white border for definition */
+  
+  /* Smooth transitions */
+  transition: all 0.3s ease;
+  
+  /* High quality rendering */
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
 }
 
-/* Optional: scale with viewport but cap the extremes */
+/* Responsive sizing - bigger on larger screens, appropriate for mobile */
 .logo-img {
-  height: clamp(20px, 5vw, 48px);
+  height: clamp(50px, 6vw, 75px); /* Range: 50px to 75px (much bigger than before) */
 }
 
-/* Slightly smaller on narrow screens if needed */
-@media (max-width: 768px) {
+/* Desktop - extra large for maximum visibility */
+@media (min-width: 1200px) {
   .logo-img {
-    height: 32px;
+    height: 75px; /* Maximum size for desktop */
   }
 }
 
-/* SVG component case */
-.logo-svg {
-  height: 32px;
-  width: auto;
-  display: block;
+/* Tablet and medium screens */
+@media (min-width: 769px) and (max-width: 1199px) {
+  .logo-img {
+    height: 65px; /* Good size for tablets */
+  }
 }
 
-.logo:hover .logo-img,
+/* Mobile - still much bigger than original */
+@media (max-width: 768px) {
+  .logo-img {
+    height: 55px; /* 72% bigger than original 32px */
+    border-width: 1.5px; /* Slightly thinner border on mobile */
+  }
+}
+
+/* Small mobile screens */
+@media (max-width: 480px) {
+  .logo-img {
+    height: 50px; /* Still 56% bigger than original */
+    padding: 2px;
+  }
+}
+
+/* Enhanced hover effects */
+
+
+/* SVG component case - also enhanced */
+.logo-svg {
+  height: 70px; /* Bigger than before */
+  width: auto;
+  display: block;
+  filter: 
+    drop-shadow(0 0 10px rgba(0, 0, 0, 0.9))
+    drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.8));
+  transition: all 0.3s ease;
+}
+
 .logo:hover .logo-svg {
   opacity: 1;
+  transform: scale(1.08);
+  filter: 
+    drop-shadow(0 0 15px rgba(0, 0, 0, 1))
+    drop-shadow(3px 3px 8px rgba(0, 0, 0, 0.9));
 }
+
+/* ===== NAVBAR ADJUSTMENTS FOR BIGGER LOGO ===== */
 
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: 60px;
+  height: 80px; /* Increased from 60px to accommodate bigger logo */
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.3s ease, backdrop-filter 0.3s ease, height 0.3s ease;
   z-index: 1000;
+  
+  /* Enhanced background for better logo visibility */
+  background: rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
 }
 
-/* BALANCED: Good space distribution */
+/* Enhanced navbar container */
 .navbar-container {
   width: 90%;
   max-width: 1200px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding: 8px 0; /* Small padding for better spacing */
 }
 
+/* Logo text styling (if used alongside image) */
 .logo {
   font-size: 1.4rem;
   font-weight: bold;
@@ -71,20 +129,24 @@
   color: white;
   text-decoration: none;
   transition: color 0.3s ease;
+  
+  /* Enhanced text shadow for visibility */
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .logo:hover {
   color: #ff9800;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
 }
 
-/* BALANCED: Nav links with proper spacing from right */
+/* Enhanced nav links */
 .nav-links {
   display: flex;
   gap: 1.5rem;
   list-style: none;
   margin: 0;
   padding: 0;
-  margin-right: 40px; /* Perfect balance - not too far, not too close */
+  margin-right: 40px;
 }
 
 .nav-links li {
@@ -100,16 +162,16 @@
   font-size: 22px;
   transition: color 0.3s, transform 0.3s;
   /* Enhanced text shadow for better visibility */
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 .nav-links a:hover {
   color: #ff9800;
   transform: scale(1.05);
-  text-shadow: 1px 1px 5px rgba(0, 0, 0, 0.9);
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.9);
 }
 
-/* Hamburger Icon (hidden on desktop) */
+/* Enhanced hamburger menu */
 .menu-icon {
   display: none;
   flex-direction: column;
@@ -117,25 +179,25 @@
   align-items: center;
   cursor: pointer;
   gap: 5px;
-  width: 30px;
-  height: 25px;
+  width: 32px;
+  height: 28px;
   position: relative;
   z-index: 1100;
 }
 
 .menu-icon span {
-  width: 25px;
+  width: 28px;
   height: 3px;
   background: white;
   border-radius: 2px;
   transition: 0.3s ease;
   /* Enhanced visibility with shadow */
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 }
 
 /* Transform into X when open */
 .menu-icon.open span:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
+  transform: rotate(45deg) translate(6px, 6px);
 }
 
 .menu-icon.open span:nth-child(2) {
@@ -143,23 +205,32 @@
 }
 
 .menu-icon.open span:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px);
+  transform: rotate(-45deg) translate(7px, -7px);
 }
 
-/* Mobile styles */
+/* Enhanced mobile styles */
 @media (max-width: 768px) {
+  .navbar {
+    height: 70px; /* Adjusted for mobile with bigger logo */
+  }
+  
   .nav-links {
     position: absolute;
-    top: 60px;
+    top: 70px; /* Adjusted for new navbar height */
     right: 0;
-    background: rgba(198, 194, 194, 0.85);
+    background: rgba(198, 194, 194, 0.95);
+    backdrop-filter: blur(10px);
     flex-direction: column;
-    width: 200px;
-    padding: 1rem;
-    gap: 1rem;
+    width: 220px;
+    padding: 1.2rem;
+    gap: 1.2rem;
     transform: translateX(100%);
     transition: transform 0.3s ease;
-    margin-right: 0; /* Reset margin on mobile */
+    margin-right: 0;
+    
+    /* Enhanced shadow for mobile menu */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    border-radius: 0 0 0 15px;
   }
 
   .nav-links.open {
@@ -169,4 +240,79 @@
   .menu-icon {
     display: flex;
   }
+  
+  /* Adjust navbar container padding on mobile */
+  .navbar-container {
+    padding: 5px 0;
+  }
+}
+
+/* Extra small mobile screens */
+@media (max-width: 480px) {
+  .navbar {
+    height: 65px;
+  }
+  
+  .nav-links {
+    top: 65px;
+    width: 200px;
+    padding: 1rem;
+  }
+  
+  .navbar-container {
+    width: 95%;
+  }
+}
+
+/* High DPI screens for extra sharpness */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .logo-img, .logo-svg {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+  }
+}
+
+/* Additional enhancements for logo visibility */
+/* @media (prefers-color-scheme: dark) {
+  .logo-img {
+    filter: 
+      drop-shadow(0 0 15px rgba(255, 255, 255, 0.3))
+      drop-shadow(2px 2px 6px rgba(0, 0, 0, 0.9))
+      drop-shadow(0 0 25px rgba(255, 255, 255, 0.1));
+  }
+} */
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: no-preference) {
+  .logo-img, .logo-svg {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-img, .logo-svg {
+    transition: none;
+  }
+  
+  .logo:hover .logo-img,
+  .logo:hover .logo-svg {
+    transform: none;
+  }
+}
+
+/* Focus states for accessibility */
+.logo:focus-visible .logo-img {
+  outline: 2px solid #ff9800;
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+
+/* Loading optimization */
+.logo-img {
+  will-change: transform, filter;
+}
+
+.logo:not(:hover) .logo-img {
+  will-change: auto;
 }
