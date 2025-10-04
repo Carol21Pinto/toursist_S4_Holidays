@@ -43,7 +43,7 @@ export default function ContactIcons() {
     <div className={`contact-icons ${isVisible ? 'show' : 'hide'}`}>
       {/* WhatsApp */}
       <a
-        href={`https://wa.me/8904814416?text=${whatsappMessage}`}
+        href={`https://wa.me/+919448790769?text=${whatsappMessage}`}
         target="_blank"
         rel="noopener noreferrer"
         className="icon whatsapp"
