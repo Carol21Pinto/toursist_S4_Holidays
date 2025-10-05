@@ -565,7 +565,7 @@ body {
 
 /* Features & CTA Sections */
 .features-section { 
-  background: #fff; 
+  background: #e9ecef; 
   padding: 4rem 0; 
 }
 
@@ -686,6 +686,7 @@ body {
   }
 
   .filter-sidebar.open {
+   
     left: 0;
   }
 
