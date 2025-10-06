@@ -27,6 +27,6 @@ const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on port ${PORT} and accessible from network`);
   console.log('🔐 Secure OTP system initialized');
-  console.log('📧 Email service configured for fernandesashith24@gmail.com');
+  console.log('📧 Email service configured for s4holidaysblr@gmail.com');
   console.log('🌐 Network access enabled - accessible at 192.168.1.6:' + PORT);
 });

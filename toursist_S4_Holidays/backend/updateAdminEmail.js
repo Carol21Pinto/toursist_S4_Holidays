@@ -20,19 +20,19 @@ async function updateAdminEmail() {
       const hashedPassword = await bcrypt.hash('admin123', 10);
       
       await Admin.create({
-        email: 'fernandesashith24@gmail.com',
+        email: 's4holidaysblr@gmail.com',
         password: hashedPassword
       });
       console.log('🎉 New admin created!');
-      console.log('📧 Email: fernandesashith24@gmail.com');
+      console.log('📧 Email: s4holidaysblr@gmail.com');
       console.log('🔐 Password: admin123 (CHANGE THIS!)');
     } else {
       const result = await Admin.updateOne(
         { _id: admins[0]._id }, 
-        { email: 'fernandesashith24@gmail.com' }
+        { email: 's4holidaysblr@gmail.com' }
       );
       console.log('🎉 Admin email updated successfully!');
-      console.log('📧 New email: fernandesashith24@gmail.com');
+      console.log('📧 New email: s4holidaysblr@gmail.com');
     }
     
   } catch (error) {
