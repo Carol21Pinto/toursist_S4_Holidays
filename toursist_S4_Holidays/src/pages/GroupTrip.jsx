@@ -83,33 +83,6 @@ export default function GroupTrip() {
     e.currentTarget.src = FALLBACK;
   };
 
-  // Format departure dates for display (simplified)
-  const formatDepartureDates = (dates) => {
-    if (!dates || !Array.isArray(dates) || dates.length === 0) {
-      return null;
-    }
-
-    const validDates = dates
-      .filter(date => date && date.trim())
-      .sort((a, b) => new Date(a) - new Date(b));
-
-    if (validDates.length === 0) return null;
-
-    const nextDate = validDates[0];
-    const dateObj = new Date(nextDate);
-    
-    return dateObj.toLocaleDateString('en-US', { 
-      month: 'short', 
-      day: 'numeric' 
-    });
-  };
-
-  // Get total departure dates count
-  const getDepartureDatesCount = (dates) => {
-    if (!dates || !Array.isArray(dates)) return 0;
-    return dates.filter(date => date && date.trim()).length;
-  };
-
   // Strict filtering - only match exact groupType
   const isPackageInGroupType = (pkg, groupType) => {
     if (!groupType || groupType === '') return true;
@@ -384,10 +357,6 @@ export default function GroupTrip() {
                     {displayPackages.map((pkg) => {
                       const primaryPath = pickPrimaryImagePath(pkg);
                       const imgUrl = getImageUrl(primaryPath);
-                      
-                      // Get departure dates info (simplified)
-                      const formattedDate = formatDepartureDates(pkg.departureDates);
-                      const totalDates = getDepartureDatesCount(pkg.departureDates);
 
                       // Format price display with debugging
                       const formatPrice = () => {
@@ -421,22 +390,10 @@ export default function GroupTrip() {
                           <div className="card-content">
                             <h3>{pkg.title}</h3>
                             
-                            {/* SIMPLIFIED: Duration, Price in one row */}
+                            {/* ✅ SIMPLIFIED: Only Duration and Price - NO departure dates */}
                             <div className="card-info">
                               <div className="duration-badge">{formatDuration(pkg)}</div>
                               <div className="price-info">{formatPrice()}</div>
-                            </div>
-
-                            {/* SIMPLIFIED: Departure dates (single line) */}
-                            <div className="departure-info">
-                              <span className="calendar-icon">📅</span>
-                              {formattedDate ? (
-                                <span className="date-text">
-                                  {formattedDate}{totalDates > 1 && ` +${totalDates - 1} more`}
-                                </span>
-                              ) : (
-                                <span className="date-text flexible">Flexible dates</span>
-                              )}
                             </div>
 
                             <button
