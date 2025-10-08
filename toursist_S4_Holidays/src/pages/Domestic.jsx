@@ -4,12 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import ContactIcons from '../components/ContactIcons';
 
 export default function Domestic() {
-  const [packages, setPackages] = useState([]);
-  const [filteredPackages, setFilteredPackages] = useState([]);
+  const [statesData, setStatesData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedState, setSelectedState] = useState('');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [showAllStates, setShowAllStates] = useState(false);
   const navigate = useNavigate();
 
   // ✅ SMART IP DETECTION - Works with ANY IP automatically!
@@ -20,130 +16,6 @@ export default function Domestic() {
   const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || `http://${currentIP}:5000`;
 
   const FALLBACK = '/images/placeholder-card.jpg';
-
-  // ✅ COMPLETE: All 28 States + 8 Union Territories with their major cities/destinations
-  const stateWithCities = {
-    // 28 STATES
-    'Andhra Pradesh': ['Hyderabad', 'Visakhapatnam', 'Vijayawada', 'Guntur', 'Nellore', 'Kurnool', 'Rajahmundry', 'Tirupati', 'Amaravati'],
-    'Arunachal Pradesh': ['Itanagar', 'Naharlagun', 'Pasighat', 'Tawang', 'Ziro', 'Bomdila', 'Tezu', 'Seppa'],
-    'Assam': ['Guwahati', 'Silchar', 'Dibrugarh', 'Jorhat', 'Nagaon', 'Tinsukia', 'Tezpur', 'Barpeta', 'Kaziranga', 'Majuli'],
-    'Bihar': ['Patna', 'Gaya', 'Bhagalpur', 'Muzaffarpur', 'Purnia', 'Darbhanga', 'Bihar Sharif', 'Arrah', 'Begusarai', 'Bodhgaya'],
-    'Chhattisgarh': ['Raipur', 'Bhilai', 'Korba', 'Bilaspur', 'Durg', 'Rajnandgaon', 'Jagdalpur', 'Raigarh', 'Ambikapur'],
-    'Goa': ['Panaji', 'Margao', 'Vasco da Gama', 'Mapusa', 'Ponda', 'Calangute', 'Baga', 'Anjuna', 'Arambol', 'Colva'],
-    'Gujarat': ['Ahmedabad', 'Surat', 'Vadodara', 'Rajkot', 'Bhavnagar', 'Jamnagar', 'Gandhinagar', 'Anand', 'Nadiad', 'Dwarka', 'Somnath'],
-    'Haryana': ['Faridabad', 'Gurgaon', 'Panipat', 'Ambala', 'Yamunanagar', 'Rohtak', 'Hisar', 'Karnal', 'Sonipat', 'Panchkula'],
-    'Himachal Pradesh': ['Shimla', 'Dharamshala', 'Solan', 'Mandi', 'Una', 'Bilaspur', 'Hamirpur', 'Kullu', 'Manali', 'Dalhousie', 'Kasauli'],
-    'Jharkhand': ['Ranchi', 'Jamshedpur', 'Dhanbad', 'Bokaro', 'Deoghar', 'Phusro', 'Hazaribagh', 'Giridih', 'Ramgarh', 'Medininagar'],
-    'Karnataka': ['Bangalore', 'Bengaluru', 'Mysore', 'Hubli', 'Mangalore', 'Belgaum', 'Davanagere', 'Bellary', 'Bijapur', 'Shimoga', 'Tumkur', 'Ooty', 'Coorg'],
-    'Kerala': ['Thiruvananthapuram', 'Kochi', 'Kozhikode', 'Thrissur', 'Kollam', 'Palakkad', 'Alappuzha', 'Malappuram', 'Kannur', 'Munnar', 'Alleppey', 'Wayanad', 'Thekkady'],
-    'Madhya Pradesh': ['Bhopal', 'Indore', 'Jabalpur', 'Gwalior', 'Ujjain', 'Sagar', 'Dewas', 'Satna', 'Ratlam', 'Rewa', 'Khajuraho'],
-    'Maharashtra': ['Mumbai', 'Pune', 'Nagpur', 'Thane', 'Nashik', 'Aurangabad', 'Solapur', 'Amravati', 'Virar', 'Kolhapur', 'Lonavala', 'Mahabaleshwar'],
-    'Manipur': ['Imphal', 'Thoubal', 'Bishnupur', 'Churachandpur', 'Kakching', 'Ukhrul', 'Senapati', 'Tamenglong'],
-    'Meghalaya': ['Shillong', 'Tura', 'Cherrapunji', 'Jowai', 'Nongpoh', 'Baghmara', 'Williamnagar', 'Nongstoin'],
-    'Mizoram': ['Aizawl', 'Lunglei', 'Saiha', 'Champhai', 'Kolasib', 'Serchhip', 'Mamit', 'Lawngtlai'],
-    'Nagaland': ['Kohima', 'Dimapur', 'Mokokchung', 'Tuensang', 'Wokha', 'Zunheboto', 'Phek', 'Kiphire', 'Longleng', 'Peren', 'Mon'],
-    'Odisha': ['Bhubaneswar', 'Cuttack', 'Rourkela', 'Berhampur', 'Sambalpur', 'Puri', 'Balasore', 'Bhadrak', 'Baripada', 'Konark'],
-    'Punjab': ['Ludhiana', 'Amritsar', 'Jalandhar', 'Patiala', 'Bathinda', 'Mohali', 'Firozpur', 'Batala', 'Pathankot', 'Moga'],
-    'Rajasthan': ['Jaipur', 'Jodhpur', 'Kota', 'Bikaner', 'Ajmer', 'Udaipur', 'Bhilwara', 'Alwar', 'Bharatpur', 'Sikar', 'Pushkar', 'Jaisalmer'],
-    'Sikkim': ['Gangtok', 'Namchi', 'Geyzing', 'Mangan', 'Jorethang', 'Nayazangmu', 'Rangpo', 'Singtam'],
-    'Tamil Nadu': ['Chennai', 'Coimbatore', 'Madurai', 'Tiruchirappalli', 'Salem', 'Tirunelveli', 'Tiruppur', 'Ranipet', 'Nagercoil', 'Thanjavur', 'Ooty', 'Kodaikanal'],
-    'Telangana': ['Hyderabad', 'Warangal', 'Nizamabad', 'Khammam', 'Karimnagar', 'Ramagundam', 'Mahabubnagar', 'Nalgonda', 'Adilabad', 'Suryapet'],
-    'Tripura': ['Agartala', 'Dharmanagar', 'Udaipur', 'Kailashahar', 'Belonia', 'Khowai', 'Pratapgarh', 'Ranir Bazar'],
-    'Uttar Pradesh': ['Lucknow', 'Kanpur', 'Ghaziabad', 'Agra', 'Varanasi', 'Meerut', 'Allahabad', 'Bareilly', 'Aligarh', 'Moradabad', 'Mathura', 'Ayodhya'],
-    'Uttarakhand': ['Dehradun', 'Haridwar', 'Roorkee', 'Haldwani', 'Rudrapur', 'Kashipur', 'Rishikesh', 'Nainital', 'Mussoorie', 'Jim Corbett'],
-    'West Bengal': ['Kolkata', 'Howrah', 'Durgapur', 'Asansol', 'Siliguri', 'Malda', 'Bardhaman', 'Barasat', 'Raiganj', 'Kharagpur', 'Darjeeling'],
-
-    // 8 UNION TERRITORIES
-    'Andaman and Nicobar Islands': ['Port Blair', 'Car Nicobar', 'Mayabunder', 'Rangat', 'Diglipur', 'Havelock Island', 'Neil Island'],
-    'Chandigarh': ['Chandigarh', 'Sector 17', 'Rock Garden', 'Sukhna Lake', 'Rose Garden'],
-    'Dadra and Nagar Haveli and Daman and Diu': ['Daman', 'Diu', 'Silvassa', 'Vapi', 'Dadra', 'Nagar Haveli'],
-    'Delhi': ['New Delhi', 'Old Delhi', 'Connaught Place', 'Karol Bagh', 'Lajpat Nagar', 'Dwarka', 'Rohini', 'India Gate', 'Red Fort', 'Qutub Minar'],
-    'Jammu and Kashmir': ['Jammu', 'Kashmir', 'Srinagar', 'Leh', 'Gulmarg', 'Pahalgam', 'Sonamarg', 'Amarnath', 'Vaishno Devi', 'Dal Lake'],
-    'Ladakh': ['Leh', 'Kargil', 'Nubra Valley', 'Pangong Lake', 'Tso Moriri', 'Hemis', 'Alchi', 'Lamayuru'],
-    'Lakshadweep': ['Kavaratti', 'Agatti', 'Minicoy', 'Bangaram', 'Kadmat', 'Kalpeni'],
-    'Puducherry': ['Puducherry', 'Karaikal', 'Mahe', 'Yanam', 'Pondicherry', 'Auroville']
-  };
-
-  const allStatesAndUTs = Object.keys(stateWithCities);
-
-  // Enhanced filter function that uses database-stored state field first, then fallback to text search
-  const isPackageInState = (pkg, stateName) => {
-    if (!stateName || stateName === '') return true;
-
-    // Check the database-stored state field first (most accurate)
-    if (pkg.state) {
-      return pkg.state.toLowerCase() === stateName.toLowerCase();
-    }
-
-    // Fallback: For older packages without state field, use text search
-    const searchTerms = [
-      stateName.toLowerCase(),
-      ...stateWithCities[stateName]?.map(city => city.toLowerCase()) || []
-    ];
-
-    const packageText = [
-      pkg.title?.toLowerCase() || '',
-      pkg.description?.toLowerCase() || '',
-      pkg.destination?.toLowerCase() || '',
-      pkg.location?.toLowerCase() || '',
-      pkg.city?.toLowerCase() || '',
-      ...(pkg.highlights || []).map(h => h.toLowerCase()),
-      ...(pkg.itinerary || []).map(day => 
-        `${day.title?.toLowerCase() || ''} ${day.description?.toLowerCase() || ''} ${day.location?.toLowerCase() || ''}`
-      ).join(' ')
-    ].join(' ');
-
-    return searchTerms.some(term => 
-      packageText.includes(term) || 
-      packageText.match(new RegExp(`\\b${term}\\b`, 'i'))
-    );
-  };
-
-  // Calculate package count for each state/UT
-  const getPackageCountForState = (stateName) => {
-    if (stateName === '') return packages.length;
-    return packages.filter(pkg => isPackageInState(pkg, stateName)).length;
-  };
-
-  // Get sorted states/UTs by package count (highest to lowest) - SHOW ALL STATES/UTs
-  const getSortedStates = () => {
-    return allStatesAndUTs
-      .map(state => ({
-        name: state,
-        count: getPackageCountForState(state)
-      }))
-      .sort((a, b) => b.count - a.count); // Sort by count (highest first) - DON'T filter out 0-count states
-  };
-
-  // ✅ NEW: Sort packages alphabetically by title (A-Z)
-  const sortPackagesAlphabetically = (packagesArray) => {
-    return [...packagesArray].sort((a, b) => {
-      // Using localeCompare for proper alphabetical sorting with case-insensitive comparison
-      return a.title.localeCompare(b.title, undefined, { 
-        sensitivity: 'base',
-        numeric: true 
-      });
-    });
-  };
-
-  // Safely pick a primary image path from a package (string only)
-  const pickPrimaryImagePath = (pkg) => {
-    const fromCard = Array.isArray(pkg?.cardImage)
-      ? pkg.cardImage.find(p => typeof p === 'string' && p.trim())
-      : (typeof pkg?.cardImage === 'string' && pkg.cardImage.trim() ? pkg.cardImage : null);
-
-    if (fromCard) return fromCard;
-
-    const imgs = pkg?.images;
-    if (Array.isArray(imgs)) {
-      const first = imgs.find(p => typeof p === 'string' && p.trim());
-      if (first) return first;
-    } else if (typeof imgs === 'string' && imgs.trim()) {
-      return imgs;
-    }
-
-    return null;
-  };
 
   // Build a usable URL only from string paths; otherwise return local fallback
   const getImageUrl = (path) => {
@@ -161,74 +33,33 @@ export default function Domestic() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    fetchPackages();
+    fetchStatesData();
   }, []);
 
-  useEffect(() => {
-    applyFilters();
-  }, [packages, selectedState]);
-
-  const fetchPackages = async () => {
+  const fetchStatesData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/packages/category/domestic`);
+      const response = await fetch(`${API_URL}/packages/grouped-by-state`);
       if (response.ok) {
         const data = await response.json();
-        
-        // ✅ NEW: Sort packages alphabetically before setting state
-        const sortedData = sortPackagesAlphabetically(data);
-        setPackages(sortedData);
-        
-        console.log('Fetched domestic packages:', sortedData);
-        console.log('Packages sorted alphabetically by title');
+        // Filter out "Unknown" state from display
+        const filteredData = data.filter(state => state.state !== 'Unknown');
+        setStatesData(filteredData);
+        console.log('Fetched states data:', filteredData);
       } else {
-        console.error('Failed to fetch packages');
+        console.error('Failed to fetch states data');
       }
     } catch (error) {
-      console.error('Error fetching packages:', error);
+      console.error('Error fetching states data:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const applyFilters = () => {
-    let filtered = [...packages];
-
-    // Filter by state/UT using enhanced matching
-    if (selectedState) {
-      filtered = filtered.filter(pkg => isPackageInState(pkg, selectedState));
-    }
-
-    // ✅ NEW: Ensure filtered packages are also sorted alphabetically
-    const sortedFiltered = sortPackagesAlphabetically(filtered);
-    setFilteredPackages(sortedFiltered);
+  const handleStateClick = (stateName) => {
+    // Navigate to state-specific packages page
+    navigate(`/domestic/${stateName.toLowerCase().replace(/\s+/g, '-')}`);
   };
-
-  const handleStateSelect = (state) => {
-    setSelectedState(state);
-    console.log(`Selected state/UT: ${state}, filtering packages...`);
-    
-    // Close sidebar on mobile after selection
-    if (window.innerWidth < 768) {
-      setSidebarOpen(false);
-    }
-  };
-
-  const clearFilters = () => {
-    setSelectedState('');
-    setShowAllStates(false);
-  };
-
-  // ✅ NEW: Always ensure display packages are sorted alphabetically
-  const displayPackages = sortPackagesAlphabetically(
-    filteredPackages.length > 0 ? filteredPackages : packages
-  );
-  const sortedStates = getSortedStates();
-  const visibleStates = showAllStates ? sortedStates : sortedStates.slice(0, 5);
-
-  console.log('Total states/UTs:', sortedStates.length);
-  console.log('Visible states/UTs:', visibleStates.length);
-  console.log('Show all states/UTs:', showAllStates);
 
   return (
     <div className="domestic-tours">
@@ -237,176 +68,66 @@ export default function Domestic() {
         <div className="hero-content hero-chip">
           <div className="namaste-greeting">S4 HOLIDAYS</div>
           <h1 className="hero-title">
-            <span className="hindi-text">[translate:भारत भ्रमण]</span>
+            <span className="hindi-text">भारत भ्रमण</span>
             <span className="english-text">Incredible India Tours</span>
           </h1>
         </div>
       </section>
 
-      {/* Main Content with Sidebar */}
-      <div className="main-content">
-        {/* Mobile Filter Toggle */}
-        <div className="mobile-filter-toggle">
-          <button 
-            className="filter-toggle-btn"
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-          >
-            <span className="filter-icon">⚙️</span>
-            Sort & Filter
-          </button>
-          
-          {selectedState && (
-            <button className="clear-filters-btn" onClick={clearFilters}>
-              Clear Filters
-            </button>
-          )}
-        </div>
+      {/* Main Content - State Cards */}
+      <section className="destinations-section">
+        <div className="container">
+          <h2 className="section-title">
+            <span className="title-hindi">लोकप्रिय गंतव्य</span>
+            <span className="title-english">Trending Group Holidays</span>
+          </h2>
+          <p className="section-subtitle">
+            Discover iconic destinations across India and the world with our group tours!
+          </p>
 
-        {/* Sidebar Overlay for Mobile */}
-        {sidebarOpen && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>}
-        
-        {/* Left Sidebar Filter */}
-        <aside className={`filter-sidebar ${sidebarOpen ? 'open' : ''}`}>
-          <div className="sidebar-header">
-            <h3 className="sidebar-title">
-              <span className="filter-icon">🔍</span>
-              Filters
-            </h3>
-            <button 
-              className="close-sidebar"
-              onClick={() => setSidebarOpen(false)}
-            >
-              ✕
-            </button>
-          </div>
-
-          <div className="sidebar-content">
-            {/* State/UT Filter Section */}
-            <div className="filter-section">
-              <h4 className="filter-section-title">Select State/UT</h4>
-              
-              <div className="states-list">
-                {/* All States/UTs Option */}
-                <button
-                  className={`state-option ${selectedState === '' ? 'active' : ''}`}
-                  onClick={() => handleStateSelect('')}
-                >
-                  <span className="state-name">All States & UTs</span>
-                  <span className="package-count">({packages.length})</span>
-                </button>
-
-                {/* Individual States/UTs (Sorted by Package Count) */}
-                {visibleStates.map(state => (
-                  <button
-                    key={state.name}
-                    className={`state-option ${selectedState === state.name ? 'active' : ''} ${state.count === 0 ? 'disabled' : ''}`}
-                    onClick={() => handleStateSelect(state.name)}
-                    disabled={state.count === 0}
-                  >
-                    <span className="state-name">{state.name}</span>
-                    <span className="package-count">({state.count})</span>
-                  </button>
-                ))}
-
-                {/* Show More Button */}
-                {sortedStates.length > 5 && (
-                  <button
-                    className="show-more-btn"
-                    onClick={() => setShowAllStates(!showAllStates)}
-                  >
-                    {showAllStates ? 'Show less' : `Show more (${sortedStates.length - 5})`}
-                  </button>
-                )}
+          <div className="states-grid">
+            {loading ? (
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+                Loading destinations...
               </div>
-            </div>
-          </div>
-        </aside>
+            ) : statesData.length === 0 ? (
+              <div className="no-packages">
+                <div className="no-results-icon">🔍</div>
+                <h3>No destinations available</h3>
+                <p>No domestic packages have been added yet. Check back soon!</p>
+              </div>
+            ) : (
+              statesData.map((state, index) => {
+                const imgUrl = getImageUrl(state.image);
 
-        {/* Main Content Area */}
-        <main className="content-area">
-          {/* Popular Destinations */}
-          <section className="destinations-section">
-            <div className="container">
-              <h2 className="section-title">
-                <span className="title-hindi">[translate:लोकप्रिय गंतव्य]</span>
-                <span className="title-english">Destinations</span>
-                {selectedState && (
-                  <span className="filter-info">
-                    Showing results for: <strong>{selectedState}</strong> 
-                    <span className="results-count">({displayPackages.length} packages found)</span>
-                  </span>
-                )}
-                <small className="sort-info">Sorted A-Z</small>
-              </h2>
+                return (
+                  <div 
+                    key={index} 
+                    className="state-card"
+                    onClick={() => handleStateClick(state.state)}
+                  >
+                    <div className="state-card-image">
+                      <img
+                        src={imgUrl}
+                        alt={state.state}
+                        onError={applyFallback}
+                      />
+                    </div>
 
-              <div className="destinations-grid">
-                {loading ? (
-                  <div className="loading-spinner">
-                    <div className="spinner"></div>
-                    Loading domestic packages...
-                  </div>
-                ) : displayPackages.length === 0 ? (
-                  <div className="no-packages">
-                    <div className="no-results-icon">🔍</div>
-                    <h3>No packages found</h3>
-                    <p>
-                      No packages found for <strong>{selectedState}</strong>. 
-                      <br />
-                      Try selecting a different state/UT or view all packages!
-                    </p>
-                    <button className="reset-btn" onClick={clearFilters}>
-                      View All Packages
-                    </button>
-                  </div>
-                ) : (
-                  displayPackages.map((pkg) => {
-                    const primaryPath = pickPrimaryImagePath(pkg);
-                    const imgUrl = getImageUrl(primaryPath);
-
-                    return (
-                      <div key={pkg._id} className="destination-card">
-                        <div className="card-image">
-                          <img
-                            src={imgUrl}
-                            alt={pkg.title}
-                            onError={applyFallback}
-                          />
-                          {selectedState && (
-                            <div className="state-badge">{selectedState}</div>
-                          )}
-                        </div>
-
-                        <div className="card-content">
-                          <h3>{pkg.title}</h3>
-                          <div className="card-details">
-                            {/* <div className="price-block">
-                              <span className="label">From</span>
-                              <div className="amount">{pkg.currency}{pkg.pricePerPerson.toLocaleString()}</div>
-                            </div> */}
-                            <div className="duration">
-                              {pkg.itinerary && pkg.itinerary.length > 0
-                                ? `${pkg.itinerary.length} Days`
-                                : '7 Days'
-                              }
-                            </div>
-                          </div>
-
-                          <button
-                            className="explore-btn"
-                            onClick={() => navigate(`/package/${pkg._id}`)}
-                          >
-                            Explore Tour
-                          </button>
-                        </div>
+                    <div className="state-card-content">
+                      <h3 className="state-name">{state.state}</h3>
+                      <div className="state-stats">
+                        <span className="tour-count">{state.tourCount} {state.tourCount === 1 ? 'Tour' : 'Tours'}</span>
                       </div>
-                    );
-                  })
-                )}
-              </div>
-            </div>
-          </section>
-        </main>
-      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      </section>
 
       <ContactIcons />
 
@@ -415,7 +136,7 @@ export default function Domestic() {
         <div className="container">
           <div className="cta-content">
             <h2>
-              <span className="cta-hindi">[translate:अपनी भारत यात्रा शुरू करें]</span>
+              <span className="cta-hindi">अपनी भारत यात्रा शुरू करें</span>
               <br />
               <span className="cta-english">Start Your India Journey Now</span>
             </h2>

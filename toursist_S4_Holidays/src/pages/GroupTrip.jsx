@@ -324,7 +324,7 @@ export default function GroupTrip() {
                       <span className="results-count">({displayPackages.length} packages found)</span>
                     </span>
                   )}
-                  <small className="sort-info">Sorted A-Z</small>
+                  <small className="sort-info"></small>
                 </h2>
 
                 {loading ? (

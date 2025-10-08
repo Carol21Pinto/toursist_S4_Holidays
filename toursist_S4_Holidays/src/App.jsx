@@ -8,6 +8,8 @@ import International from "./pages/International.jsx";
 import GroupTrip from "./pages/GroupTrip.jsx";
 import Domestic from "./pages/Domestic.jsx";
 import Pilgrimage from "./pages/Pilgrimage.jsx";
+import StatePackages from "./pages/StatePackages.jsx";
+import ContinentPackages from "./pages/ContinentPackages.jsx"; // NEW: Import ContinentPackages
 
 // Admin
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -21,7 +23,6 @@ import EditPackage from './pages/admin/EditPackage';
 import ForgotPassword from "./pages/admin/ForgotPassword.jsx";
 import About from "./pages/About.jsx";
 
-// const About = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>About Page - Coming Soon</h1></div>;
 const Destination = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Destination Page - Coming Soon</h1></div>;
 const Hotel = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Hotel Page - Coming Soon</h1></div>;
 const Blog = () => <div style={{ paddingTop: "80px", textAlign: "center", minHeight: "100vh", background: "#f5f5f5" }}><h1>Blog Page - Coming Soon</h1></div>;
@@ -44,8 +45,15 @@ export default function App() {
       <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
       <Route path="/package/:id" element={<PackageDetail />} />
       <Route path="/destination" element={<PublicLayout><Destination /></PublicLayout>} />
+      
+      {/* International Routes */}
       <Route path="/international" element={<PublicLayout><International /></PublicLayout>} />
+      <Route path="/international/:continentName" element={<PublicLayout><ContinentPackages /></PublicLayout>} /> {/* NEW */}
+      
+      {/* Domestic Routes */}
       <Route path="/domestic" element={<PublicLayout><Domestic /></PublicLayout>} />
+      <Route path="/domestic/:stateName" element={<PublicLayout><StatePackages /></PublicLayout>} />
+      
       <Route path="/pilgrimage" element={<PublicLayout><Pilgrimage /></PublicLayout>} />
       <Route path="/group-trip" element={<PublicLayout><GroupTrip /></PublicLayout>} />
       <Route path="/hotel" element={<PublicLayout><Hotel /></PublicLayout>} />

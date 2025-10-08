@@ -23,6 +23,69 @@ exports.getAllPackages = async (req, res) => {
   }
 };
 
+// NEW: Get packages grouped by state with statistics (only states with packages)
+exports.getPackagesGroupedByState = async (req, res) => {
+  try {
+    console.log('=== GET PACKAGES GROUPED BY STATE ===');
+    
+    // Get all domestic packages
+    const domesticPackages = await Package.find({ category: 'domestic' }).sort({ createdAt: -1 });
+    
+    console.log('Total domestic packages found:', domesticPackages.length);
+    
+    // Group packages by state
+    const stateGroups = {};
+    
+    domesticPackages.forEach(pkg => {
+      const stateName = pkg.state || 'Unknown';
+      
+      if (!stateGroups[stateName]) {
+        stateGroups[stateName] = {
+          state: stateName,
+          packages: [],
+          tourCount: 0,
+          departures: 0,
+          guestsCount: 0
+        };
+      }
+      
+      stateGroups[stateName].packages.push(pkg);
+      stateGroups[stateName].tourCount++;
+      
+      // Calculate departures (count departure dates)
+      if (pkg.departureDates && Array.isArray(pkg.departureDates)) {
+        stateGroups[stateName].departures += pkg.departureDates.length;
+      }
+      
+      // For now, guestsCount can be a placeholder or calculated based on your logic
+      // You can update this based on actual booking data if available
+      stateGroups[stateName].guestsCount += Math.floor(Math.random() * 1000) + 100; // Placeholder
+    });
+    
+    // Convert to array and filter out states with 0 packages
+    const result = Object.values(stateGroups)
+      .filter(group => group.tourCount > 0)
+      .map(group => ({
+        state: group.state,
+        tourCount: group.tourCount,
+        departures: group.departures,
+        guestsCount: group.guestsCount,
+        // Pick a representative image from the first package
+        image: group.packages[0]?.cardImage || group.packages[0]?.images?.[0] || null
+      }))
+      .sort((a, b) => b.tourCount - a.tourCount); // Sort by tour count (highest first)
+    
+    console.log('States with packages:', result.length);
+    console.log('State groups:', result.map(r => `${r.state}: ${r.tourCount} tours`));
+    console.log('=== END GROUPED BY STATE ===');
+    
+    return res.json(result);
+  } catch (err) {
+    console.error('GROUPED_BY_STATE_ERR:', err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
 // Create new package
 exports.createPackage = async (req, res) => {
   try {
@@ -36,7 +99,7 @@ exports.createPackage = async (req, res) => {
     console.log('GroupType:', packageData.groupType);
     console.log('State:', packageData.state);
     console.log('Continent:', packageData.continent);
-    console.log('Departure Dates:', packageData.departureDates); // NEW: Log departure dates
+    console.log('Departure Dates:', packageData.departureDates);
     
     const newPackage = new Package({
       title: packageData.name,
@@ -54,7 +117,6 @@ exports.createPackage = async (req, res) => {
       pricingMode: packageData.pricingMode,
       priceText: packageData.priceText || '',
       
-      // NEW: Add departure dates
       departureDates: packageData.departureDates || [],
       
       cardImage: cardImage,
@@ -76,7 +138,7 @@ exports.createPackage = async (req, res) => {
     console.log('GroupType:', newPackage.groupType);
     console.log('State:', newPackage.state);
     console.log('Continent:', newPackage.continent);
-    console.log('Departure Dates:', newPackage.departureDates); // NEW: Log saved departure dates
+    console.log('Departure Dates:', newPackage.departureDates);
     console.log('=== END CREATE DEBUG ===');
     
     console.log('Package created successfully:', newPackage._id, 'at', newPackage.createdAt);
@@ -96,7 +158,7 @@ exports.updatePackage = async (req, res) => {
 
     const packageData = JSON.parse(req.body.data);
     console.log('Parsed package data:', packageData);
-    console.log('Departure Dates in update:', packageData.departureDates); // NEW: Log departure dates
+    console.log('Departure Dates in update:', packageData.departureDates);
 
     const updates = {
       title: packageData.name,
@@ -114,7 +176,6 @@ exports.updatePackage = async (req, res) => {
       priceNote: packageData.priceNote || '',
       priceText: packageData.priceText || '',
       
-      // NEW: Add departure dates
       departureDates: packageData.departureDates || [],
       
       itinerary: packageData.itinerary || [],
@@ -148,7 +209,7 @@ exports.updatePackage = async (req, res) => {
     console.log('GroupType:', pkg.groupType);
     console.log('State:', pkg.state);
     console.log('Continent:', pkg.continent);
-    console.log('Departure Dates:', pkg.departureDates); // NEW: Log updated departure dates
+    console.log('Departure Dates:', pkg.departureDates);
 
     console.log('Package updated successfully:', pkg._id, 'at', pkg.updatedAt);
     return res.json(pkg);
@@ -182,7 +243,7 @@ exports.getPackage = async (req, res) => {
   }
 };
 
-// UPDATED: Delete with File Cleanup
+// Delete with File Cleanup
 exports.deletePackage = async (req, res) => {
   try {
     const { id } = req.params;
@@ -226,8 +287,6 @@ exports.deletePackage = async (req, res) => {
       if (!imagePath) continue;
       
       try {
-        // Your multer saves files as 'uploads/filename.jpg'
-        // Remove any duplicate 'uploads/' prefix and create full path
         const cleanPath = imagePath.replace(/^uploads[\/\\]/, '');
         const fullPath = path.join(__dirname, '../uploads', cleanPath);
         
@@ -428,3 +487,53 @@ exports.getWeeklyCounts = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+// NEW: Get packages grouped by continent with statistics (only continents with packages)
+exports.getPackagesGroupedByContinent = async (req, res) => {
+  try {
+    console.log('=== GET PACKAGES GROUPED BY CONTINENT ===');
+    
+    // Get all international packages
+    const internationalPackages = await Package.find({ category: 'international' }).sort({ createdAt: -1 });
+    
+    console.log('Total international packages found:', internationalPackages.length);
+    
+    // Group packages by continent
+    const continentGroups = {};
+    
+    internationalPackages.forEach(pkg => {
+      const continentName = pkg.continent || 'Unknown';
+      
+      if (!continentGroups[continentName]) {
+        continentGroups[continentName] = {
+          continent: continentName,
+          packages: [],
+          tourCount: 0
+        };
+      }
+      
+      continentGroups[continentName].packages.push(pkg);
+      continentGroups[continentName].tourCount++;
+    });
+    
+    // Convert to array and filter out continents with 0 packages
+    const result = Object.values(continentGroups)
+      .filter(group => group.tourCount > 0)
+      .map(group => ({
+        continent: group.continent,
+        tourCount: group.tourCount,
+        // Pick a representative image from the first package
+        image: group.packages[0]?.cardImage || group.packages[0]?.images?.[0] || null
+      }))
+      .sort((a, b) => b.tourCount - a.tourCount); // Sort by tour count (highest first)
+    
+    console.log('Continents with packages:', result.length);
+    console.log('Continent groups:', result.map(r => `${r.continent}: ${r.tourCount} tours`));
+    console.log('=== END GROUPED BY CONTINENT ===');
+    
+    return res.json(result);
+  } catch (err) {
+    console.error('GROUPED_BY_CONTINENT_ERR:', err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+

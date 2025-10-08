@@ -6,6 +6,12 @@ const upload = require('../config/multer');
 // NEW: Get all packages route - MUST BE FIRST
 router.get('/', pkg.getAllPackages);
 
+// NEW: Get packages grouped by state (ONLY STATES WITH PACKAGES)
+router.get('/grouped-by-state', pkg.getPackagesGroupedByState);
+
+// NEW: Get packages grouped by continent
+router.get('/grouped-by-continent', pkg.getPackagesGroupedByContinent);
+
 // Specific routes FIRST (before /:id)
 router.get('/category/:category', pkg.getPackagesByCategory);
 router.get('/stats', pkg.getPackageStats);
