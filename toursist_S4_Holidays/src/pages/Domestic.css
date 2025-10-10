@@ -2,6 +2,22 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&family=Kalam:wght@400;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap');
 
+/* ===== DISABLE TEXT SELECTION ===== */
+* {
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+}
+/* ===== END DISABLE TEXT SELECTION ===== */
+
 /* Reset and Base Styles */
 * {
   box-sizing: border-box;
@@ -272,7 +288,8 @@ body {
   50% { transform: translateY(-4px); }
 }
 
-/* Tour Count Badge (Overlaid on Image) */
+/* ✅ RED BADGE REMOVED - Section commented out */
+/* Tour Count Badge (Overlaid on Image) - DISABLED
 .state-card-image::before {
   content: attr(data-tours);
   position: absolute;
@@ -295,6 +312,7 @@ body {
   0%, 100% { transform: scale(1); }
   50% { transform: scale(1.05); }
 }
+*/
 
 /* Loading State */
 .loading-spinner {

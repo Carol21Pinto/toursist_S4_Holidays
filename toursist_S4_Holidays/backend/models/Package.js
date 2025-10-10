@@ -6,19 +6,26 @@ const PackageSchema = new mongoose.Schema({
   duration: { type: String },
   
   // Location fields
-  groupType: { type: String }, // For Group packages: "Domestic", "International", "Pilgrimage"
-  state: { type: String },     // For Domestic packages  
-  continent: { type: String }, // For International packages
+  groupType: { type: String },
+  state: { type: String },
+  continent: { type: String },
   
   // Pricing fields
   pricingMode: { type: String, enum: ['Structured', 'Text'], default: 'Structured' },
   pricePerPerson: { type: Number },
   currency: { type: String, default: 'INR' },
-  priceNote: { type: String },
+  priceNote: { type: String }, // Legacy format (pipe-separated)
   priceText: { type: String },
   
-  // NEW: Departure dates field
-  departureDates: [{ type: String }], // Array of date strings
+  // ✅ NEW: Categorized pricing notes
+  pricingNotes: [{ type: String }], // Array of all notes
+  pricingNoteCategories: {
+    booking: [{ type: String }],  // Notes categorized as "Booking Policy"
+    notes: [{ type: String }]     // Notes categorized as "Notes"
+  },
+  
+  // Departure dates
+  departureDates: [{ type: String }],
   
   cardImage: { type: String },
   images: [{ type: String }],

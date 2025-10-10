@@ -10,46 +10,85 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // ✅ SMART IP DETECTION - Works with ANY IP automatically!
+  // SMART IP DETECTION
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   const currentIP = isLocalhost ? 'localhost' : window.location.hostname;
-
   const API_URL = import.meta.env.VITE_API_URL || `http://${currentIP}:5000/api`;
 
-  // ✅ SMART image URL generation for mobile compatibility
+  // SMART image URL generation
   const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg';
     const fixedPath = imagePath.replace(/\\/g, '/');
     if (fixedPath.startsWith('http')) return fixedPath;
-    
-    // Smart server base URL - works with any IP!
     const serverBase = `http://${currentIP}:5000`;
     return `${serverBase}/${fixedPath}`;
   };
 
-  // Handle back navigation
   const handleGoBack = () => {
     navigate(-1);
   };
 
-  // NEW: Helper function to get pricing notes
+  // Helper function to get ALL pricing notes
   const getPricingNotes = () => {
-    // First check for new array format
     if (packageData.pricingNotes && Array.isArray(packageData.pricingNotes)) {
       return packageData.pricingNotes.filter(note => note && note.trim());
     }
-    
-    // Then check for legacy single note or pipe-separated format
     if (packageData.priceNote && packageData.priceNote.trim()) {
-      // Split by pipe separator and filter empty notes
       return packageData.priceNote.split(' | ').filter(note => note && note.trim());
     }
-    
     return [];
   };
 
-  // NEW: Check if pricing notes should be displayed
-  const shouldShowPricingNotes = () => {
+  // ✅ UPDATED: Read categorized notes from backend OR auto-categorize for old packages
+  const splitNotesIntoColumns = () => {
+    const allNotes = getPricingNotes();
+    let bookingPolicyNotes = [];
+    let generalNotes = [];
+
+    // Check if backend sent categorized notes (new format)
+    if (packageData.pricingNoteCategories && 
+        (packageData.pricingNoteCategories.booking || packageData.pricingNoteCategories.notes)) {
+      bookingPolicyNotes = packageData.pricingNoteCategories.booking || [];
+      generalNotes = packageData.pricingNoteCategories.notes || [];
+      
+      console.log('✅ Using categorized notes from backend');
+      console.log('Booking Policy:', bookingPolicyNotes);
+      console.log('Notes:', generalNotes);
+    } else {
+      // Fallback: Auto-categorize for old packages (backward compatibility)
+      console.log('⚠️ No categorized notes found, using auto-detection');
+      
+      allNotes.forEach(note => {
+        const lowerNote = note.toLowerCase();
+        
+        const isBookingPolicy = 
+          lowerNote.includes('booking policy') ||
+          lowerNote.includes('full payment for flights') ||
+          lowerNote.includes('remaining balance must be cleared') ||
+          lowerNote.includes('minimum of 50%') ||
+          lowerNote.includes('at the time of booking to confirm') ||
+          lowerNote.includes('prior to the departure date') ||
+          (lowerNote.includes('payment') && lowerNote.includes('time of booking')) ||
+          (lowerNote.includes('balance') && lowerNote.includes('30 days'));
+        
+        if (isBookingPolicy) {
+          bookingPolicyNotes.push(note);
+        } else {
+          generalNotes.push(note);
+        }
+      });
+    }
+
+    return { bookingPolicyNotes, generalNotes };
+  };
+
+  // Check if notes section should be displayed
+  const shouldShowNotesSection = () => {
+    if (packageData.pricingNoteCategories && 
+        (packageData.pricingNoteCategories.booking?.length > 0 || 
+         packageData.pricingNoteCategories.notes?.length > 0)) {
+      return true;
+    }
     const notes = getPricingNotes();
     return notes.length > 0;
   };
@@ -63,7 +102,8 @@ const PackageDetail = () => {
           throw new Error(`Error ${response.status}: Package not found`);
         }
         const data = await response.json();
-        console.log('Package data received:', data);
+        console.log('📦 Package data received:', data);
+        console.log('📝 Pricing Note Categories:', data.pricingNoteCategories);
         setPackageData(data);
         setError(null);
       } catch (err) {
@@ -130,7 +170,7 @@ const PackageDetail = () => {
     );
   }
 
-  // FIXED: Helper function to render pricing
+  // Helper function to render pricing
   const renderPriceDisplay = () => {
     if (packageData.pricingMode === 'Structured' && 
         packageData.pricePerPerson && 
@@ -145,7 +185,7 @@ const PackageDetail = () => {
     return 'Contact for pricing';
   };
 
-  // FIXED: Helper function for hero section pricing (shorter version)
+  // Helper function for hero section pricing
   const renderHeroPricing = () => {
     if (packageData.pricingMode === 'Structured' && 
         packageData.pricePerPerson && 
@@ -160,10 +200,13 @@ const PackageDetail = () => {
     return 'Contact for pricing';
   };
 
+  // Get split notes
+  const { bookingPolicyNotes, generalNotes } = splitNotesIntoColumns();
+
   return (
     <div className="package-detail-container">
       
-      {/* Back Button at the Top */}
+      {/* Back Button */}
       <div className="back-button-container">
         <button className="back-button" onClick={handleGoBack}>
           <span className="back-arrow">←</span>
@@ -171,7 +214,7 @@ const PackageDetail = () => {
         </button>
       </div>
 
-      {/* Hero Section with Auto-Fit Image */}
+      {/* Hero Section */}
       <header style={{
         backgroundImage: `url("${getImageUrl(packageData.cardImage)}")`,
         backgroundPosition: 'center center',
@@ -189,13 +232,13 @@ const PackageDetail = () => {
         <h2>Package Overview</h2>
         <div className="overview">
           <div><strong>Duration:</strong> {packageData.duration || 'Not specified'}</div>
-          {/* <div><strong>Note:</strong> {packageData.priceNote || 'All inclusive'}</div> */}
           <div className="price">{renderPriceDisplay()}</div>
         </div>
       </section>
 
-      {/* Departure Dates Section */}
-      {packageData.departureDates && packageData.departureDates.length > 0 && packageData.departureDates.some(date => date.trim()) && (
+      {/* Departure Dates */}
+      {packageData.departureDates && packageData.departureDates.length > 0 && 
+       packageData.departureDates.some(date => date.trim()) && (
         <section className="section departure-section">
           <h2>Available Departure Dates</h2>
           <div className="departure-dates">
@@ -245,7 +288,6 @@ const PackageDetail = () => {
       <section className="section">
         <h2>Details</h2>
         <div className="two-col">
-          {/* Inclusions */}
           <div className="col">
             <h3>Inclusions</h3>
             {packageData.inclusions && packageData.inclusions.length > 0 ? (
@@ -260,7 +302,6 @@ const PackageDetail = () => {
             )}
           </div>
 
-          {/* Exclusions */}
           <div className="col exclusions">
             <h3>Exclusions</h3>
             {packageData.exclusions && packageData.exclusions.length > 0 ? (
@@ -277,16 +318,37 @@ const PackageDetail = () => {
         </div>
       </section>
 
-      {/* NEW: Compact Height Pricing Notes Box - Full Width */}
-      {shouldShowPricingNotes() && (
-        <section className="section pricing-notes-compact">
-          <h3>💰Notes:</h3>
-          <div className="compact-notes-grid">
-            {getPricingNotes().map((note, index) => (
-              <div key={index} className="compact-note">
-                {note}
+      {/* ✅ Two-Box Split Layout - Booking Policy & Notes */}
+      {shouldShowNotesSection() && (
+        <section className="section notes-split-section">
+          <div className="split-boxes">
+            {/* Left Box - Booking Policy */}
+            {bookingPolicyNotes.length > 0 && (
+              <div className="split-box booking-box">
+                <h3>📋 Booking Policy</h3>
+                <div className="box-content">
+                  {bookingPolicyNotes.map((note, index) => (
+                    <div key={index} className="note-line">
+                      • {note}
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+            )}
+
+            {/* Right Box - Notes */}
+            {generalNotes.length > 0 && (
+              <div className="split-box notes-box">
+                <h3>💰 Notes</h3>
+                <div className="box-content">
+                  {generalNotes.map((note, index) => (
+                    <div key={index} className="note-line">
+                      • {note}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </section>
       )}

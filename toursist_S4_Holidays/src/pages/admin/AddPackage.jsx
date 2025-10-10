@@ -11,16 +11,16 @@ const AddPackage = () => {
     pricePerPerson: '',
     currency: 'INR',
     priceText: '',
-    // New location fields
-    state: '',        // For Domestic packages
-    continent: '',    // For International packages
-    groupType: ''     // For Group packages (Domestic/International/Pilgrimage)
+    state: '',
+    continent: '',
+    groupType: ''
   });
 
   const [pricingMode, setPricingMode] = useState('Structured');
   
-  // NEW: Multiple pricing notes array instead of single priceNote
+  // Pricing notes with categories
   const [pricingNotes, setPricingNotes] = useState(['']);
+  const [pricingNoteCategories, setPricingNoteCategories] = useState(['booking']); // Track category for each note
   
   const [itinerary, setItinerary] = useState([
     { day: 1, title: '', activities: [''] }
@@ -28,55 +28,22 @@ const AddPackage = () => {
   
   const [inclusions, setInclusions] = useState(['']);
   const [exclusions, setExclusions] = useState(['']);
-  
-  // NEW: Departure dates state
   const [departureDates, setDepartureDates] = useState(['']);
-  
   const [cardImage, setCardImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // ✅ COMPLETE LIST: All 28 States + 8 Union Territories
+  // States and continents lists
   const indianStates = [
-    // 28 States (in alphabetical order)
-    'Andhra Pradesh',
-    'Arunachal Pradesh', 
-    'Assam',
-    'Bihar',
-    'Chhattisgarh',
-    'Goa',
-    'Gujarat',
-    'Haryana',
-    'Himachal Pradesh',
-    'Jharkhand',
-    'Karnataka',
-    'Kerala',
-    'Madhya Pradesh',
-    'Maharashtra',
-    'Manipur',
-    'Meghalaya',
-    'Mizoram',
-    'Nagaland',
-    'Odisha',
-    'Punjab',
-    'Rajasthan',
-    'Sikkim',
-    'Tamil Nadu',
-    'Telangana',
-    'Tripura',
-    'Uttar Pradesh',
-    'Uttarakhand',
-    'West Bengal',
-    
-    // 8 Union Territories (in alphabetical order)
-    'Andaman and Nicobar Islands',
-    'Chandigarh',
-    'Dadra and Nagar Haveli and Daman and Diu',
-    'Delhi',
-    'Jammu and Kashmir',
-    'Ladakh',
-    'Lakshadweep',
-    'Puducherry'
+    'Andhra Pradesh', 'Arunachal Pradesh', 'Assam', 'Bihar', 'Chhattisgarh',
+    'Goa', 'Gujarat', 'Haryana', 'Himachal Pradesh', 'Jharkhand',
+    'Karnataka', 'Kerala', 'Madhya Pradesh', 'Maharashtra', 'Manipur',
+    'Meghalaya', 'Mizoram', 'Nagaland', 'Odisha', 'Punjab',
+    'Rajasthan', 'Sikkim', 'Tamil Nadu', 'Telangana', 'Tripura',
+    'Uttar Pradesh', 'Uttarakhand', 'West Bengal',
+    'Andaman and Nicobar Islands', 'Chandigarh',
+    'Dadra and Nagar Haveli and Daman and Diu', 'Delhi',
+    'Jammu and Kashmir', 'Ladakh', 'Lakshadweep', 'Puducherry'
   ];
 
   const continents = [
@@ -84,10 +51,7 @@ const AddPackage = () => {
     'Africa', 'Oceania', 'South America'
   ];
 
-  // Group types for Group category
-  const groupTypes = [
-    'Domestic', 'International', 'Pilgrimage'
-  ];
+  const groupTypes = ['Domestic', 'International', 'Pilgrimage'];
 
   // Snackbar state
   const [snackbar, setSnackbar] = useState({
@@ -96,41 +60,25 @@ const AddPackage = () => {
     severity: 'success'
   });
 
-  // Handle snackbar close
+  // Snackbar handlers
   const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway') {
-      return;
-    }
+    if (reason === 'clickaway') return;
     setSnackbar(prev => ({ ...prev, open: false }));
   };
 
-  // Show success snackbar
   const showSuccess = (message) => {
-    setSnackbar({
-      open: true,
-      message: message,
-      severity: 'success'
-    });
+    setSnackbar({ open: true, message: message, severity: 'success' });
   };
 
-  // Show error snackbar
   const showError = (message) => {
-    setSnackbar({
-      open: true,
-      message: message,
-      severity: 'error'
-    });
+    setSnackbar({ open: true, message: message, severity: 'error' });
   };
 
-  // Handle basic form fields
+  // Form handlers
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData(prev => ({ ...prev, [name]: value }));
 
-    // Clear location fields when category changes
     if (name === 'category') {
       setFormData(prev => ({
         ...prev,
@@ -141,31 +89,40 @@ const AddPackage = () => {
     }
   };
 
-  // Handle pricing mode change
   const handlePricingModeChange = (mode) => {
     setPricingMode(mode);
   };
 
-  // NEW: Handle pricing notes functions
+  // ✅ NEW: Pricing notes with category handlers
   const handlePricingNoteChange = (index, value) => {
     const newNotes = [...pricingNotes];
     newNotes[index] = value;
     setPricingNotes(newNotes);
   };
 
+  const handlePricingNoteCategoryChange = (index, category) => {
+    const newCategories = [...pricingNoteCategories];
+    newCategories[index] = category;
+    setPricingNoteCategories(newCategories);
+  };
+
   const addPricingNote = () => {
     setPricingNotes([...pricingNotes, '']);
+    setPricingNoteCategories([...pricingNoteCategories, 'notes']); // Default to 'notes'
   };
 
   const removePricingNote = (index) => {
     if (pricingNotes.length > 1) {
       const newNotes = [...pricingNotes];
+      const newCategories = [...pricingNoteCategories];
       newNotes.splice(index, 1);
+      newCategories.splice(index, 1);
       setPricingNotes(newNotes);
+      setPricingNoteCategories(newCategories);
     }
   };
 
-  // Handle card image upload and preview
+  // Card image handlers
   const handleCardImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -175,7 +132,7 @@ const AddPackage = () => {
     }
   };
 
-  // Handle itinerary changes
+  // Itinerary handlers
   const handleItineraryChange = (dayIndex, field, value) => {
     const newItinerary = [...itinerary];
     newItinerary[dayIndex][field] = value;
@@ -194,7 +151,6 @@ const AddPackage = () => {
     setItinerary(newItinerary);
   };
 
-  // Remove activity function
   const removeActivity = (dayIndex, activityIndex) => {
     const newItinerary = [...itinerary];
     if (newItinerary[dayIndex].activities.length > 1) {
@@ -211,7 +167,6 @@ const AddPackage = () => {
     }]);
   };
 
-  // Remove day function
   const removeDay = (dayIndex) => {
     if (itinerary.length > 1) {
       const newItinerary = [...itinerary];
@@ -224,7 +179,7 @@ const AddPackage = () => {
     }
   };
 
-  // NEW: Handle departure dates
+  // Departure dates handlers
   const handleDepartureDateChange = (index, value) => {
     const newDates = [...departureDates];
     newDates[index] = value;
@@ -243,7 +198,7 @@ const AddPackage = () => {
     }
   };
 
-  // Handle inclusions/exclusions
+  // Inclusions/Exclusions handlers
   const handleArrayChange = (index, value, type) => {
     if (type === 'inclusions') {
       const newInclusions = [...inclusions];
@@ -264,7 +219,6 @@ const AddPackage = () => {
     }
   };
 
-  // Remove inclusion function
   const removeInclusion = (index) => {
     if (inclusions.length > 1) {
       const newInclusions = [...inclusions];
@@ -273,7 +227,6 @@ const AddPackage = () => {
     }
   };
 
-  // Remove exclusion function
   const removeExclusion = (index) => {
     if (exclusions.length > 1) {
       const newExclusions = [...exclusions];
@@ -282,23 +235,20 @@ const AddPackage = () => {
     }
   };
 
-  // Enhanced dashboard refresh function
+  // Dashboard refresh
   const triggerDashboardRefresh = () => {
-    console.log('Triggering dashboard refresh for real-time chart update...');
-    
+    console.log('Triggering dashboard refresh...');
     localStorage.setItem('dashboardRefresh', Date.now().toString());
     window.dispatchEvent(new CustomEvent('dashboardRefresh'));
-    
     setTimeout(() => {
       localStorage.setItem('dashboardRefresh', (Date.now() + 1).toString());
     }, 100);
-    
     setTimeout(() => {
       localStorage.setItem('dashboardRefresh', (Date.now() + 2).toString());
     }, 500);
   };
 
-  // Submit form
+  // Submit handlers
   const addPackage = async (packageData, cardImage) => {
     try {
       setIsSubmitting(true);
@@ -321,10 +271,11 @@ const AddPackage = () => {
         const newPackage = await response.json();
         console.log('Package created successfully:', newPackage);
         
-        showSuccess("🎉 Package added successfully! Your dashboard will update automatically.");
+        showSuccess("🎉 Package added successfully!");
         triggerDashboardRefresh();
         
         setTimeout(() => {
+          // Reset form
           setFormData({
             name: '',
             category: 'Domestic',
@@ -339,8 +290,9 @@ const AddPackage = () => {
           setItinerary([{ day: 1, title: '', activities: [''] }]);
           setInclusions(['']);
           setExclusions(['']);
-          setDepartureDates(['']); // Reset departure dates
-          setPricingNotes(['']); // Reset pricing notes
+          setDepartureDates(['']);
+          setPricingNotes(['']);
+          setPricingNoteCategories(['booking']);
           setCardImage(null);
           setImagePreview(null);
           setPricingMode('Structured');
@@ -363,20 +315,35 @@ const AddPackage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    // ✅ Create categorized notes object
+    const categorizedNotes = {
+      booking: [],
+      notes: []
+    };
+
+    pricingNotes.forEach((note, index) => {
+      if (note.trim()) {
+        const category = pricingNoteCategories[index] || 'notes';
+        categorizedNotes[category].push(note.trim());
+      }
+    });
+
     const packageData = {
       ...formData,
       pricingMode,
-      // Convert pricing notes array to formatted string for backend compatibility
-      priceNote: pricingNotes.filter(note => note.trim()).join(' | '),
-      pricingNotes: pricingNotes.filter(note => note.trim()), // Also send as array
+      // Send categorized notes
+      pricingNotes: pricingNotes.filter(note => note.trim()),
+      pricingNoteCategories: categorizedNotes, // NEW: Send categorized structure
+      priceNote: pricingNotes.filter(note => note.trim()).join(' | '), // Legacy format
       itinerary: itinerary.filter(day => day.title && day.activities.some(act => act)),
       inclusions: inclusions.filter(inc => inc.trim()),
       exclusions: exclusions.filter(exc => exc.trim()),
-      departureDates: departureDates.filter(date => date.trim()) // Include departure dates
+      departureDates: departureDates.filter(date => date.trim())
     };
 
     await addPackage(packageData, cardImage);
   };
+  // ... continuing from Part 1
 
   return (
     <div className="add-package-container">
@@ -418,7 +385,7 @@ const AddPackage = () => {
             </div>
           </div>
 
-          {/* Group Type Selection for Group Category */}
+          {/* Group Type Selection */}
           {formData.category === 'Group' && (
             <div className="form-row">
               <div className="form-group">
@@ -428,10 +395,6 @@ const AddPackage = () => {
                   value={formData.groupType}
                   onChange={handleInputChange}
                   required
-                  style={{
-                    background: formData.groupType ? '#e8f5e8' : 'white',
-                    borderColor: formData.groupType ? '#28a745' : '#e1e5e9'
-                  }}
                 >
                   <option value="">Choose Group Type...</option>
                   {groupTypes.map(type => (
@@ -442,7 +405,7 @@ const AddPackage = () => {
             </div>
           )}
 
-          {/* Location Selection Based on Category */}
+          {/* Location Selection */}
           <div className="form-row">
             {formData.category === 'Domestic' && (
               <div className="form-group">
@@ -452,10 +415,6 @@ const AddPackage = () => {
                   value={formData.state}
                   onChange={handleInputChange}
                   required
-                  style={{
-                    background: formData.state ? '#e8f5e8' : 'white',
-                    borderColor: formData.state ? '#28a745' : '#e1e5e9'
-                  }}
                 >
                   <option value="">Choose State/Union Territory...</option>
                   {indianStates.map(state => (
@@ -473,10 +432,6 @@ const AddPackage = () => {
                   value={formData.continent}
                   onChange={handleInputChange}
                   required
-                  style={{
-                    background: formData.continent ? '#e8f5e8' : 'white',
-                    borderColor: formData.continent ? '#28a745' : '#e1e5e9'
-                  }}
                 >
                   <option value="">Choose Continent/Region...</option>
                   {continents.map(continent => (
@@ -497,43 +452,11 @@ const AddPackage = () => {
               />
             </div>
           </div>
-
-          {/* Location Info Helper */}
-          {formData.category === 'Domestic' && formData.state && (
-            <div className="location-info">
-              <span className="info-icon">ℹ️</span>
-              <span>Selected {indianStates.includes(formData.state) && formData.state.includes('and') ? 'Union Territory' : 'State'}: <strong>{formData.state}</strong> - This will help users find your package easily!</span>
-            </div>
-          )}
-
-          {formData.category === 'International' && formData.continent && (
-            <div className="location-info">
-              <span className="info-icon">🌍</span>  
-              <span>Selected Region: <strong>{formData.continent}</strong> - This will help users find your package easily!</span>
-            </div>
-          )}
-
-          {formData.category === 'Pilgrimage' && (
-            <div className="location-info">
-              <span className="info-icon">🕌</span>
-              <span>Pilgrimage package selected - Perfect for spiritual journeys and holy destinations!</span>
-            </div>
-          )}
-
-          {formData.category === 'Group' && formData.groupType && (
-            <div className="location-info">
-              <span className="info-icon">👥</span>
-              <span>Selected Group Type: <strong>{formData.groupType}</strong> - This will help users find your group package easily!</span>
-            </div>
-          )}
         </div>
 
-        {/* NEW: Departure Dates Section */}
+        {/* Departure Dates Section */}
         <div className="form-section">
           <h2>Departure Dates <span style={{color: '#666', fontSize: '0.9rem', fontWeight: 'normal'}}>(Optional)</span></h2>
-          <p style={{color: '#666', fontSize: '0.9rem', margin: '0 0 20px 0'}}>
-            📅 Add multiple departure dates for your package. Leave empty if dates are flexible.
-          </p>
           
           {departureDates.map((date, index) => (
             <div key={index} className="departure-date-row">
@@ -542,7 +465,6 @@ const AddPackage = () => {
                   type="date"
                   value={date}
                   onChange={(e) => handleDepartureDateChange(index, e.target.value)}
-                  placeholder="Select departure date"
                   className="departure-date-input"
                 />
               </div>
@@ -558,35 +480,12 @@ const AddPackage = () => {
             </div>
           ))}
           
-          <button
-            type="button"
-            onClick={addDepartureDate}
-            className="add-date-btn"
-          >
+          <button type="button" onClick={addDepartureDate} className="add-date-btn">
             📅 Add Departure Date
           </button>
-
-          {/* Show selected dates preview */}
-          {departureDates.some(date => date.trim()) && (
-            <div className="dates-preview">
-              <span className="preview-label">Selected Dates:</span>
-              <div className="dates-list">
-                {departureDates.filter(date => date.trim()).map((date, index) => (
-                  <span key={index} className="date-tag">
-                    {new Date(date).toLocaleDateString('en-US', { 
-                      weekday: 'short', 
-                      year: 'numeric', 
-                      month: 'short', 
-                      day: 'numeric' 
-                    })}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* Enhanced Pricing Section */}
+        {/* Enhanced Pricing Section with Category Selection */}
         <div className="form-section">
           <h2>Pricing</h2>
           
@@ -636,26 +535,72 @@ const AddPackage = () => {
                 </div>
               </div>
 
-              {/* NEW: Multiple Pricing Notes Section */}
+              {/* ✅ NEW: Enhanced Pricing Notes with Category Selection */}
               <div className="form-group full-width">
                 <label>
-                  Pricing Notes <span style={{color: '#666', fontSize: '0.9rem', fontWeight: 'normal'}}>(Multiple bullet points)</span>
+                  Pricing Notes <span style={{color: '#666', fontSize: '0.9rem', fontWeight: 'normal'}}>(Categorized)</span>
                 </label>
                 <p style={{color: '#666', fontSize: '0.9rem', margin: '0 0 15px 0'}}>
-                  💡 Add multiple pricing notes as bullet points (e.g., "With flights ex Bangalore", "Excludes GST", etc.)
+                  💡 Add notes and select if they're Booking Policy or General Notes
                 </p>
                 
                 {pricingNotes.map((note, index) => (
-                  <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-                    <div className="form-group" style={{ flex: 1, margin: 0 }}>
+                  <div key={index} style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: '1fr 200px auto', 
+                    gap: '10px', 
+                    marginBottom: '12px',
+                    alignItems: 'start',
+                    background: '#f8f9fa',
+                    padding: '12px',
+                    borderRadius: '8px',
+                    border: '1px solid #e1e5e9'
+                  }}>
+                    {/* Note Input */}
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
                       <input
                         type="text"
                         value={note}
                         onChange={(e) => handlePricingNoteChange(index, e.target.value)}
-                        placeholder={`e.g., ${index === 0 ? 'With flights ex Bangalore' : index === 1 ? 'Excludes GST & service charges' : 'Based on twin sharing'}`}
-                        className="pricing-note-input"
+                        placeholder={
+                          index === 0 ? 'e.g., Booking Policy' : 
+                          index === 1 ? 'e.g., Full payment for flights required' : 
+                          'Add pricing note...'
+                        }
+                        style={{
+                          padding: '10px 12px',
+                          borderRadius: '6px',
+                          border: '1px solid #e1e5e9',
+                          fontSize: '0.95rem',
+                          width: '100%'
+                        }}
                       />
                     </div>
+                    
+                    {/* Category Selector */}
+                    <div style={{ display: 'flex', flexDirection: 'column' }}>
+                      <select
+                        value={pricingNoteCategories[index] || 'notes'}
+                        onChange={(e) => handlePricingNoteCategoryChange(index, e.target.value)}
+                        style={{
+                          padding: '10px 12px',
+                          borderRadius: '6px',
+                          border: '2px solid',
+                          borderColor: pricingNoteCategories[index] === 'booking' ? '#2196F3' : '#ff9800',
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          background: pricingNoteCategories[index] === 'booking' ? '#e3f2fd' : '#fff8e1',
+                          color: pricingNoteCategories[index] === 'booking' ? '#1976D2' : '#f57f17',
+                          cursor: 'pointer',
+                          width: '100%'
+                        }}
+                      >
+                        <option value="booking">📋 Booking Policy</option>
+                        <option value="notes">💰 Notes</option>
+                      </select>
+                    </div>
+                    
+                    {/* Remove Button */}
                     {pricingNotes.length > 1 && (
                       <button
                         type="button"
@@ -664,12 +609,12 @@ const AddPackage = () => {
                           background: '#ffebee',
                           color: '#d32f2f',
                           border: 'none',
-                          padding: '8px 16px',
+                          padding: '10px 16px',
                           borderRadius: '6px',
                           fontSize: '0.9rem',
                           cursor: 'pointer',
                           fontWeight: '600',
-                          alignSelf: 'center'
+                          whiteSpace: 'nowrap'
                         }}
                       >
                         Remove
@@ -681,46 +626,83 @@ const AddPackage = () => {
                 <button
                   type="button"
                   onClick={addPricingNote}
-                  className="add-btn"
                   style={{
                     background: '#e8f5e8',
                     color: '#2e7d32',
                     border: '1px solid #4caf50',
-                    padding: '10px 20px',
-                    borderRadius: '6px',
-                    fontSize: '0.9rem',
+                    padding: '12px 24px',
+                    borderRadius: '8px',
+                    fontSize: '0.95rem',
                     cursor: 'pointer',
                     fontWeight: '600',
-                    marginTop: '10px'
+                    marginTop: '10px',
+                    width: '100%'
                   }}
                 >
                   ➕ Add Pricing Note
                 </button>
 
-                {/* Show pricing notes preview */}
+                {/* Preview Categorized Notes */}
                 {pricingNotes.some(note => note.trim()) && (
-                  <div className="pricing-notes-preview" style={{
-                    background: '#f8f9fa',
-                    border: '1px solid #dee2e6',
-                    borderRadius: '8px',
-                    padding: '15px',
-                    marginTop: '15px'
+                  <div style={{
+                    marginTop: '20px',
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: '15px'
                   }}>
-                    <span className="preview-label" style={{ 
-                      fontWeight: '600', 
-                      color: '#495057',
-                      display: 'block',
-                      marginBottom: '10px'
-                    }}>
-                      📝 Preview Notes:
-                    </span>
-                    <ul style={{ margin: 0, paddingLeft: '20px', color: '#666' }}>
-                      {pricingNotes.filter(note => note.trim()).map((note, index) => (
-                        <li key={index} style={{ marginBottom: '5px' }}>
-                          {note}
-                        </li>
-                      ))}
-                    </ul>
+                    {/* Booking Policy Preview */}
+                    {pricingNotes.some((note, i) => note.trim() && pricingNoteCategories[i] === 'booking') && (
+                      <div style={{
+                        background: '#e3f2fd',
+                        border: '2px solid #2196F3',
+                        borderRadius: '8px',
+                        padding: '15px'
+                      }}>
+                        <span style={{ 
+                          fontWeight: '600', 
+                          color: '#1976D2',
+                          display: 'block',
+                          marginBottom: '10px',
+                          fontSize: '0.95rem'
+                        }}>
+                          📋 Booking Policy Preview:
+                        </span>
+                        <ul style={{ margin: 0, paddingLeft: '20px', color: '#333', fontSize: '0.9rem' }}>
+                          {pricingNotes.map((note, i) => 
+                            note.trim() && pricingNoteCategories[i] === 'booking' ? (
+                              <li key={i} style={{ marginBottom: '5px' }}>{note}</li>
+                            ) : null
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                    {/* Notes Preview */}
+                    {pricingNotes.some((note, i) => note.trim() && pricingNoteCategories[i] === 'notes') && (
+                      <div style={{
+                        background: '#fff8e1',
+                        border: '2px solid #ff9800',
+                        borderRadius: '8px',
+                        padding: '15px'
+                      }}>
+                        <span style={{ 
+                          fontWeight: '600', 
+                          color: '#f57f17',
+                          display: 'block',
+                          marginBottom: '10px',
+                          fontSize: '0.95rem'
+                        }}>
+                          💰 Notes Preview:
+                        </span>
+                        <ul style={{ margin: 0, paddingLeft: '20px', color: '#333', fontSize: '0.9rem' }}>
+                          {pricingNotes.map((note, i) => 
+                            note.trim() && pricingNoteCategories[i] === 'notes' ? (
+                              <li key={i} style={{ marginBottom: '5px' }}>{note}</li>
+                            ) : null
+                          )}
+                        </ul>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>
@@ -734,7 +716,6 @@ const AddPackage = () => {
                 onChange={handleInputChange}
                 placeholder="Starting from ₹25,000 per person"
                 rows="3"
-                className="price-text-area"
               />
             </div>
           )}
@@ -743,61 +724,36 @@ const AddPackage = () => {
         {/* Images Section */}
         <div className="form-section">
           <h2>Images</h2>
-          
-          <div className="image-upload-section">
-            <div className="form-group">
-              <label>Card image (required)</label>
-              <div className="file-input-container">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleCardImageChange}
-                  id="cardImage"
-                  className="file-input"
-                  required
-                />
-                <label htmlFor="cardImage" className="file-input-label">
-                  Choose File
-                </label>
+          <div className="form-group">
+            <label>Card image (required)</label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleCardImageChange}
+              id="cardImage"
+              required
+            />
+            {imagePreview && (
+              <div className="image-preview">
+                <img src={imagePreview} alt="Preview" style={{ maxWidth: '300px', marginTop: '10px', borderRadius: '8px' }} />
               </div>
-              
-              {imagePreview && (
-                <div className="image-preview">
-                  <img src={imagePreview} alt="Card preview" />
-                </div>
-              )}
-            </div>
+            )}
           </div>
         </div>
 
-        {/* Day-wise Itinerary Section with Activities Remove Buttons */}
+        {/* Itinerary Section */}
         <div className="form-section">
           <h2>Day-wise Itinerary</h2>
-          
           {itinerary.map((day, dayIndex) => (
             <div key={dayIndex} className="itinerary-day">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
                 <h3>Day {day.day}</h3>
                 {itinerary.length > 1 && (
-                  <button
-                    type="button"
-                    onClick={() => removeDay(dayIndex)}
-                    style={{
-                      background: '#ffebee',
-                      color: '#d32f2f',
-                      border: 'none',
-                      padding: '8px 16px',
-                      borderRadius: '6px',
-                      fontSize: '0.9rem',
-                      cursor: 'pointer',
-                      fontWeight: '600'
-                    }}
-                  >
+                  <button type="button" onClick={() => removeDay(dayIndex)} className="remove-btn">
                     Remove Day
                   </button>
                 )}
               </div>
-              
               <div className="form-group">
                 <label>Title</label>
                 <input
@@ -807,7 +763,6 @@ const AddPackage = () => {
                   placeholder="e.g., Arrive Cochin"
                 />
               </div>
-
               <div className="form-group">
                 <label>Activities</label>
                 {day.activities.map((activity, actIndex) => (
@@ -817,173 +772,90 @@ const AddPackage = () => {
                       value={activity}
                       onChange={(e) => handleActivityChange(dayIndex, actIndex, e.target.value)}
                       placeholder="Activity description"
-                      className="activity-input"
                       style={{ flex: 1 }}
                     />
                     {day.activities.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeActivity(dayIndex, actIndex)}
-                        style={{
-                          background: '#ffebee',
-                          color: '#d32f2f',
-                          border: 'none',
-                          padding: '8px 12px',
-                          borderRadius: '4px',
-                          fontSize: '0.8rem',
-                          cursor: 'pointer',
-                          fontWeight: '600',
-                          minWidth: 'auto'
-                        }}
-                      >
+                      <button type="button" onClick={() => removeActivity(dayIndex, actIndex)} className="remove-btn small">
                         Remove
                       </button>
                     )}
                   </div>
                 ))}
-                <button
-                  type="button"
-                  onClick={() => addActivity(dayIndex)}
-                  className="add-btn small"
-                >
+                <button type="button" onClick={() => addActivity(dayIndex)} className="add-btn small">
                   + Add Activity
                 </button>
               </div>
             </div>
           ))}
-          
-          <button
-            type="button"
-            onClick={addDay}
-            className="add-btn full-width"
-          >
+          <button type="button" onClick={addDay} className="add-btn full-width">
             + Add Day
           </button>
         </div>
 
-        {/* Inclusions Section with Remove Buttons */}
+        {/* Inclusions Section */}
         <div className="form-section">
           <h2>Inclusions</h2>
-          
           {inclusions.map((inclusion, index) => (
             <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              <div className="form-group" style={{ flex: 1, margin: 0 }}>
-                <input
-                  type="text"
-                  value={inclusion}
-                  onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
-                  placeholder="Inclusion item"
-                />
-              </div>
+              <input
+                type="text"
+                value={inclusion}
+                onChange={(e) => handleArrayChange(index, e.target.value, 'inclusions')}
+                placeholder="Inclusion item"
+                style={{ flex: 1 }}
+              />
               {inclusions.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeInclusion(index)}
-                  style={{
-                    background: '#ffebee',
-                    color: '#d32f2f',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    fontSize: '0.9rem',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    alignSelf: 'center'
-                  }}
-                >
+                <button type="button" onClick={() => removeInclusion(index)} className="remove-btn">
                   Remove
                 </button>
               )}
             </div>
           ))}
-          
-          <button
-            type="button"
-            onClick={() => addArrayItem('inclusions')}
-            className="add-btn"
-          >
+          <button type="button" onClick={() => addArrayItem('inclusions')} className="add-btn">
             + Add Inclusion
           </button>
         </div>
 
-        {/* Exclusions Section with Remove Buttons */}
+        {/* Exclusions Section */}
         <div className="form-section">
           <h2>Exclusions</h2>
-          
           {exclusions.map((exclusion, index) => (
             <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
-              <div className="form-group" style={{ flex: 1, margin: 0 }}>
-                <input
-                  type="text"
-                  value={exclusion}
-                  onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
-                  placeholder="Exclusion item"
-                />
-              </div>
+              <input
+                type="text"
+                value={exclusion}
+                onChange={(e) => handleArrayChange(index, e.target.value, 'exclusions')}
+                placeholder="Exclusion item"
+                style={{ flex: 1 }}
+              />
               {exclusions.length > 1 && (
-                <button
-                  type="button"
-                  onClick={() => removeExclusion(index)}
-                  style={{
-                    background: '#ffebee',
-                    color: '#d32f2f',
-                    border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '6px',
-                    fontSize: '0.9rem',
-                    cursor: 'pointer',
-                    fontWeight: '600',
-                    alignSelf: 'center'
-                  }}
-                >
+                <button type="button" onClick={() => removeExclusion(index)} className="remove-btn">
                   Remove
                 </button>
               )}
             </div>
           ))}
-          
-          <button
-            type="button"
-            onClick={() => addArrayItem('exclusions')}
-            className="add-btn"
-          >
+          <button type="button" onClick={() => addArrayItem('exclusions')} className="add-btn">
             + Add Exclusion
           </button>
         </div>
 
         {/* Submit Button */}
         <div className="submit-section">
-          <button 
-            type="submit" 
-            className="save-btn"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? '⏳ Saving Package...' : '💾 Save Package & Update Chart'}
+          <button type="submit" className="save-btn" disabled={isSubmitting}>
+            {isSubmitting ? '⏳ Saving Package...' : '💾 Save Package'}
           </button>
         </div>
       </form>
 
-      {/* Beautiful Snackbar for Success/Error Messages */}
+      {/* Snackbar */}
       <Snackbar 
         open={snackbar.open} 
         autoHideDuration={4000} 
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{ zIndex: 9999 }}
       >
-        <Alert 
-          onClose={handleCloseSnackbar} 
-          severity={snackbar.severity} 
-          sx={{ 
-            width: '100%',
-            fontSize: '1rem',
-            fontWeight: 500,
-            '& .MuiAlert-icon': { fontSize: '1.2rem' },
-            boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
-            backdropFilter: 'blur(10px)',
-            borderRadius: '12px'
-          }}
-        >
+        <Alert onClose={handleCloseSnackbar} severity={snackbar.severity}>
           {snackbar.message}
         </Alert>
       </Snackbar>

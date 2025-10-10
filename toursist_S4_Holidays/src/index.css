@@ -15,6 +15,12 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  
+  /* ✅ DISABLE TEXT SELECTION */
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
 a {
@@ -34,4 +40,44 @@ button {
   border: none;
   outline: none;
   background: none;
+}
+
+/* ✅ ALLOW TEXT SELECTION IN INPUT FIELDS */
+input,
+textarea,
+select,
+[contenteditable="true"] {
+  user-select: text !important;
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  cursor: text !important;
+}
+
+/* ✅ DEFAULT CURSOR FOR TEXT ELEMENTS (NO I-BEAM) */
+body,
+div,
+p,
+span,
+h1, h2, h3, h4, h5, h6,
+section,
+article,
+header,
+footer,
+main,
+nav,
+aside {
+  cursor: default;
+}
+
+/* ✅ POINTER CURSOR FOR INTERACTIVE ELEMENTS */
+button,
+a,
+.btn,
+.button,
+[role="button"],
+[type="button"],
+[type="submit"],
+[type="reset"] {
+  cursor: pointer !important;
 }

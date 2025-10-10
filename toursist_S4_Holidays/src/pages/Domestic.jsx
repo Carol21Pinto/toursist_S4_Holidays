@@ -79,7 +79,7 @@ export default function Domestic() {
         <div className="container">
           <h2 className="section-title">
             <span className="title-hindi">लोकप्रिय गंतव्य</span>
-            <span className="title-english">Trending Group Holidays</span>
+            <span className="title-english">Domestic Holidays</span>
           </h2>
           <p className="section-subtitle">
             Discover iconic destinations across India and the world with our group tours!

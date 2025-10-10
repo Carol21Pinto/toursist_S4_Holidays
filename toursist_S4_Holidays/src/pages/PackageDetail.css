@@ -13,7 +13,7 @@
   min-height: 100vh;
 }
 
-/* FIXED: Back Button - Only fixed on desktop, relative on mobile */
+/* Back Button - Fixed on desktop, relative on mobile */
 .package-detail-container .back-button-container {
   position: fixed;
   top: 20px;
@@ -60,7 +60,7 @@
   transform: translateX(-2px);
 }
 
-/* UPDATED: Hero Section with Perfect Auto-Fit Image */
+/* Hero Section with Perfect Auto-Fit Image */
 .package-detail-container header {
   position: relative;
   height: 50vh;
@@ -74,8 +74,6 @@
   color: white;
   text-align: center;
   box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-  
-  /* Perfect image auto-fit */
   background-position: center center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
@@ -155,7 +153,7 @@
   color: #fff;
 }
 
-/* NEW: Departure Dates Section */
+/* Departure Dates Section */
 .package-detail-container .departure-section {
   background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
   border-left: 4px solid #4caf50;
@@ -240,13 +238,13 @@
   margin-bottom: 10px; 
 }
 
-/* FIXED: Custom bullet points with better spacing and visibility */
+/* Custom bullet points */
 .package-detail-container .point {
   display: flex;
   align-items: flex-start;
   margin-bottom: 8px;
-  padding-right: 15px; /* Added padding to prevent cutoff */
-  min-height: 25px; /* Ensure minimum height */
+  padding-right: 15px;
+  min-height: 25px;
 }
 
 .package-detail-container .point span {
@@ -255,18 +253,17 @@
   justify-content: center;
   width: 22px;
   height: 22px;
-  min-width: 22px; /* Prevent shrinking */
+  min-width: 22px;
   margin-right: 12px;
-  margin-top: 2px; /* Align with text */
+  margin-top: 2px;
   border-radius: 50%;
   background: #ff9800;
   color: white;
   font-size: 12px;
   font-weight: bold;
-  flex-shrink: 0; /* Prevent shrinking */
+  flex-shrink: 0;
 }
 
-/* Ensure text doesn't overlap with bullet */
 .package-detail-container .point span + * {
   flex: 1;
   word-wrap: break-word;
@@ -293,14 +290,87 @@
   color: #00796b;
 }
 
-/* Green bullets for inclusions */
 .package-detail-container .col .point span { 
   background: #4caf50; 
 }
 
-/* Red bullets for exclusions */
 .package-detail-container .col.exclusions .point span { 
   background: #f44336; 
+}
+
+/* ✅ NEW: Two-Box Split Layout - 50/50 Split */
+.package-detail-container .notes-split-section {
+  background: transparent;
+  padding: 0;
+  margin: 40px auto;
+  max-width: 1100px;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+.package-detail-container .split-boxes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.package-detail-container .split-box {
+  background: linear-gradient(135deg, #fff8e1, #fffbf0);
+  border: 2px solid #ffd54f;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* Booking Policy Box - Left (Blue accent) */
+.package-detail-container .booking-box {
+  border-left: 5px solid #2196F3;
+  background: linear-gradient(135deg, #e3f2fd, #f1f8ff);
+  border-color: #90caf9;
+}
+
+.package-detail-container .booking-box h3 {
+  color: #1976D2;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #90caf9;
+}
+
+/* Notes Box - Right (Orange accent) */
+.package-detail-container .notes-box {
+  border-left: 5px solid #ff9800;
+  background: linear-gradient(135deg, #fff8e1, #fffbf0);
+  border-color: #ffd54f;
+}
+
+.package-detail-container .notes-box h3 {
+  color: #f57f17;
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #ffd54f;
+}
+
+/* Box Content */
+.package-detail-container .box-content {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.package-detail-container .note-line {
+  font-size: 0.95rem;
+  color: #333;
+  line-height: 1.6;
+  padding: 8px 0;
+  border-bottom: 1px dashed #e0e0e0;
+}
+
+.package-detail-container .note-line:last-child {
+  border-bottom: none;
 }
 
 /* Footer */
@@ -314,9 +384,8 @@
   border-radius: 0;
 }
 
-/* FIXED: Responsive Design - Back Button behavior */
+/* Responsive Design */
 @media (max-width: 768px) {
-  /* Make back button relative on mobile to prevent scroll issues */
   .package-detail-container .back-button-container {
     position: relative;
     top: auto;
@@ -359,15 +428,32 @@
     min-width: 100%;
   }
   
-  /* Mobile departure dates */
   .package-detail-container .departure-dates {
     grid-template-columns: 1fr;
   }
 
-  /* FIXED: Better mobile spacing for points */
   .package-detail-container .point {
     padding-right: 10px;
     margin-bottom: 10px;
+  }
+
+  /* Split Boxes Mobile - Stack Vertically */
+  .package-detail-container .split-boxes {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .package-detail-container .split-box {
+    padding: 15px;
+  }
+
+  .package-detail-container .split-box h3 {
+    font-size: 1.1rem;
+  }
+
+  .package-detail-container .note-line {
+    font-size: 0.9rem;
+    padding: 6px 0;
   }
 }
 
@@ -430,242 +516,23 @@
   .package-detail-container .departure-date .date-text {
     font-size: 0.85rem;
   }
-}
 
-/* Additional CSS for the duplicate classes (keeping your original) */
-.package-detail {
-  font-family: "Segoe UI", sans-serif;
-  color: #2c3e50;
-  line-height: 1.6;
-}
-
-/* Banner */
-.banner {
-  position: relative;
-  height: 400px;
-  overflow: hidden;
-  border-radius: 12px;
-  margin-bottom: 40px;
-}
-
-.banner img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.banner-overlay {
-  position: absolute;
-  bottom: 20px;
-  left: 30px;
-  background: rgba(0, 0, 0, 0.55);
-  padding: 15px 25px;
-  border-radius: 8px;
-  color: #fff;
-}
-
-.banner-overlay h1 {
-  margin: 0 0 5px;
-  font-size: 2.2rem;
-}
-
-.banner-overlay p {
-  margin: 0;
-  font-size: 1.1rem;
-}
-
-/* Pricing */
-.pricing {
-  text-align: center;
-  margin: 30px 0;
-}
-
-.pricing h2 {
-  margin-bottom: 15px;
-  color: #2980b9;
-}
-
-.price {
-  font-size: 2rem;
-  font-weight: bold;
-  color: #27ae60;
-}
-
-.price span {
-  font-size: 1rem;
-  color: #555;
-}
-
-.price-note {
-  margin-top: 10px;
-  font-style: italic;
-  color: #555;
-}
-
-/* Itinerary */
-.itinerary {
-  margin: 40px 0;
-}
-
-.itinerary h2 {
-  margin-bottom: 20px;
-  color: #2980b9;
-}
-
-.itinerary-card {
-  background: #f9f9ff;
-  border-left: 5px solid #6c5ce7;
-  padding: 15px 20px;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.itinerary-card h3 {
-  margin: 0 0 10px;
-  color: #2c3e50;
-}
-
-.itinerary-card ul {
-  padding-left: 20px;
-}
-
-/* Inclusions & Exclusions */
-.inclusions-exclusions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 25px;
-  margin: 40px 0;
-}
-
-.inclusions,
-.exclusions {
-  background: #fafafa;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-}
-
-.inclusions h2 {
-  color: #27ae60;
-}
-
-.exclusions h2 {
-  color: #e74c3c;
-}
-
-.inclusions ul,
-.exclusions ul {
-  list-style: none;
-  padding-left: 0;
-  margin: 0;
-}
-
-.inclusions li,
-.exclusions li {
-  margin-bottom: 10px;
-  font-size: 0.95rem;
-}
-
-/* Status */
-.status {
-  text-align: center;
-  padding: 50px;
-  font-size: 18px;
-}
-
-.status.error {
-  color: #d32f2f;
-}
-/* NEW: Pricing Notes Dropdown Section */
-/* NEW: Compact Height Pricing Notes Box - Full Width */
-.package-detail-container .pricing-notes-compact {
-  background: linear-gradient(135deg, #fff8e1, #fffbf0);
-  border: 1px solid #ffcc02;
-  border-left: 4px solid #ff9800;
-  padding: 15px 20px; /* Reduced vertical padding for compact height */
-  margin: 40px auto;
-  max-width: 1100px; /* Same as other sections - full width */
-  border-radius: 8px;
-  min-height: auto; /* Let content determine height */
-}
-
-.package-detail-container .pricing-notes-compact h3 {
-  margin: 0 0 10px 0; /* Reduced bottom margin */
-  color: #f57f17;
-  font-size: 1.1rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.package-detail-container .compact-notes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Multi-column for full width */
-  gap: 8px 20px; /* Small vertical gap, larger horizontal gap */
-  margin: 0;
-}
-
-.package-detail-container .compact-note {
-  font-size: 0.95rem;
-  color: #333;
-  line-height: 1.3; /* Tighter line height */
-  padding: 2px 0; /* Minimal padding */
-  display: flex;
-  align-items: flex-start;
-}
-
-.package-detail-container .compact-note::before {
-  content: "•";
-  color: #ff9800;
-  font-weight: bold;
-  margin-right: 8px;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-
-/* Mobile Responsive - Stack vertically on small screens */
-@media (max-width: 768px) {
-  .package-detail-container .pricing-notes-compact {
-    margin: 20px;
-    padding: 12px 15px; /* Even more compact on mobile */
-    max-width: none;
+  /* Split Boxes Small Mobile */
+  .package-detail-container .split-boxes {
+    gap: 12px;
   }
-  
-  .package-detail-container .pricing-notes-compact h3 {
+
+  .package-detail-container .split-box {
+    padding: 12px;
+  }
+
+  .package-detail-container .split-box h3 {
     font-size: 1rem;
-    margin-bottom: 8px; /* Smaller margin on mobile */
+    margin-bottom: 12px;
   }
-  
-  .package-detail-container .compact-notes-grid {
-    grid-template-columns: 1fr; /* Single column on mobile */
-    gap: 6px; /* Smaller gaps on mobile */
-  }
-  
-  .package-detail-container .compact-note {
-    font-size: 0.9rem;
-    line-height: 1.2;
-  }
-}
 
-@media (max-width: 480px) {
-  .package-detail-container .pricing-notes-compact {
-    margin: 10px;
-    padding: 10px 12px; /* Ultra compact on small mobile */
-  }
-  
-  .package-detail-container .pricing-notes-compact h3 {
-    font-size: 0.95rem;
-    margin-bottom: 6px;
-  }
-  
-  .package-detail-container .compact-note {
+  .package-detail-container .note-line {
     font-size: 0.85rem;
-    padding: 1px 0;
-  }
-  
-  .package-detail-container .compact-note::before {
-    margin-right: 6px;
-    font-size: 1rem;
+    padding: 5px 0;
   }
 }

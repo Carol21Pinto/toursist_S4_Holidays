@@ -173,13 +173,13 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  /* transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); */
   cursor: pointer;
   position: relative;
   overflow: hidden;
 }
 
-.social-icon::before {
+/* .social-icon::before {
   content: '';
   position: absolute;
   top: 0;
@@ -188,9 +188,9 @@
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
-}
+} */
 
-.social-icon:hover::before {
+/* .social-icon:hover::before {
   left: 100%;
 }
 
@@ -212,12 +212,12 @@
 .social-icon.phone {
   background: linear-gradient(45deg, #34c759, #28a745);
   box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
-}
+} */
 
-.social-icon:hover {
+/* .social-icon:hover {
   transform: translateY(-3px) scale(1.1) rotate(5deg);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
+} */
 
 /* Enhanced Text */
 .connect-column p {
@@ -334,16 +334,16 @@
     padding: 0 20px;
   }
   
-  .social-icons {
+  /* .social-icons {
     justify-content: center;
-  }
+  } */
   
   .footer-column li {
     white-space: normal;
   }
 }
 /* Update social icons for clickable functionality */
-.social-icon {
+/* .social-icon {
   width: 35px;
   height: 35px;
   border-radius: 50%;
@@ -352,28 +352,28 @@
   justify-content: center;
   font-size: 16px;
   transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  cursor: pointer; /* Makes it clear it's clickable */
+  cursor: pointer; 
   position: relative;
   overflow: hidden;
-  user-select: none; /* Prevent text selection */
-}
+  user-select: none; 
+} */
 
 /* Add active state for better user feedback */
-.social-icon:active {
+/* .social-icon:active {
   transform: translateY(-1px) scale(1.05);
-}
+} */
 
 /* Keep all your existing social icon styles and add these enhancements */
-.social-icon:hover {
+/* .social-icon:hover {
   transform: translateY(-3px) scale(1.1) rotate(5deg);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-}
+} */
 
 /* SVG styling for crisp icons */
-.social-icon svg {
+/* .social-icon svg {
   transition: all 0.3s ease;
 }
 
 .social-icon:hover svg {
   transform: scale(1.1);
-}
+} */
