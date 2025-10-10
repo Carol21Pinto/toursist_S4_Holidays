@@ -9,7 +9,6 @@ export default function ContinentPackages() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // ✅ SMART IP DETECTION - Works with ANY IP automatically!
   const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
   const currentIP = isLocalhost ? 'localhost' : window.location.hostname;
 
@@ -18,7 +17,6 @@ export default function ContinentPackages() {
 
   const FALLBACK = '/images/placeholder-card.jpg';
 
-  // Convert URL param back to proper continent name (e.g., "north-america" -> "North America")
   const getContinentNameFromParam = (param) => {
     return param
       .split('-')
@@ -28,7 +26,6 @@ export default function ContinentPackages() {
 
   const displayContinentName = getContinentNameFromParam(continentName);
 
-  // Build a usable URL only from string paths; otherwise return local fallback
   const getImageUrl = (path) => {
     if (typeof path !== 'string' || !path.trim()) return FALLBACK;
     const fixed = path.replace(/\\/g, '/');
@@ -36,7 +33,6 @@ export default function ContinentPackages() {
     return `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
   };
 
-  // Safely pick a primary image path from a package (string only)
   const pickPrimaryImagePath = (pkg) => {
     const fromCard = Array.isArray(pkg?.cardImage)
       ? pkg.cardImage.find(p => typeof p === 'string' && p.trim())
@@ -55,7 +51,6 @@ export default function ContinentPackages() {
     return null;
   };
 
-  // Reusable local-fallback handler
   const applyFallback = (e) => {
     e.currentTarget.onerror = null;
     e.currentTarget.src = FALLBACK;
@@ -73,12 +68,10 @@ export default function ContinentPackages() {
       if (response.ok) {
         const data = await response.json();
         
-        // Filter packages by continent name
         const filteredPackages = data.filter(pkg => 
           pkg.continent && pkg.continent.toLowerCase() === displayContinentName.toLowerCase()
         );
         
-        // Sort alphabetically by title
         const sortedPackages = filteredPackages.sort((a, b) => 
           a.title.localeCompare(b.title, undefined, { 
             sensitivity: 'base',
@@ -104,7 +97,14 @@ export default function ContinentPackages() {
 
   return (
     <div className="continent-packages-container">
-      {/* Hero Section with High-Res Background */}
+      {/* ✅ NEW: Simple Back Button */}
+      <div className="back-button-container">
+        <button className="simple-back-btn" onClick={handleGoBack}>
+          ← Back
+        </button>
+      </div>
+
+      {/* Hero Section */}
       <section className="continent-hero">
         <div className="continent-hero-content">
           <h1 className="continent-title">{displayContinentName}</h1>

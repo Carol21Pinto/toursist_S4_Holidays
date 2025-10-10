@@ -104,7 +104,14 @@ export default function StatePackages() {
 
   return (
     <div className="state-packages-container">
-      {/* Hero Section with High-Res Background - NO BACK BUTTON */}
+      {/* ✅ BACK BUTTON ADDED */}
+      <div className="back-button-container">
+        <button className="simple-back-btn" onClick={handleGoBack}>
+          ← Back
+        </button>
+      </div>
+
+      {/* Hero Section with High-Res Background */}
       <section className="state-hero">
         <div className="state-hero-content">
           <h1 className="state-title">{displayStateName}</h1>

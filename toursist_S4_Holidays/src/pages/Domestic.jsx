@@ -68,7 +68,7 @@ export default function Domestic() {
         <div className="hero-content hero-chip">
           <div className="namaste-greeting">S4 HOLIDAYS</div>
           <h1 className="hero-title">
-            <span className="hindi-text">भारत भ्रमण</span>
+            {/* <span className="hindi-text">भारत भ्रमण</span> */}
             <span className="english-text">Incredible India Tours</span>
           </h1>
         </div>
@@ -78,7 +78,7 @@ export default function Domestic() {
       <section className="destinations-section">
         <div className="container">
           <h2 className="section-title">
-            <span className="title-hindi">लोकप्रिय गंतव्य</span>
+            {/* <span className="title-hindi">लोकप्रिय गंतव्य</span> */}
             <span className="title-english">Domestic Holidays</span>
           </h2>
           <p className="section-subtitle">
@@ -136,7 +136,7 @@ export default function Domestic() {
         <div className="container">
           <div className="cta-content">
             <h2>
-              <span className="cta-hindi">अपनी भारत यात्रा शुरू करें</span>
+              {/* <span className="cta-hindi">अपनी भारत यात्रा शुरू करें</span> */}
               <br />
               <span className="cta-english">Start Your India Journey Now</span>
             </h2>

@@ -7,235 +7,163 @@ import {
   Typography,
   Grid,
   Chip,
-  IconButton,
-  Avatar,
   Button,
   Stack,
   TextField,
   InputAdornment,
-  Menu,
-  MenuItem,
   Snackbar,
   Alert,
+  Avatar,
 } from "@mui/material";
 import {
   Search,
   Edit,
   Delete,
-  MoreVert,
   Add,
   FilterList,
   Home,
   Flight,
-  Group,
-  AttachMoney,
+  Church,
+  Group as GroupIcon,
+  People,
   Warning,
   CheckCircle,
-  Church,
 } from "@mui/icons-material";
 
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-// Package Card Component
+// Simple Static Package Card Component
 function PackageCard({ package: pkg, onEdit, onDelete }) {
-  const [anchorEl, setAnchorEl] = useState(null);
-
   const getCategoryIcon = (category) => {
     switch (category?.toLowerCase()) {
-      case 'domestic': return <Home sx={{ fontSize: '20px' }} />;
-      case 'international': return <Flight sx={{ fontSize: '20px' }} />;
-      case 'pilgrimage': return <Church sx={{ fontSize: '20px' }} />;
-      case 'group': return <Group sx={{ fontSize: '20px' }} />;
-      default: return <Home sx={{ fontSize: '20px' }} />;
+      case 'domestic': return <Home fontSize="small" />;
+      case 'international': return <Flight fontSize="small" />;
+      case 'pilgrimage': return <Church fontSize="small" />;
+      case 'group': return <GroupIcon fontSize="small" />;
+      default: return <Home fontSize="small" />;
     }
   };
 
   const getCategoryColor = (category) => {
     switch (category?.toLowerCase()) {
-      case 'domestic': return '#10b981';
-      case 'international': return '#3b82f6';
-      case 'pilgrimage': return '#f59e0b';
-      case 'group': return '#8b5cf6';
-      default: return '#6b7280';
+      case 'domestic': return { bg: '#e6f7f1', text: '#059669', border: '#10b981' };
+      case 'international': return { bg: '#dbeafe', text: '#2563eb', border: '#3b82f6' };
+      case 'pilgrimage': return { bg: '#fef3c7', text: '#d97706', border: '#f59e0b' };
+      case 'group': return { bg: '#ede9fe', text: '#7c3aed', border: '#8b5cf6' };
+      default: return { bg: '#f3f4f6', text: '#6b7280', border: '#9ca3af' };
     }
   };
 
-  const handleMenuClose = () => setAnchorEl(null);
+  const color = getCategoryColor(pkg?.category);
 
   const renderPrice = () => {
-    if (pkg?.pricingMode === 'Structured') {
-      return `${pkg?.currency || '₹'} ${pkg?.pricePerPerson?.toLocaleString() || '0'}`;
-    } else {
-      return pkg?.priceText || 'Contact for Price';
+    if (pkg?.pricingMode === 'Structured' && pkg?.pricePerPerson) {
+      return `INR ${pkg.pricePerPerson.toLocaleString()}`;
+    } else if (pkg?.priceText) {
+      return pkg.priceText;
     }
-  };
-
-  const handleEditClick = () => {
-    console.log('Edit button clicked for package:', pkg?.title, 'ID:', pkg?._id);
-    if (pkg?._id) {
-      onEdit(pkg._id);
-    }
-    handleMenuClose();
-  };
-
-  const handleDeleteClick = () => {
-    console.log('Delete button clicked for package:', pkg?.title, 'ID:', pkg?._id);
-    if (pkg?._id) {
-      onDelete(pkg._id, pkg?.title);
-    }
-    handleMenuClose();
+    return 'Contact for Price';
   };
 
   return (
     <Card
       sx={{
-        background: 'rgba(255, 255, 255, 0.95)',
-        backdropFilter: 'blur(10px)',
-        borderRadius: '20px',
-        border: '1px solid rgba(255, 255, 255, 0.2)',
-        boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)',
-        transition: 'all 0.3s ease',
+        background: '#fff',
+        borderRadius: '16px',
+        border: `2px solid ${color.border}30`,
+        boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
         height: '100%',
-        position: 'relative',
-        overflow: 'hidden',
-        '&:hover': {
-          transform: 'translateY(-8px)',
-          boxShadow: '0 20px 40px rgba(31, 38, 135, 0.25)',
-        },
-        '&::before': {
-          content: '""',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          height: '4px',
-          background: `linear-gradient(90deg, ${getCategoryColor(pkg?.category)}, ${getCategoryColor(pkg?.category)}90)`,
-        }
+        display: 'flex',
+        flexDirection: 'column',
       }}
     >
-      <CardContent sx={{ padding: '24px !important', height: '100%' }}>
-        {/* Header with Menu */}
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Avatar
-              sx={{
-                background: `linear-gradient(45deg, ${getCategoryColor(pkg?.category)}, ${getCategoryColor(pkg?.category)}90)`,
-                width: 48,
-                height: 48,
-              }}
-            >
-              {getCategoryIcon(pkg?.category)}
-            </Avatar>
-            <Box>
-              <Typography
-                variant="h6"
-                sx={{
-                  fontWeight: 700,
-                  color: '#1f2937',
-                  fontSize: '1.1rem',
-                  marginBottom: '4px'
-                }}
-              >
-                {pkg?.title || 'Untitled Package'}
-              </Typography>
-              <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-                <Chip
-                  label={(pkg?.category || 'general').charAt(0).toUpperCase() + (pkg?.category || 'general').slice(1)}
-                  size="small"
-                  sx={{
-                    background: `linear-gradient(45deg, ${getCategoryColor(pkg?.category)}20, ${getCategoryColor(pkg?.category)}10)`,
-                    color: getCategoryColor(pkg?.category),
-                    fontWeight: 600,
-                    fontSize: '0.75rem',
-                    border: `1px solid ${getCategoryColor(pkg?.category)}30`
-                  }}
-                />
-                <Chip
-                  label={pkg?.pricingMode || 'Unknown'}
-                  size="small"
-                  variant="outlined"
-                  sx={{
-                    fontSize: '0.7rem',
-                    height: '20px',
-                    color: pkg?.pricingMode === 'Structured' ? '#059669' : '#7c3aed',
-                    borderColor: pkg?.pricingMode === 'Structured' ? '#059669' : '#7c3aed'
-                  }}
-                />
-              </Box>
-            </Box>
-          </Box>
-
-          <IconButton
-            onClick={(e) => setAnchorEl(e.currentTarget)}
+      <CardContent sx={{ padding: '20px', display: 'flex', flexDirection: 'column', height: '100%' }}>
+        {/* Header */}
+        <Box sx={{ display: 'flex', gap: 2, marginBottom: '16px' }}>
+          <Avatar
             sx={{
-              background: 'rgba(107, 114, 128, 0.1)',
-              '&:hover': { background: 'rgba(107, 114, 128, 0.2)' }
+              background: color.bg,
+              color: color.text,
+              width: 44,
+              height: 44,
             }}
           >
-            <MoreVert />
-          </IconButton>
-
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-            transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-            anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-          >
-            <MenuItem onClick={handleEditClick}>
-              <Edit sx={{ marginRight: 1, fontSize: '18px' }} />
-              Edit Package
-            </MenuItem>
-            <MenuItem onClick={handleDeleteClick} sx={{ color: '#ef4444' }}>
-              <Delete sx={{ marginRight: 1, fontSize: '18px' }} />
-              Delete Package
-            </MenuItem>
-          </Menu>
-        </Box>
-
-        {/* Package Details */}
-        <Box sx={{ marginBottom: '20px' }}>
-          {pkg?.duration && (
-            <Typography sx={{ color: '#6b7280', fontSize: '0.9rem', marginBottom: '8px' }}>
-              📅 {pkg.duration}
-            </Typography>
-          )}
-          
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, marginBottom: '12px' }}>
-            <AttachMoney sx={{ color: getCategoryColor(pkg?.category), fontSize: '20px' }} />
+            {getCategoryIcon(pkg?.category)}
+          </Avatar>
+          <Box sx={{ flex: 1 }}>
             <Typography
               variant="h6"
               sx={{
                 fontWeight: 700,
-                color: getCategoryColor(pkg?.category),
-                fontSize: '1.2rem',
-                wordBreak: 'break-word'
+                color: '#1f2937',
+                fontSize: '1.05rem',
+                marginBottom: '6px',
+                lineHeight: 1.3,
               }}
             >
-              {renderPrice()}
+              {pkg?.title || 'Untitled Package'}
             </Typography>
-            {pkg?.pricingMode === 'Structured' && (
-              <Typography sx={{ color: '#6b7280', fontSize: '0.85rem' }}>
-                per person
-              </Typography>
-            )}
+            <Box sx={{ display: 'flex', gap: 0.5, flexWrap: 'wrap' }}>
+              <Chip
+                label={(pkg?.category || 'General').charAt(0).toUpperCase() + (pkg?.category || 'general').slice(1)}
+                size="small"
+                sx={{
+                  background: color.bg,
+                  color: color.text,
+                  fontWeight: 600,
+                  fontSize: '0.7rem',
+                  height: '22px',
+                  border: `1px solid ${color.border}40`,
+                  '& .MuiChip-label': { padding: '0 8px' }
+                }}
+              />
+              <Chip
+                label={pkg?.pricingMode === 'Structured' ? 'Structured' : 'Text'}
+                size="small"
+                sx={{
+                  background: '#f3f4f6',
+                  color: '#6b7280',
+                  fontSize: '0.7rem',
+                  height: '22px',
+                  '& .MuiChip-label': { padding: '0 8px' }
+                }}
+              />
+            </Box>
           </Box>
+        </Box>
 
-          {pkg?.priceNote && (
-            <Typography sx={{ color: '#6b7280', fontSize: '0.8rem', fontStyle: 'italic' }}>
-              {pkg.priceNote}
+        {/* Duration & Price */}
+        <Box sx={{ marginBottom: '16px' }}>
+          {pkg?.duration && (
+            <Typography sx={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '8px' }}>
+              📅 {pkg.duration}
+            </Typography>
+          )}
+          <Typography
+            sx={{
+              fontWeight: 700,
+              color: color.text,
+              fontSize: '1.1rem',
+              marginBottom: '4px'
+            }}
+          >
+            {renderPrice()}
+          </Typography>
+          {pkg?.pricingMode === 'Structured' && (
+            <Typography sx={{ color: '#9ca3af', fontSize: '0.8rem' }}>
+              per person
             </Typography>
           )}
         </Box>
 
-        {/* Package Stats */}
-        <Box sx={{ display: 'flex', gap: 2, marginTop: 'auto' }}>
+        {/* Stats */}
+        <Box sx={{ display: 'flex', gap: 1, marginTop: 'auto', marginBottom: '16px', flexWrap: 'wrap' }}>
           {pkg?.itinerary && pkg.itinerary.length > 0 && (
             <Chip
               label={`${pkg.itinerary.length} Days`}
               size="small"
               variant="outlined"
-              sx={{ fontSize: '0.75rem' }}
+              sx={{ fontSize: '0.7rem', height: '24px' }}
             />
           )}
           {pkg?.inclusions && pkg.inclusions.length > 0 && (
@@ -243,28 +171,29 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
               label={`${pkg.inclusions.length} Inclusions`}
               size="small"
               variant="outlined"
-              sx={{ fontSize: '0.75rem' }}
+              sx={{ fontSize: '0.7rem', height: '24px' }}
             />
           )}
         </Box>
 
-        {/* Quick Actions */}
-        <Box sx={{ display: 'flex', gap: 1, marginTop: '16px', paddingTop: '16px', borderTop: '1px solid rgba(0,0,0,0.1)' }}>
+        {/* Action Buttons */}
+        <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             size="small"
-            startIcon={<Edit />}
-            onClick={handleEditClick}
+            variant="contained"
+            startIcon={<Edit fontSize="small" />}
+            onClick={() => onEdit(pkg._id)}
             sx={{
-              background: `linear-gradient(45deg, ${getCategoryColor(pkg?.category)}, ${getCategoryColor(pkg?.category)}90)`,
-              color: 'white',
-              borderRadius: '20px',
+              flex: 1,
+              background: color.text,
+              color: '#fff',
               textTransform: 'none',
               fontWeight: 600,
-              fontSize: '0.75rem',
-              padding: '6px 16px',
+              fontSize: '0.8rem',
+              padding: '8px 12px',
+              borderRadius: '8px',
               '&:hover': {
-                transform: 'translateY(-1px)',
-                boxShadow: `0 4px 15px ${getCategoryColor(pkg?.category)}40`,
+                background: color.border,
               }
             }}
           >
@@ -272,20 +201,21 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           </Button>
           <Button
             size="small"
-            startIcon={<Delete />}
-            onClick={handleDeleteClick}
             variant="outlined"
+            startIcon={<Delete fontSize="small" />}
+            onClick={() => onDelete(pkg._id, pkg.title)}
             sx={{
+              flex: 1,
               color: '#ef4444',
               borderColor: '#ef4444',
-              borderRadius: '20px',
               textTransform: 'none',
               fontWeight: 600,
-              fontSize: '0.75rem',
-              padding: '6px 16px',
+              fontSize: '0.8rem',
+              padding: '8px 12px',
+              borderRadius: '8px',
               '&:hover': {
                 borderColor: '#dc2626',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                background: '#fef2f2',
               }
             }}
           >
@@ -311,7 +241,6 @@ export default function PackagesList() {
     action: null
   });
 
-  // FIXED: Store the ID directly, not in state that can get lost
   let deletePackageId = null;
   let deletePackageTitle = '';
 
@@ -322,12 +251,9 @@ export default function PackagesList() {
       
       if (response.ok) {
         const data = await response.json();
-        console.log('Loaded packages:', data);
-        
         const packagesArray = Array.isArray(data) ? data : (data.packages || data.data || []);
         setPackages(packagesArray);
       } else {
-        console.error('Failed to fetch packages');
         setPackages([]);
       }
     } catch (error) {
@@ -343,28 +269,16 @@ export default function PackagesList() {
   }, []);
 
   const handleEdit = (id) => {
-    console.log('handleEdit received ID:', id);
     if (id) {
       navigate(`/admin/packages/edit/${id}`);
-    } else {
-      console.error('No ID provided to handleEdit');
     }
   };
 
-  // FIXED: Store ID in closure scope, not React state
   const handleDelete = (id, title) => {
-    console.log('handleDelete called with ID:', id, 'Title:', title);
+    if (!id) return;
     
-    if (!id) {
-      console.error('No ID provided to handleDelete');
-      return;
-    }
-    
-    // FIXED: Store in closure variables instead of state
     deletePackageId = id;
     deletePackageTitle = title || 'Unknown Package';
-    
-    console.log('Stored for delete:', { deletePackageId, deletePackageTitle });
     
     setSnackbar({
       open: true,
@@ -376,12 +290,7 @@ export default function PackagesList() {
             color="inherit" 
             size="small" 
             onClick={confirmDelete}
-            sx={{ 
-              fontWeight: 600,
-              color: '#fff',
-              background: 'rgba(239, 68, 68, 0.8)',
-              '&:hover': { background: 'rgba(220, 38, 38, 0.9)' }
-            }}
+            sx={{ fontWeight: 600, color: '#fff', background: '#ef4444', '&:hover': { background: '#dc2626' } }}
           >
             DELETE
           </Button>
@@ -398,18 +307,11 @@ export default function PackagesList() {
     });
   };
 
-  // FIXED: Use closure variables instead of state
   const confirmDelete = async () => {
     try {
-      console.log('Confirming delete for ID:', deletePackageId);
+      if (!deletePackageId) throw new Error('Package ID is missing');
       
-      if (!deletePackageId) {
-        throw new Error('Package ID is missing');
-      }
-      
-      const response = await fetch(`${API_URL}/packages/${deletePackageId}`, { 
-        method: 'DELETE' 
-      });
+      const response = await fetch(`${API_URL}/packages/${deletePackageId}`, { method: 'DELETE' });
       
       if (response.ok) {
         setSnackbar({
@@ -420,111 +322,74 @@ export default function PackagesList() {
         });
         
         loadPackages();
-        
         localStorage.setItem('dashboardRefresh', Date.now().toString());
         window.dispatchEvent(new CustomEvent('dashboardRefresh'));
       } else {
-        const errorText = await response.text();
         throw new Error(`Server error: ${response.status}`);
       }
     } catch (error) {
-      console.error('Error deleting package:', error);
       setSnackbar({
         open: true,
-        message: `❌ Failed to delete "${deletePackageTitle}": ${error.message}`,
+        message: `❌ Failed to delete: ${error.message}`,
         severity: 'error',
         action: null
       });
     } finally {
-      // FIXED: Clear closure variables
       deletePackageId = null;
       deletePackageTitle = '';
     }
   };
 
   const cancelDelete = () => {
-    // FIXED: Clear closure variables
     deletePackageId = null;
     deletePackageTitle = '';
     setSnackbar({ ...snackbar, open: false });
   };
 
   const handleCloseSnackbar = (event, reason) => {
-    if (reason === 'clickaway' && snackbar.action) {
-      return;
-    }
+    if (reason === 'clickaway' && snackbar.action) return;
     setSnackbar({ ...snackbar, open: false });
   };
 
   const filteredPackages = packages.filter(pkg => {
     if (!pkg) return false;
-    
-    const matchesSearch = !searchTerm || 
-      (pkg.title && pkg.title.toLowerCase().includes(searchTerm.toLowerCase()));
-    
-    const matchesCategory = categoryFilter === 'all' || 
-      (pkg.category && pkg.category === categoryFilter);
-    
+    const matchesSearch = !searchTerm || (pkg.title && pkg.title.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesCategory = categoryFilter === 'all' || (pkg.category && pkg.category === categoryFilter);
     return matchesSearch && matchesCategory;
   });
 
-  const sortedPackages = filteredPackages.sort((a, b) => {
-    if (a.pricingMode === 'Structured' && b.pricingMode !== 'Structured') return -1;
-    if (a.pricingMode !== 'Structured' && b.pricingMode === 'Structured') return 1;
-    return (a.title || '').localeCompare(b.title || '');
-  });
+  const sortedPackages = filteredPackages.sort((a, b) => (a.title || '').localeCompare(b.title || ''));
 
   const categories = [
-    { value: 'all', label: 'All Categories', icon: FilterList },
+    { value: 'all', label: 'All', icon: FilterList },
     { value: 'domestic', label: 'Domestic', icon: Home },
     { value: 'international', label: 'International', icon: Flight },
     { value: 'pilgrimage', label: 'Pilgrimage', icon: Church },
-    { value: 'group', label: 'Group Trip', icon: Group },
+    { value: 'group', label: 'Group', icon: People },
   ];
 
   return (
     <Box>
       {/* Header */}
       <Box sx={{ marginBottom: '32px' }}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
-          <Box>
-            <Typography 
-              variant="h4" 
-              sx={{ 
-                fontWeight: 800,
-                color: '#1f2937',
-                marginBottom: '8px'
-              }}
-            >
-              All Packages ({packages.length})
-            </Typography>
-            <Typography 
-              sx={{ 
-                color: '#6b7280',
-                fontSize: '1.1rem'
-              }}
-            >
-              Manage your travel packages - including Pilgrimage packages
-            </Typography>
-          </Box>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <Typography variant="h4" sx={{ fontWeight: 700, color: '#1f2937' }}>
+            Packages ({packages.length})
+          </Typography>
           <Button
             variant="contained"
             startIcon={<Add />}
             onClick={() => navigate('/admin/add')}
             sx={{
-              background: 'linear-gradient(45deg, #667eea, #764ba2)',
-              borderRadius: '25px',
+              background: '#6366f1',
               textTransform: 'none',
               fontWeight: 600,
-              padding: '12px 24px',
-              fontSize: '1rem',
-              '&:hover': {
-                transform: 'translateY(-2px)',
-                boxShadow: '0 8px 25px rgba(102, 126, 234, 0.4)',
-              }
+              padding: '10px 20px',
+              borderRadius: '10px',
+              '&:hover': { background: '#4f46e5' }
             }}
           >
-            Add New Package
+            Add Package
           </Button>
         </Box>
 
@@ -537,16 +402,15 @@ export default function PackagesList() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <Search sx={{ color: '#6b7280' }} />
+                  <Search sx={{ color: '#9ca3af' }} />
                 </InputAdornment>
               ),
             }}
             sx={{
+              flex: 1,
               '& .MuiOutlinedInput-root': {
-                borderRadius: '25px',
-                background: 'rgba(255, 255, 255, 0.95)',
-                backdropFilter: 'blur(10px)',
-                '& fieldset': { border: '1px solid rgba(255, 255, 255, 0.3)' },
+                borderRadius: '10px',
+                background: '#fff',
               }
             }}
           />
@@ -557,22 +421,23 @@ export default function PackagesList() {
               return (
                 <Button
                   key={category.value}
-                  startIcon={<IconComponent />}
+                  startIcon={<IconComponent fontSize="small" />}
                   onClick={() => setCategoryFilter(category.value)}
                   variant={categoryFilter === category.value ? 'contained' : 'outlined'}
                   sx={{
-                    borderRadius: '20px',
+                    borderRadius: '10px',
                     textTransform: 'none',
                     fontWeight: 600,
+                    fontSize: '0.85rem',
+                    padding: '8px 16px',
                     ...(categoryFilter === category.value ? {
-                      background: 'linear-gradient(45deg, #667eea, #764ba2)',
+                      background: '#6366f1',
+                      color: '#fff',
+                      '&:hover': { background: '#4f46e5' }
                     } : {
                       borderColor: '#d1d5db',
                       color: '#6b7280',
-                      '&:hover': {
-                        borderColor: '#667eea',
-                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
-                      }
+                      '&:hover': { borderColor: '#6366f1', background: '#f0f9ff' }
                     })
                   }}
                 >
@@ -586,108 +451,54 @@ export default function PackagesList() {
 
       {/* Packages Grid */}
       {loading ? (
-        <Box sx={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+        <Box sx={{ textAlign: 'center', padding: '40px' }}>
           <Typography>Loading packages...</Typography>
         </Box>
       ) : sortedPackages.length === 0 ? (
-        <Card sx={{
-          background: 'rgba(255, 255, 255, 0.95)',
-          backdropFilter: 'blur(10px)',
-          borderRadius: '20px',
-          border: '1px solid rgba(255, 255, 255, 0.2)',
-          boxShadow: '0 8px 32px rgba(31, 38, 135, 0.15)',
-          textAlign: 'center',
-          padding: '60px 40px',
-        }}>
+        <Card sx={{ textAlign: 'center', padding: '60px 40px', borderRadius: '16px', boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}>
           <Typography variant="h5" sx={{ marginBottom: '16px', color: '#6b7280' }}>
             {searchTerm || categoryFilter !== 'all' ? 'No packages found' : 'No packages yet'}
           </Typography>
           <Typography sx={{ marginBottom: '24px', color: '#9ca3af' }}>
-            {searchTerm || categoryFilter !== 'all' 
-              ? 'Try adjusting your search or filters'
-              : 'Create your first package to get started'
-            }
+            {searchTerm || categoryFilter !== 'all' ? 'Try adjusting your filters' : 'Create your first package'}
           </Typography>
           <Button
             variant="contained"
             startIcon={<Add />}
             onClick={() => navigate('/admin/add')}
-            sx={{
-              background: 'linear-gradient(45deg, #667eea, #764ba2)',
-              borderRadius: '25px',
-              textTransform: 'none',
-              fontWeight: 600,
-              padding: '12px 24px',
-            }}
+            sx={{ background: '#6366f1', textTransform: 'none', fontWeight: 600, padding: '10px 20px', borderRadius: '10px' }}
           >
-            Add Your First Package
+            Add Package
           </Button>
         </Card>
       ) : (
         <Grid container spacing={3}>
           {sortedPackages.map((pkg, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg?._id || index}>
-              <PackageCard 
-                package={pkg} 
-                onEdit={handleEdit} 
-                onDelete={handleDelete} 
-              />
+            <Grid item xs={12} sm={6} md={4} key={pkg?._id || index}>
+              <PackageCard package={pkg} onEdit={handleEdit} onDelete={handleDelete} />
             </Grid>
           ))}
         </Grid>
       )}
 
-      {/* Stats Footer */}
-      {!loading && sortedPackages.length > 0 && (
-        <Box sx={{ 
-          marginTop: '40px', 
-          textAlign: 'center',
-          padding: '20px',
-          background: 'rgba(255, 255, 255, 0.5)',
-          borderRadius: '15px',
-          backdropFilter: 'blur(10px)',
-        }}>
-          <Typography sx={{ color: '#6b7280', fontSize: '0.9rem' }}>
-            Showing {sortedPackages.length} of {packages.length} packages
-            <br />
-            <Typography component="span" sx={{ fontSize: '0.8rem', color: '#9ca3af' }}>
-              Including Domestic, International, Pilgrimage & Group packages
-            </Typography>
-          </Typography>
-        </Box>
-      )}
-
-      {/* Delete Confirmation Snackbar */}
+      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={snackbar.action ? null : 4000}
         onClose={handleCloseSnackbar}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        sx={{ zIndex: 9999 }}
       >
         <Alert
           onClose={snackbar.action ? null : handleCloseSnackbar}
           severity={snackbar.severity}
           action={snackbar.action}
-          icon={
-            snackbar.severity === 'warning' ? <Warning /> :
-            snackbar.severity === 'success' ? <CheckCircle /> : undefined
-          }
+          icon={snackbar.severity === 'warning' ? <Warning /> : <CheckCircle />}
           sx={{
             width: '100%',
             fontSize: '1rem',
             fontWeight: 500,
-            minWidth: '350px',
-            '& .MuiAlert-icon': { fontSize: '1.2rem' },
-            boxShadow: '0 8px 32px rgba(31, 38, 135, 0.37)',
-            backdropFilter: 'blur(10px)',
             borderRadius: '12px',
-            ...(snackbar.severity === 'warning' && {
-              backgroundColor: '#fff3cd',
-              color: '#856404',
-              border: '1px solid #ffeaa7',
-              '& .MuiAlert-icon': { color: '#f39c12' }
-            })
+            boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
           }}
         >
           {snackbar.message}
