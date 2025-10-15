@@ -1,9 +1,15 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
+const compression = require('compression');
 require('dotenv').config();
 
 const app = express();
+
+// Middleware
+app.use(compression());
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
@@ -12,8 +18,8 @@ app.use('/uploads', express.static('uploads'));
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 30000, // 30 second timeout for initial connection
-      socketTimeoutMS: 45000, // 45 second socket timeout
+      serverSelectionTimeoutMS: 30000,
+      socketTimeoutMS: 45000,
     });
     
     console.log('✅ MongoDB Connected Successfully');
@@ -22,7 +28,7 @@ const connectDB = async () => {
     console.error('❌ MongoDB Connection Failed:', err.message);
     console.error('🔍 Check your .env file and MongoDB Atlas Network Access settings');
     console.error('🔧 Make sure 0.0.0.0/0 is whitelisted in MongoDB Atlas');
-    process.exit(1); // Exit if can't connect to database
+    process.exit(1);
   }
 };
 
@@ -46,7 +52,7 @@ process.on('SIGINT', async () => {
   process.exit(0);
 });
 
-// Routes
+// API Routes (MUST BE BEFORE SSR HANDLER)
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/api/admin', adminRoutes);
 
@@ -63,6 +69,90 @@ app.get('/api/health', (req, res) => {
   });
 });
 
+// SSR Configuration
+const isProduction = process.env.NODE_ENV === 'production';
+const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
+const frontendPath = path.resolve(__dirname, '../frontend');
+
+if (isProduction) {
+  // Production: Serve static files and SSR
+  const clientPath = path.join(frontendDistPath, 'client');
+  const serverPath = path.join(frontendDistPath, 'server');
+  
+  // Serve static assets
+  app.use(express.static(clientPath, { index: false }));
+  
+  // SSR Handler for all frontend routes (Express 5 compatible)
+  app.use((req, res, next) => {
+    // Skip API routes
+    if (req.path.startsWith('/api/')) {
+      return next();
+    }
+
+    try {
+      const template = fs.readFileSync(
+        path.join(clientPath, 'index.html'),
+        'utf-8'
+      );
+
+      const { render } = require(path.join(serverPath, 'entry-server.js'));
+      const { html: appHtml, head: headTags } = render(req.url);
+
+      const html = template
+        .replace('<!--ssr-head-->', headTags || '')
+        .replace('<!--ssr-outlet-->', appHtml);
+
+      res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+    } catch (error) {
+      console.error('SSR Error:', error);
+      res.status(500).end(error.message);
+    }
+  });
+} else {
+  // Development: Use Vite dev server
+  const { createServer: createViteServer } = require('vite');
+  
+  createViteServer({
+    root: frontendPath,  // Tell Vite where frontend folder is
+    server: { middlewareMode: true },
+    appType: 'custom'
+  }).then((vite) => {
+    app.use(vite.middlewares);
+
+    // SSR Handler for all frontend routes (Express 5 compatible)
+    app.use(async (req, res, next) => {
+      // Skip API routes
+      if (req.path.startsWith('/api/')) {
+        return next();
+      }
+
+      try {
+        const url = req.originalUrl;
+
+        let template = fs.readFileSync(
+          path.join(frontendPath, 'index.html'),
+          'utf-8'
+        );
+
+        template = await vite.transformIndexHtml(url, template);
+
+        const { render } = await vite.ssrLoadModule('/src/entry-server.jsx');
+        const { html: appHtml, head: headTags } = render(url);
+
+        const html = template
+          .replace('<!--ssr-head-->', headTags || '')
+          .replace('<!--ssr-outlet-->', appHtml);
+
+        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
+      } catch (error) {
+        vite.ssrFixStacktrace(error);
+        console.error('SSR Error:', error);
+        res.status(500).end(error.message);
+      }
+    });
+  });
+}
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error('Server Error:', err);
@@ -76,12 +166,11 @@ const PORT = process.env.PORT || 5000;
 
 // Start server after database connection
 const startServer = async () => {
-  // Connect to database FIRST
   await connectDB();
   
-  // THEN start the server
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`🚀 Server running on port ${PORT} and accessible from network`);
+    console.log(`🌐 Mode: ${isProduction ? 'PRODUCTION (SSR)' : 'DEVELOPMENT (SSR)'}`);
     console.log('🔐 Secure OTP system initialized');
     console.log('📧 Email service configured for s4holidaysblr@gmail.com');
     console.log('🌐 Network access enabled - accessible at 192.168.1.6:' + PORT);
@@ -89,5 +178,4 @@ const startServer = async () => {
   });
 };
 
-// Start the application
 startServer();
