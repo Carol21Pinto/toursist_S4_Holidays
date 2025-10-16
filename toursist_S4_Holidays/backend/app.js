@@ -175,6 +175,28 @@ const startServer = async () => {
     console.log('📧 Email service configured for s4holidaysblr@gmail.com');
     console.log('🌐 Network access enabled - accessible at 192.168.1.6:' + PORT);
     console.log('🏥 Health check: http://localhost:' + PORT + '/api/health');
+    
+   // NEW: Auto-open browser in development mode
+if (!isProduction) {
+  const url = `http://localhost:${PORT}`;
+  console.log(`\n🌍 Opening browser at: ${url}\n`);
+  
+  // Open browser after a short delay to ensure server is ready
+  setTimeout(() => {
+    const { exec } = require('child_process');
+    const command = process.platform === 'win32' ? `start ${url}` : 
+                    process.platform === 'darwin' ? `open ${url}` : 
+                    `xdg-open ${url}`;
+    
+    exec(command, (err) => {
+      if (err) {
+        console.error('Could not open browser automatically:', err.message);
+        console.log('Please open your browser manually at:', url);
+      }
+    });
+  }, 1000);
+}
+
   });
 };
 

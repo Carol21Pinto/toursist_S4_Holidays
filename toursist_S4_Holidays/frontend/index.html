@@ -4,11 +4,173 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>S4 Holidays</title>
+    
+    <!-- Inline minimal CSS to prevent FOUC and show loading -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+          'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+          sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      /* Loading skeleton container */
+      .loading-skeleton {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100vh;
+        background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3e 50%, #1a4d2e 100%);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        transition: opacity 0.5s ease-out;
+      }
+
+      /* Hide skeleton when app loads */
+      .loading-skeleton.loaded {
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      /* S4 Holidays Logo */
+      .loading-logo {
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .loading-logo h1 {
+        font-size: 48px;
+        font-weight: 700;
+        color: #ffffff;
+        letter-spacing: 2px;
+        margin-bottom: 8px;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+      }
+
+      .loading-logo p {
+        font-size: 14px;
+        color: #ffd700;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+
+      /* Spinner container */
+      .spinner-container {
+        position: relative;
+        width: 80px;
+        height: 80px;
+      }
+
+      /* Spinner animation */
+      .spinner {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+        border-top: 4px solid #ffffff;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      .spinner:nth-child(2) {
+        border-top-color: #ffd700;
+        animation-delay: -0.3s;
+      }
+
+      .spinner:nth-child(3) {
+        border-top-color: #ff9800;
+        animation-delay: -0.6s;
+      }
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+
+      /* Loading text */
+      .loading-text {
+        margin-top: 30px;
+        color: #ffffff;
+        font-size: 16px;
+        letter-spacing: 1px;
+        animation: pulse 1.5s ease-in-out infinite;
+      }
+
+      @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.5; }
+      }
+
+      /* Ensure app content starts hidden */
+      #root:empty + .loading-skeleton {
+        display: flex;
+      }
+    </style>
+    
     <!--ssr-head-->
   </head>
   <body>
     <div id="root"><!--ssr-outlet--></div>
+    
+    <!-- Loading Skeleton (shown until React hydrates) -->
+    <div class="loading-skeleton" id="loading-skeleton">
+      <div class="loading-logo">
+        <h1>S4 HOLIDAYS</h1>
+        <p>The Division of Sangam Tours</p>
+      </div>
+      <div class="spinner-container">
+        <div class="spinner"></div>
+        <div class="spinner"></div>
+        <div class="spinner"></div>
+      </div>
+      <div class="loading-text">Loading your journey...</div>
+    </div>
+
     <script type="module" src="/src/entry-client.jsx"></script>
+    
+    <!-- Remove loading skeleton after hydration -->
+    <script>
+      // Hide loading skeleton when React hydrates
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const skeleton = document.getElementById('loading-skeleton');
+          if (skeleton) {
+            skeleton.classList.add('loaded');
+            // Remove from DOM after fade out animation
+            setTimeout(function() {
+              skeleton.remove();
+            }, 500);
+          }
+        }, 100);
+      });
+
+      // Also hide if content already loaded (for SSR)
+      document.addEventListener('DOMContentLoaded', function() {
+        const root = document.getElementById('root');
+        if (root && root.innerHTML.trim() !== '') {
+          setTimeout(function() {
+            const skeleton = document.getElementById('loading-skeleton');
+            if (skeleton) {
+              skeleton.classList.add('loaded');
+              setTimeout(function() {
+                skeleton.remove();
+              }, 500);
+            }
+          }, 300);
+        }
+      });
+    </script>
   </body>
 </html>

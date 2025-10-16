@@ -1,6 +1,5 @@
 const Package = require('../models/Package');
-const fs = require('fs');
-const path = require('path');
+const { cloudinary } = require('../config/cloudinary');
 
 // Safely parse JSON from multipart FormData
 function parseMaybeJSON(value, fallback) {
@@ -9,6 +8,28 @@ function parseMaybeJSON(value, fallback) {
     try { return JSON.parse(value); } catch { return fallback; }
   }
   return value;
+}
+
+// Helper function to extract Cloudinary public_id from URL
+function getCloudinaryPublicId(imageUrl) {
+  if (!imageUrl || !imageUrl.includes('cloudinary')) return null;
+  
+  try {
+    // Extract public_id from Cloudinary URL
+    // Format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/folder/filename.jpg
+    const parts = imageUrl.split('/');
+    const uploadIndex = parts.indexOf('upload');
+    if (uploadIndex === -1) return null;
+    
+    // Get everything after 'upload/' and before the file extension
+    const pathParts = parts.slice(uploadIndex + 2); // Skip 'upload' and version number
+    const publicId = pathParts.join('/').replace(/\.[^/.]+$/, ''); // Remove extension
+    
+    return publicId;
+  } catch (err) {
+    console.error('Error extracting public_id:', err);
+    return null;
+  }
 }
 
 // NEW: Get all packages
@@ -86,10 +107,11 @@ exports.getPackagesGroupedByState = async (req, res) => {
   }
 };
 
-// Create new package
+// Create new package (Updated for Cloudinary)
 exports.createPackage = async (req, res) => {
   try {
     const packageData = JSON.parse(req.body.data);
+    // Cloudinary automatically provides the full URL in req.file.path
     const cardImage = req.file ? req.file.path : '';
     
     // Debug logging
@@ -100,6 +122,7 @@ exports.createPackage = async (req, res) => {
     console.log('State:', packageData.state);
     console.log('Continent:', packageData.continent);
     console.log('Departure Dates:', packageData.departureDates);
+    console.log('Cloudinary Image URL:', cardImage);
     
     const newPackage = new Package({
       title: packageData.name,
@@ -119,7 +142,7 @@ exports.createPackage = async (req, res) => {
       
       departureDates: packageData.departureDates || [],
       
-      cardImage: cardImage,
+      cardImage: cardImage, // Cloudinary URL
       images: [],
       description: packageData.description || '',
       itinerary: packageData.itinerary || [],
@@ -139,6 +162,7 @@ exports.createPackage = async (req, res) => {
     console.log('State:', newPackage.state);
     console.log('Continent:', newPackage.continent);
     console.log('Departure Dates:', newPackage.departureDates);
+    console.log('Image URL:', newPackage.cardImage);
     console.log('=== END CREATE DEBUG ===');
     
     console.log('Package created successfully:', newPackage._id, 'at', newPackage.createdAt);
@@ -149,7 +173,7 @@ exports.createPackage = async (req, res) => {
   }
 };
 
-// Update package
+// Update package (Updated for Cloudinary)
 exports.updatePackage = async (req, res) => {
   try {
     console.log('UPDATE REQUEST - Package ID:', req.params.id);
@@ -183,8 +207,25 @@ exports.updatePackage = async (req, res) => {
       exclusions: packageData.exclusions || [],
     };
 
+    // If new image uploaded
     if (req.file) {
-      updates.cardImage = req.file.path;
+      // Get old package to delete old image from Cloudinary
+      const oldPackage = await Package.findById(req.params.id);
+      
+      if (oldPackage && oldPackage.cardImage) {
+        // Delete old image from Cloudinary
+        const publicId = getCloudinaryPublicId(oldPackage.cardImage);
+        if (publicId) {
+          try {
+            await cloudinary.uploader.destroy(publicId);
+            console.log('Old Cloudinary image deleted:', publicId);
+          } catch (deleteErr) {
+            console.error('Error deleting old Cloudinary image:', deleteErr);
+          }
+        }
+      }
+      
+      updates.cardImage = req.file.path; // New Cloudinary URL
       console.log('New image uploaded:', req.file.path);
     }
 
@@ -210,6 +251,7 @@ exports.updatePackage = async (req, res) => {
     console.log('State:', pkg.state);
     console.log('Continent:', pkg.continent);
     console.log('Departure Dates:', pkg.departureDates);
+    console.log('Image URL:', pkg.cardImage);
 
     console.log('Package updated successfully:', pkg._id, 'at', pkg.updatedAt);
     return res.json(pkg);
@@ -243,36 +285,36 @@ exports.getPackage = async (req, res) => {
   }
 };
 
-// Delete with File Cleanup
+// Delete with Cloudinary cleanup
 exports.deletePackage = async (req, res) => {
   try {
     const { id } = req.params;
     
-    // First, find the package to get image paths before deletion
+    // First, find the package to get image URLs before deletion
     const packageToDelete = await Package.findById(id);
     
     if (!packageToDelete) {
       return res.status(404).json({ message: 'Package not found' });
     }
     
-    // Collect all image file paths from the package
-    const imagePaths = [];
+    // Collect all image URLs from the package
+    const imageUrls = [];
     
     // Add cardImage (main package image)
     if (packageToDelete.cardImage) {
-      imagePaths.push(packageToDelete.cardImage);
+      imageUrls.push(packageToDelete.cardImage);
     }
     
     // Add images array (gallery images)
     if (packageToDelete.images && Array.isArray(packageToDelete.images)) {
-      imagePaths.push(...packageToDelete.images);
+      imageUrls.push(...packageToDelete.images);
     }
     
     // Add itinerary images if they exist
     if (packageToDelete.itinerary && Array.isArray(packageToDelete.itinerary)) {
       packageToDelete.itinerary.forEach(day => {
         if (day.image) {
-          imagePaths.push(day.image);
+          imageUrls.push(day.image);
         }
       });
     }
@@ -280,29 +322,26 @@ exports.deletePackage = async (req, res) => {
     // Delete package from database first
     const deletedPackage = await Package.findByIdAndDelete(id);
     
-    // Now delete the associated image files
+    // Now delete the associated images from Cloudinary
     let deletedFilesCount = 0;
     
-    for (const imagePath of imagePaths) {
-      if (!imagePath) continue;
+    for (const imageUrl of imageUrls) {
+      if (!imageUrl) continue;
       
       try {
-        const cleanPath = imagePath.replace(/^uploads[\/\\]/, '');
-        const fullPath = path.join(__dirname, '../uploads', cleanPath);
+        const publicId = getCloudinaryPublicId(imageUrl);
         
-        // Check if file exists and delete it
-        if (fs.existsSync(fullPath)) {
-          fs.unlinkSync(fullPath);
+        if (publicId) {
+          await cloudinary.uploader.destroy(publicId);
           deletedFilesCount++;
-          console.log(`File deleted: ${fullPath}`);
+          console.log(`Cloudinary image deleted: ${publicId}`);
         }
-        
       } catch (fileError) {
-        console.error(`Error deleting file ${imagePath}:`, fileError.message);
+        console.error(`Error deleting Cloudinary image ${imageUrl}:`, fileError.message);
       }
     }
     
-    console.log('Package deleted:', id, `(${deletedFilesCount} files cleaned up)`);
+    console.log('Package deleted:', id, `(${deletedFilesCount} Cloudinary images cleaned up)`);
     return res.json({ message: 'Package deleted' });
     
   } catch (err) {
@@ -487,6 +526,7 @@ exports.getWeeklyCounts = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
 // NEW: Get packages grouped by continent with statistics (only continents with packages)
 exports.getPackagesGroupedByContinent = async (req, res) => {
   try {
@@ -536,4 +576,3 @@ exports.getPackagesGroupedByContinent = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
-
