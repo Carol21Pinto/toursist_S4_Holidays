@@ -2,7 +2,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
-const fs = require('fs');
 const compression = require('compression');
 require('dotenv').config();
 
@@ -10,27 +9,28 @@ const app = express();
 
 // Middleware
 app.use(compression());
-app.use(cors());
+app.use(cors({
+  origin: '*', // Will update with your frontend URL later
+  credentials: true
+}));
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
-// Connect MongoDB Atlas with improved error handling
+// Connect MongoDB Atlas
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI, {
       serverSelectionTimeoutMS: 30000,
       socketTimeoutMS: 45000,
     });
-    
     console.log('✅ MongoDB Connected Successfully');
     console.log('📊 Database:', mongoose.connection.name);
   } catch (err) {
     console.error('❌ MongoDB Connection Failed:', err.message);
-    console.error('🔍 Check your .env file and MongoDB Atlas Network Access settings');
-    console.error('🔧 Make sure 0.0.0.0/0 is whitelisted in MongoDB Atlas');
-    process.exit(1);
   }
 };
+
+connectDB();
 
 // Handle connection events
 mongoose.connection.on('connected', () => {
@@ -41,18 +41,7 @@ mongoose.connection.on('error', (err) => {
   console.error('❌ Mongoose connection error:', err);
 });
 
-mongoose.connection.on('disconnected', () => {
-  console.log('⚠️  Mongoose disconnected from MongoDB Atlas');
-});
-
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  await mongoose.connection.close();
-  console.log('🛑 MongoDB connection closed due to app termination');
-  process.exit(0);
-});
-
-// API Routes (MUST BE BEFORE SSR HANDLER)
+// API Routes
 const adminRoutes = require('./routes/adminRoutes');
 app.use('/api/admin', adminRoutes);
 
@@ -69,89 +58,23 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// SSR Configuration
-const isProduction = process.env.NODE_ENV === 'production';
-const frontendDistPath = path.resolve(__dirname, '../frontend/dist');
-const frontendPath = path.resolve(__dirname, '../frontend');
-
-if (isProduction) {
-  // Production: Serve static files and SSR
-  const clientPath = path.join(frontendDistPath, 'client');
-  const serverPath = path.join(frontendDistPath, 'server');
-  
-  // Serve static assets
-  app.use(express.static(clientPath, { index: false }));
-  
-  // SSR Handler for all frontend routes (Express 5 compatible)
-  app.use((req, res, next) => {
-    // Skip API routes
-    if (req.path.startsWith('/api/')) {
-      return next();
-    }
-
-    try {
-      const template = fs.readFileSync(
-        path.join(clientPath, 'index.html'),
-        'utf-8'
-      );
-
-      const { render } = require(path.join(serverPath, 'entry-server.js'));
-      const { html: appHtml, head: headTags } = render(req.url);
-
-      const html = template
-        .replace('<!--ssr-head-->', headTags || '')
-        .replace('<!--ssr-outlet-->', appHtml);
-
-      res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-    } catch (error) {
-      console.error('SSR Error:', error);
-      res.status(500).end(error.message);
+// Root endpoint
+app.get('/', (req, res) => {
+  res.json({
+    message: 'S4 Holidays API Server',
+    status: 'running',
+    endpoints: {
+      health: '/api/health',
+      packages: '/api/packages',
+      admin: '/api/admin'
     }
   });
-} else {
-  // Development: Use Vite dev server
-  const { createServer: createViteServer } = require('vite');
-  
-  createViteServer({
-    root: frontendPath,  // Tell Vite where frontend folder is
-    server: { middlewareMode: true },
-    appType: 'custom'
-  }).then((vite) => {
-    app.use(vite.middlewares);
+});
 
-    // SSR Handler for all frontend routes (Express 5 compatible)
-    app.use(async (req, res, next) => {
-      // Skip API routes
-      if (req.path.startsWith('/api/')) {
-        return next();
-      }
-
-      try {
-        const url = req.originalUrl;
-
-        let template = fs.readFileSync(
-          path.join(frontendPath, 'index.html'),
-          'utf-8'
-        );
-
-        template = await vite.transformIndexHtml(url, template);
-
-        const { render } = await vite.ssrLoadModule('/src/entry-server.jsx');
-        const { html: appHtml, head: headTags } = render(url);
-
-        const html = template
-          .replace('<!--ssr-head-->', headTags || '')
-          .replace('<!--ssr-outlet-->', appHtml);
-
-        res.status(200).set({ 'Content-Type': 'text/html' }).end(html);
-      } catch (error) {
-        vite.ssrFixStacktrace(error);
-        console.error('SSR Error:', error);
-        res.status(500).end(error.message);
-      }
-    });
-  });
-}
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({ message: 'Route not found' });
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -162,42 +85,15 @@ app.use((err, req, res, next) => {
   });
 });
 
+// For Vercel serverless
 const PORT = process.env.PORT || 5000;
 
-// Start server after database connection
-const startServer = async () => {
-  await connectDB();
-  
-  app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Server running on port ${PORT} and accessible from network`);
-    console.log(`🌐 Mode: ${isProduction ? 'PRODUCTION (SSR)' : 'DEVELOPMENT (SSR)'}`);
-    console.log('🔐 Secure OTP system initialized');
-    console.log('📧 Email service configured for s4holidaysblr@gmail.com');
-    console.log('🌐 Network access enabled - accessible at 192.168.1.6:' + PORT);
-    console.log('🏥 Health check: http://localhost:' + PORT + '/api/health');
-    
-   // NEW: Auto-open browser in development mode
-if (!isProduction) {
-  const url = `http://localhost:${PORT}`;
-  console.log(`\n🌍 Opening browser at: ${url}\n`);
-  
-  // Open browser after a short delay to ensure server is ready
-  setTimeout(() => {
-    const { exec } = require('child_process');
-    const command = process.platform === 'win32' ? `start ${url}` : 
-                    process.platform === 'darwin' ? `open ${url}` : 
-                    `xdg-open ${url}`;
-    
-    exec(command, (err) => {
-      if (err) {
-        console.error('Could not open browser automatically:', err.message);
-        console.log('Please open your browser manually at:', url);
-      }
-    });
-  }, 1000);
+// Only listen if not on Vercel (Vercel handles this)
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+  });
 }
 
-  });
-};
-
-startServer();
+// Export for Vercel
+module.exports = app;
