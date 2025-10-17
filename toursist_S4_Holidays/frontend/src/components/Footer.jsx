@@ -45,6 +45,8 @@ const Footer = () => {
             <li>+91 7349473023</li>
             <li>+91 7019533081</li>
             <li>+91 9513130336</li>
+            <li>+91 8105901825</li>
+            <li>+91 9611989632</li>
             <li>Email: s4holidaysblr@gmail.com</li>
           </ul>
         </div>

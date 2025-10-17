@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import './GroupTrip.css';
 import ContactIcons from '../components/ContactIcons';
 
@@ -12,13 +13,11 @@ export default function GroupTrip() {
   const [showAllTypes, setShowAllTypes] = useState(false);
   const navigate = useNavigate();
 
-  // ✅ SMART IP DETECTION - Works with ANY IP automatically!
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
- 
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
+  
   const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTllY2VmIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
 
-  // Group types for filtering
   const groupTypes = ['Domestic', 'International', 'Pilgrimage'];
 
   const pickPrimaryImagePath = (pkg) => {
@@ -80,7 +79,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
     e.currentTarget.src = FALLBACK;
   };
 
-  // Strict filtering - only match exact groupType
   const isPackageInGroupType = (pkg, groupType) => {
     if (!groupType || groupType === '') return true;
     
@@ -91,13 +89,11 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
     return false;
   };
 
-  // Calculate package count for each group type
   const getPackageCountForGroupType = (groupType) => {
     if (groupType === '') return packages.length;
     return packages.filter(pkg => isPackageInGroupType(pkg, groupType)).length;
   };
 
-  // Get sorted group types by package count (highest to lowest)
   const getSortedGroupTypes = () => {
     return groupTypes
       .map(type => ({
@@ -107,10 +103,8 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
       .sort((a, b) => b.count - a.count);
   };
 
-  // ✅ NEW: Sort packages alphabetically by title (A-Z)
   const sortPackagesAlphabetically = (packagesArray) => {
     return [...packagesArray].sort((a, b) => {
-      // Using localeCompare for proper alphabetical sorting
       return a.title.localeCompare(b.title, undefined, { 
         sensitivity: 'base',
         numeric: true 
@@ -134,11 +128,9 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
       if (response.ok) {
         const data = await response.json();
         
-        // ✅ NEW: Sort packages alphabetically before setting state
         const sortedData = sortPackagesAlphabetically(data);
         setPackages(sortedData);
         
-        // ENHANCED DEBUG: Show detailed package information
         console.log('=== DETAILED PACKAGE DEBUG ===');
         console.log('Total packages fetched:', sortedData.length);
         console.log('API_URL:', API_URL);
@@ -157,7 +149,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
           console.log('priceText:', pkg.priceText);
           console.log('departureDates:', pkg.departureDates);
           
-          // Test image URL construction
           const primaryPath = pickPrimaryImagePath(pkg);
           const imgUrl = getImageUrl(primaryPath);
           console.log('primaryPath:', primaryPath);
@@ -182,7 +173,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
       filtered = filtered.filter(pkg => isPackageInGroupType(pkg, selectedGroupType));
     }
 
-    // ✅ NEW: Ensure filtered packages are also sorted alphabetically
     const sortedFiltered = sortPackagesAlphabetically(filtered);
     setFilteredPackages(sortedFiltered);
   };
@@ -206,7 +196,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
       ? `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}`
       : '4 Days';
 
-  // ✅ NEW: Always ensure display packages are sorted alphabetically
   const displayPackages = sortPackagesAlphabetically(
     filteredPackages.length > 0 ? filteredPackages : packages
   );
@@ -215,8 +204,39 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
 
   return (
     <>
+      <Helmet>
+        <title>Group Tour Packages | Domestic, International & Pilgrimage Group Tours | S4 Holidays</title>
+        <meta name="description" content="Book exciting group tour packages with S4 Holidays. Explore domestic, international, and pilgrimage group adventures. Perfect for families, friends, and corporate groups. Best group travel deals." />
+        <meta name="keywords" content="group tours, group travel packages, group trips, family group tours, corporate group tours, group adventure trips, group travel deals, organized group tours" />
+        
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content="https://s4holidays.com/group" />
+        <meta property="og:title" content="Group Tour Packages | S4 Holidays" />
+        <meta property="og:description" content="Book exciting group tour packages for domestic, international, and pilgrimage adventures" />
+        <meta property="og:image" content="https://s4holidays.com/og-group.jpg" />
+
+        <meta property="twitter:card" content="summary_large_image" />
+        <meta property="twitter:url" content="https://s4holidays.com/group" />
+        <meta property="twitter:title" content="Group Tour Packages | S4 Holidays" />
+        
+        <link rel="canonical" href="https://s4holidays.com/group" />
+        
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "TravelAgency",
+            "name": "S4 Holidays - Group Tours",
+            "description": "Group tour packages for domestic, international, and pilgrimage destinations",
+            "url": "https://s4holidays.com/group",
+            "offers": {
+              "@type": "AggregateOffer",
+              "offerCount": packages.length
+            }
+          })}
+        </script>
+      </Helmet>
+
       <div className="group-trip">
-        {/* Hero Section */}
         <section className="group-hero">
           <div className="hero-background"></div>
           <div className="hero-content">
@@ -229,9 +249,7 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
           </div>
         </section>
 
-        {/* Main Content with Sidebar */}
         <div className="main-content">
-          {/* Mobile Filter Toggle */}
           <div className="mobile-filter-toggle">
             <button 
               className="filter-toggle-btn"
@@ -248,10 +266,8 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
             )}
           </div>
 
-          {/* Sidebar Overlay for Mobile */}
           {sidebarOpen && <div className="sidebar-overlay active" onClick={() => setSidebarOpen(false)}></div>}
           
-          {/* Left Sidebar Filter */}
           <aside className={`filter-sidebar ${sidebarOpen ? 'open' : ''}`}>
             <div className="sidebar-header">
               <h3 className="sidebar-title">
@@ -267,12 +283,10 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
             </div>
 
             <div className="sidebar-content">
-              {/* Group Type Filter Section */}
               <div className="filter-section">
                 <h4 className="filter-section-title">Select Group Type</h4>
                 
                 <div className="group-types-list">
-                  {/* All Types Option */}
                   <button
                     className={`group-type-option ${selectedGroupType === '' ? 'active' : ''}`}
                     onClick={() => handleGroupTypeSelect('')}
@@ -281,7 +295,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
                     <span className="package-count">({packages.length})</span>
                   </button>
 
-                  {/* Individual Group Types (Sorted by Package Count) */}
                   {visibleGroupTypes.map(type => (
                     <button
                       key={type.name}
@@ -294,7 +307,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
                     </button>
                   ))}
 
-                  {/* Show More Button */}
                   {sortedGroupTypes.length > 3 && (
                     <button
                       className="show-more-btn"
@@ -308,9 +320,7 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
             </div>
           </aside>
 
-          {/* Main Content Area */}
           <main className="content-area">
-            {/* Popular Group Destinations */}
             <section className="group-destinations">
               <div className="container">
                 <h2 className="section-title">
@@ -355,7 +365,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
                       const primaryPath = pickPrimaryImagePath(pkg);
                       const imgUrl = getImageUrl(primaryPath);
 
-                      // Format price display with debugging
                       const formatPrice = () => {
                         if (pkg.pricingMode === 'Text' && pkg.priceText) {
                           return pkg.priceText;
@@ -387,7 +396,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
                           <div className="card-content">
                             <h3>{pkg.title}</h3>
                             
-                            {/* ✅ SIMPLIFIED: Only Duration and Price - NO departure dates */}
                             <div className="card-info">
                               <div className="duration-badge">{formatDuration(pkg)}</div>
                               <div className="price-info">{formatPrice()}</div>
@@ -413,7 +421,6 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
       
       <ContactIcons />
       
-      {/* Footer */}
       <footer className="simple-footer">
         <p>"The world is waiting — pack your bags!"</p>
       </footer>
