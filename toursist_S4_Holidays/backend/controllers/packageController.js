@@ -1,5 +1,24 @@
 const Package = require('../models/Package');
+const mongoose = require('mongoose');
 const { cloudinary } = require('../config/cloudinary');
+
+// ✅ Helper to ensure MongoDB connection before queries
+async function ensureConnection() {
+  if (mongoose.connection.readyState !== 1) {
+    console.log('⚠️ MongoDB disconnected, reconnecting...');
+    try {
+      await mongoose.connect(process.env.MONGO_URI, {
+        serverSelectionTimeoutMS: 5000,
+        socketTimeoutMS: 10000,
+        maxPoolSize: 10,
+      });
+      console.log('✅ Reconnected to MongoDB');
+    } catch (error) {
+      console.error('❌ Reconnection failed:', error);
+      throw error;
+    }
+  }
+}
 
 // Safely parse JSON from multipart FormData
 function parseMaybeJSON(value, fallback) {
@@ -35,6 +54,7 @@ function getCloudinaryPublicId(imageUrl) {
 // NEW: Get all packages
 exports.getAllPackages = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     const packages = await Package.find({}).sort({ createdAt: -1 });
     console.log('All packages fetched:', packages.length);
     return res.json(packages);
@@ -47,6 +67,7 @@ exports.getAllPackages = async (req, res) => {
 // NEW: Get packages grouped by state with statistics (only states with packages)
 exports.getPackagesGroupedByState = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     console.log('=== GET PACKAGES GROUPED BY STATE ===');
     
     // Get all domestic packages
@@ -110,6 +131,7 @@ exports.getPackagesGroupedByState = async (req, res) => {
 // Create new package (Updated for Cloudinary)
 exports.createPackage = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     const packageData = JSON.parse(req.body.data);
     // Cloudinary automatically provides the full URL in req.file.path
     const cardImage = req.file ? req.file.path : '';
@@ -176,6 +198,7 @@ exports.createPackage = async (req, res) => {
 // Update package (Updated for Cloudinary)
 exports.updatePackage = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     console.log('UPDATE REQUEST - Package ID:', req.params.id);
     console.log('UPDATE REQUEST - Body:', req.body);
     console.log('UPDATE REQUEST - File:', req.file);
@@ -264,6 +287,7 @@ exports.updatePackage = async (req, res) => {
 // Get all by category (latest first)
 exports.getPackagesByCategory = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     const { category } = req.params;
     const packages = await Package.find({ category }).sort({ createdAt: -1 });
     return res.json(packages);
@@ -276,6 +300,7 @@ exports.getPackagesByCategory = async (req, res) => {
 // Get single
 exports.getPackage = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     const pkg = await Package.findById(req.params.id);
     if (!pkg) return res.status(404).json({ message: 'Package not found' });
     return res.json(pkg);
@@ -288,6 +313,7 @@ exports.getPackage = async (req, res) => {
 // Delete with Cloudinary cleanup
 exports.deletePackage = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     const { id } = req.params;
     
     // First, find the package to get image URLs before deletion
@@ -353,6 +379,7 @@ exports.deletePackage = async (req, res) => {
 // Stats
 exports.getPackageStats = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     const categories = ['domestic', 'international', 'pilgrimage', 'group'];
     const stats = {};
     for (const category of categories) {
@@ -370,6 +397,7 @@ exports.getPackageStats = async (req, res) => {
 // Real-time package timeline
 exports.getPackageTimeline = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     console.log('=== PACKAGE TIMELINE DEBUG ===');
     
     const packages = await Package.find({})
@@ -474,6 +502,7 @@ exports.getPackageTimeline = async (req, res) => {
 // Weekly counts for chart (backup)
 exports.getWeeklyCounts = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     const today = new Date();
     const start = new Date(today);
     start.setHours(0,0,0,0);
@@ -530,6 +559,7 @@ exports.getWeeklyCounts = async (req, res) => {
 // NEW: Get packages grouped by continent with statistics (only continents with packages)
 exports.getPackagesGroupedByContinent = async (req, res) => {
   try {
+    await ensureConnection(); // ✅ Ensure connection
     console.log('=== GET PACKAGES GROUPED BY CONTINENT ===');
     
     // Get all international packages
