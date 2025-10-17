@@ -5,9 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --open",
-    "build": "npm run build:client && npm run build:server",
-    "build:client": "vite build --outDir dist/client --ssrManifest",
-    "build:server": "vite build --outDir dist/server --ssr src/entry-server.jsx",
+    "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
