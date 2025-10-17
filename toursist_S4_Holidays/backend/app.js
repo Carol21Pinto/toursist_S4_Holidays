@@ -16,52 +16,41 @@ app.use(cors({
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
-// Optimized MongoDB connection for Vercel
+// ✅ OPTIMIZED: MongoDB connection with caching for Vercel serverless
 let cachedDb = null;
 
-const connectDB = async () => {
+async function connectDB() {
   if (cachedDb && mongoose.connection.readyState === 1) {
-    console.log('✅ Using cached MongoDB connection');
+    console.log('⚡ Using cached MongoDB connection');
     return cachedDb;
   }
 
   try {
     const opts = {
-      serverSelectionTimeoutMS: 5000, // Reduced from 30000
-      socketTimeoutMS: 10000, // Reduced from 45000
-      maxPoolSize: 10, // Connection pooling
-      minPoolSize: 2,
+      serverSelectionTimeoutMS: 5000,
+      socketTimeoutMS: 10000,
+      maxPoolSize: 10,
+      minPoolSize: 1,
       maxIdleTimeMS: 10000,
       connectTimeoutMS: 5000,
+      family: 4, // Use IPv4, skip IPv6
+      retryWrites: true,
+      w: 'majority'
     };
 
-    await mongoose.connect(process.env.MONGO_URI, opts);
+    const conn = await mongoose.connect(process.env.MONGO_URI, opts);
+    cachedDb = conn.connection;
     
-    cachedDb = mongoose.connection;
-    console.log('✅ MongoDB Connected Successfully');
-    console.log('📊 Database:', mongoose.connection.name);
+    console.log('✅ MongoDB Connected:', mongoose.connection.name);
     return cachedDb;
   } catch (err) {
     console.error('❌ MongoDB Connection Failed:', err.message);
     throw err;
   }
-};
+}
 
-// Connect on startup
+// Connect on cold start
 connectDB().catch(err => console.error('Initial connection failed:', err));
-
-// Handle connection events
-mongoose.connection.on('connected', () => {
-  console.log('🔗 Mongoose connected to MongoDB Atlas');
-});
-
-mongoose.connection.on('error', (err) => {
-  console.error('❌ Mongoose connection error:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('⚠️ Mongoose disconnected - will reconnect');
-});
 
 // API Routes
 const adminRoutes = require('./routes/adminRoutes');
@@ -70,10 +59,10 @@ app.use('/api/admin', adminRoutes);
 const packageRoutes = require('./routes/packageRoutes');
 app.use('/api/packages', packageRoutes);
 
-// Health check endpoint
+// Health check with connection retry
 app.get('/api/health', async (req, res) => {
   try {
-    await connectDB(); // Ensure connection
+    await connectDB();
     const dbStatus = mongoose.connection.readyState === 1 ? 'connected' : 'disconnected';
     res.json({
       status: 'ok',
@@ -116,7 +105,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// For Vercel serverless
 const PORT = process.env.PORT || 5000;
 
 // Only listen if not on Vercel
@@ -126,5 +114,4 @@ if (process.env.VERCEL !== '1') {
   });
 }
 
-// Export for Vercel
 module.exports = app;
