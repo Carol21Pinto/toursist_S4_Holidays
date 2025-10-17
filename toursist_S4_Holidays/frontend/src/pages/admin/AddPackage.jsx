@@ -3,6 +3,9 @@ import { Snackbar, Alert } from '@mui/material';
 import './AddPackage.css';
 
 const AddPackage = () => {
+  // ✅ ADD THIS - API URL configuration
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
   // Form state with new location fields and pricing notes
   const [formData, setFormData] = useState({
     name: '',
@@ -262,7 +265,9 @@ const AddPackage = () => {
 
       console.log('Sending package data:', packageData);
 
-      const response = await fetch("http://localhost:5000/api/packages", {
+      const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+      const response = await fetch(`${API_URL}/packages`, {
         method: "POST",
         body: formDataToSend,
       });

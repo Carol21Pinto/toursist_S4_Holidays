@@ -9,11 +9,8 @@ export default function ContinentPackages() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const currentIP = isLocalhost ? 'localhost' : window.location.hostname;
-
-  const API_URL = import.meta.env.VITE_API_URL || `http://${currentIP}:5000/api`;
-  const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || `http://${currentIP}:5000`;
+ const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
 
   const FALLBACK = '/images/placeholder-card.jpg';
 

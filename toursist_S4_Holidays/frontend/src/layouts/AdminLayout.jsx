@@ -9,6 +9,9 @@ import './AdminLayout.css';
 
 const drawerWidth = 280; // Back to normal size
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
+
 export default function AdminLayout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -18,24 +21,24 @@ export default function AdminLayout({ children }) {
   const isLoginPage = location.pathname === "/admin/login";
 
   const handleLogout = async () => {
-    try {
-      const token = localStorage.getItem("adminToken");
-      if (token) {
-        await fetch("http://localhost:5000/api/admin/logout", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${token}`,
-            "Content-Type": "application/json"
-          }
-        }).catch(err => console.log("Logout API call failed:", err));
+  try {
+    await fetch(`${API_URL}/admin/logout`, {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
       }
-    } catch (error) {
-      console.error("Error during logout:", error);
-    } finally {
-      localStorage.removeItem("adminToken");
-      navigate("/admin/login", { replace: true });
-    }
-  };
+    });
+    
+    localStorage.removeItem('adminToken');
+    navigate('/admin/login');
+  } catch (error) {
+    console.error('Logout failed:', error);
+    localStorage.removeItem('adminToken');
+    navigate('/admin/login');
+  }
+};
+
 
   return (
     <Box sx={{ 

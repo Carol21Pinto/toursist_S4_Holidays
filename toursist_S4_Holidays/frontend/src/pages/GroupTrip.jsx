@@ -13,12 +13,9 @@ export default function GroupTrip() {
   const navigate = useNavigate();
 
   // ✅ SMART IP DETECTION - Works with ANY IP automatically!
-  const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-  const currentIP = isLocalhost ? 'localhost' : window.location.hostname;
-
-  const API_URL = import.meta.env.VITE_API_URL || `http://${currentIP}:5000/api`;
-  const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || `http://${currentIP}:5000`;
-  
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
+ 
   const FALLBACK = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZTllY2VmIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxNiIgZmlsbD0iIzZjNzU3ZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg==';
 
   // Group types for filtering
