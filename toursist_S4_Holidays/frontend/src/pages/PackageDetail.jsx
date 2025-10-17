@@ -10,17 +10,16 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // SMART IP DETECTION
- const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
+  // ✅ FIXED: Environment-based API URLs
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
 
-  // SMART image URL generation
+  // ✅ FIXED: SMART image URL generation (removed currentIP reference)
   const getImageUrl = (imagePath) => {
     if (!imagePath) return 'https://www.keralatourism.org/images/homecontentimage/desktop/backwater.jpg';
     const fixedPath = imagePath.replace(/\\/g, '/');
     if (fixedPath.startsWith('http')) return fixedPath;
-    const serverBase = `http://${currentIP}:5000`;
-    return `${serverBase}/${fixedPath}`;
+    return `${SERVER_BASE}/${fixedPath}`;
   };
 
   const handleGoBack = () => {
@@ -114,7 +113,7 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
     };
 
     if (id) fetchPackage();
-  }, [id]);
+  }, [id, API_URL]);
 
   // Loading state
   if (loading) {
