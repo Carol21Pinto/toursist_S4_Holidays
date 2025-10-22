@@ -3,10 +3,14 @@ import './International.css';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ContactIcons from '../components/ContactIcons';
+import { fetchWithCache } from '../utils/fetchWithCache';
+// ⚡ Simple cache utility
+
 
 export default function International() {
   const [continentsData, setContinentsData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -34,17 +38,17 @@ export default function International() {
   const fetchContinentsData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/packages/grouped-by-continent`);
-      if (response.ok) {
-        const data = await response.json();
-        const filteredData = data.filter(continent => continent.continent !== 'Unknown');
-        setContinentsData(filteredData);
-        console.log('Fetched continents data:', filteredData);
-      } else {
-        console.error('Failed to fetch continents data');
-      }
+      setError(null);
+      
+      // ⚡ Use cached fetch
+      const data = await fetchWithCache(`${API_URL}/packages/grouped-by-continent`);
+      
+      const filteredData = data.filter(continent => continent.continent !== 'Unknown');
+      setContinentsData(filteredData);
+      console.log('Fetched continents data:', filteredData);
     } catch (error) {
       console.error('Error fetching continents data:', error);
+      setError('Failed to load destinations. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -110,6 +114,15 @@ export default function International() {
                   <div className="spinner"></div>
                   Loading destinations...
                 </div>
+              ) : error ? (
+                <div className="error-message">
+                  <div className="error-icon">⚠️</div>
+                  <h3>Oops! Something went wrong</h3>
+                  <p>{error}</p>
+                  <button onClick={fetchContinentsData} className="retry-button">
+                    Try Again
+                  </button>
+                </div>
               ) : continentsData.length === 0 ? (
                 <div className="no-packages">
                   <div className="no-results-icon">🌍</div>
@@ -122,16 +135,21 @@ export default function International() {
 
                   return (
                     <div 
-                      key={index} 
+                      key={`${continent.continent}-${index}`}
                       className="continent-card"
                       onClick={() => handleContinentClick(continent.continent)}
                     >
                       <div className="continent-card-image">
                         <img
-                          src={imgUrl}
-                          alt={continent.continent}
-                          onError={applyFallback}
-                        />
+                                src={imgUrl}
+                                alt={`${continent.continent} Tours`}
+                                loading="lazy"
+                                decoding="async"
+                                width="400"
+                                height="300"
+                                onError={applyFallback}
+                              />
+
                       </div>
 
                       <div className="continent-card-content">
@@ -150,7 +168,7 @@ export default function International() {
 
         <ContactIcons />
 
-        <section className="features-section">
+        {/* <section className="features-section">
           <div className="container">
             <div className="features-grid">
               <div className="feature-item">
@@ -175,7 +193,7 @@ export default function International() {
               </div>
             </div>
           </div>
-        </section>
+        </section> */}
 
         <section className="international-cta simple-cta">
           <div className="container">

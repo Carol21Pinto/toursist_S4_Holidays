@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import './Pilgrimage.css';
 import ContactIcons from '../components/ContactIcons';
+import { fetchWithCache } from '../utils/fetchWithCache'; // ⚡ Import cache utility
 
 export default function Pilgrimage() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -66,16 +68,16 @@ export default function Pilgrimage() {
   const fetchPackages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/packages/category/pilgrimage`);
-      if (response.ok) {
-        const data = await response.json();
-        setPackages(data);
-        console.log('Fetched pilgrimage packages:', data);
-      } else {
-        console.error('Failed to fetch pilgrimage packages');
-      }
+      setError(null);
+      
+      // ⚡ Use cached fetch
+      const data = await fetchWithCache(`${API_URL}/packages/category/pilgrimage`);
+      
+      setPackages(data);
+      console.log('Fetched pilgrimage packages:', data);
     } catch (error) {
       console.error('Error fetching pilgrimage packages:', error);
+      setError('Failed to load packages. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -131,58 +133,74 @@ export default function Pilgrimage() {
           <div className="container">
             <h2 className="section-title">Sacred Destinations</h2>
             {loading ? (
-               <div className="loading-spinner">Loading pilgrimage packages...</div>
+              <div className="loading-spinner">
+                <div className="spinner"></div>
+                Loading pilgrimage packages...
+              </div>
+            ) : error ? (
+              <div className="error-message">
+                <div className="error-icon">⚠️</div>
+                <h3>Oops! Something went wrong</h3>
+                <p>{error}</p>
+                <button onClick={fetchPackages} className="retry-button">
+                  Try Again
+                </button>
+              </div>
             ) : packages.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
-                No pilgrimage packages found. Add some packages in the admin panel!
+              <div className="no-packages">
+                <div className="no-results-icon">🕉️</div>
+                <h3>No packages available</h3>
+                <p>No pilgrimage packages found. Add some packages in the admin panel!</p>
               </div>
             ) : (
               <div className="destinations-grid">
                 {packages.map((pkg) => {
                   const primaryPath = pickPrimaryImagePath(pkg);
                   const imgUrl = getImageUrl(primaryPath);
-                  console.log('[IMG DEBUG]', pkg.title, { primaryPath, imgUrl });
                   
                   return (
                     <div key={pkg._id} className="destination-card">
-                    <div className="card-image">
-                      {imgUrl ? (
-                        <img src={imgUrl} alt={pkg.title} onError={applyFallback} />
-                      ) : (
-                        <div className="image-placeholder">Image coming soon</div>
-                      )}
-                    </div>
-
-                    <div className="card-content">
-                      <h3 className="destination-name">{pkg.title}</h3>
-
-                      <div className="card-details">
-                        <div className="price">
-                        </div>
-                        <div className="duration">{formatDuration(pkg)}</div>
+                      <div className="card-image">
+                        {imgUrl ? (
+                          <img 
+                            src={imgUrl} 
+                            alt={pkg.title} 
+                            loading="lazy"
+                            onError={applyFallback} 
+                          />
+                        ) : (
+                          <div className="image-placeholder">Image coming soon</div>
+                        )}
                       </div>
 
-                      <button
-                        className="pilgrimage-btn"
-                        onClick={() => navigate(`/package/${pkg._id}`)}
-                      >
-                        Begin Sacred Journey
-                      </button>
-                    </div>
-                  </div>
+                      <div className="card-content">
+                        <h3 className="destination-name">{pkg.title}</h3>
 
+                        <div className="card-details">
+                          <div className="duration">{formatDuration(pkg)}</div>
+                        </div>
+
+                        <button
+                          className="pilgrimage-btn"
+                          onClick={() => navigate(`/package/${pkg._id}`)}
+                        >
+                          Begin Sacred Journey
+                        </button>
+                      </div>
+                    </div>
                   );
                 })}
               </div>
             )}
           </div>
         </section>
+        
         <ContactIcons />
+        
         <section className="sacred-cta">
           <div className="container">
             <h2>Begin Your Sacred Journey</h2>
             <p>Experience divine blessings, inner peace, and spiritual awakening</p>
-          
           </div>
         </section>
       </div>

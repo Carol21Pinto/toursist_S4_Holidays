@@ -40,4 +40,12 @@ const PackageSchema = new mongoose.Schema({
   contactNumbers: [String],
 }, { timestamps: true });
 
+// ✅ PERFORMANCE BOOST: Add indexes for faster queries
+PackageSchema.index({ category: 1 });
+PackageSchema.index({ state: 1 });
+PackageSchema.index({ continent: 1 });
+PackageSchema.index({ createdAt: -1 });
+PackageSchema.index({ category: 1, state: 1 });
+PackageSchema.index({ category: 1, createdAt: -1 });
+
 module.exports = mongoose.model('Package', PackageSchema);

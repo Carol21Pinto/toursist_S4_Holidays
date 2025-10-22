@@ -3,10 +3,15 @@ import './Domestic.css';
 import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ContactIcons from '../components/ContactIcons';
+import { fetchWithCache } from '../utils/fetchWithCache';
+
+// ⚡ Simple cache utility
+
 
 export default function Domestic() {
   const [statesData, setStatesData] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -34,17 +39,17 @@ export default function Domestic() {
   const fetchStatesData = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/packages/grouped-by-state`);
-      if (response.ok) {
-        const data = await response.json();
-        const filteredData = data.filter(state => state.state !== 'Unknown');
-        setStatesData(filteredData);
-        console.log('Fetched states data:', filteredData);
-      } else {
-        console.error('Failed to fetch states data');
-      }
+      setError(null);
+      
+      // ⚡ Use cached fetch
+      const data = await fetchWithCache(`${API_URL}/packages/grouped-by-state`);
+      
+      const filteredData = data.filter(state => state.state !== 'Unknown');
+      setStatesData(filteredData);
+      console.log('Fetched states data:', filteredData);
     } catch (error) {
       console.error('Error fetching states data:', error);
+      setError('Failed to load destinations. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -115,6 +120,15 @@ export default function Domestic() {
                   <div className="spinner"></div>
                   Loading destinations...
                 </div>
+              ) : error ? (
+                <div className="error-message">
+                  <div className="error-icon">⚠️</div>
+                  <h3>Oops! Something went wrong</h3>
+                  <p>{error}</p>
+                  <button onClick={fetchStatesData} className="retry-button">
+                    Try Again
+                  </button>
+                </div>
               ) : statesData.length === 0 ? (
                 <div className="no-packages">
                   <div className="no-results-icon">🔍</div>
@@ -127,16 +141,21 @@ export default function Domestic() {
 
                   return (
                     <div 
-                      key={index} 
+                      key={`${state.state}-${index}`}
                       className="state-card"
                       onClick={() => handleStateClick(state.state)}
                     >
                       <div className="state-card-image">
                         <img
-                          src={imgUrl}
-                          alt={state.state}
-                          onError={applyFallback}
-                        />
+                            src={imgUrl}
+                            alt={`${state.state} Tours`}
+                            loading="lazy"
+                            decoding="async"
+                            width="400"
+                            height="300"
+                            onError={applyFallback}
+                          />
+
                       </div>
 
                       <div className="state-card-content">

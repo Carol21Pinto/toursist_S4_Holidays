@@ -34,15 +34,12 @@ function getCloudinaryPublicId(imageUrl) {
   if (!imageUrl || !imageUrl.includes('cloudinary')) return null;
   
   try {
-    // Extract public_id from Cloudinary URL
-    // Format: https://res.cloudinary.com/cloud_name/image/upload/v1234567890/folder/filename.jpg
     const parts = imageUrl.split('/');
     const uploadIndex = parts.indexOf('upload');
     if (uploadIndex === -1) return null;
     
-    // Get everything after 'upload/' and before the file extension
-    const pathParts = parts.slice(uploadIndex + 2); // Skip 'upload' and version number
-    const publicId = pathParts.join('/').replace(/\.[^/.]+$/, ''); // Remove extension
+    const pathParts = parts.slice(uploadIndex + 2);
+    const publicId = pathParts.join('/').replace(/\.[^/.]+$/, '');
     
     return publicId;
   } catch (err) {
@@ -51,11 +48,20 @@ function getCloudinaryPublicId(imageUrl) {
   }
 }
 
-// NEW: Get all packages
+// ✅ OPTIMIZED: Get all packages (only essential fields)
 exports.getAllPackages = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
-    const packages = await Package.find({}).sort({ createdAt: -1 });
+    await ensureConnection();
+    
+    // ⚡ Only select fields needed for listing
+    const packages = await Package.find({})
+      .select('title category duration state continent groupType pricePerPerson currency cardImage createdAt')
+      .sort({ createdAt: -1 })
+      .lean(); // ⚡ Faster than full Mongoose documents
+    
+    // ⚡ Add cache headers for 5 minutes
+    res.set('Cache-Control', 'public, max-age=300');
+    
     console.log('All packages fetched:', packages.length);
     return res.json(packages);
   } catch (err) {
@@ -64,107 +70,152 @@ exports.getAllPackages = async (req, res) => {
   }
 };
 
-// NEW: Get packages grouped by state with statistics (only states with packages)
+// ✅ OPTIMIZED: Get packages grouped by state (only states with packages)
 exports.getPackagesGroupedByState = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
+    await ensureConnection();
     console.log('=== GET PACKAGES GROUPED BY STATE ===');
     
-    // Get all domestic packages
-    const domesticPackages = await Package.find({ category: 'domestic' }).sort({ createdAt: -1 });
+    // ⚡ Use aggregation for faster grouping
+    const stateGroups = await Package.aggregate([
+      { $match: { category: 'domestic', state: { $exists: true, $ne: null } } },
+      {
+        $group: {
+          _id: '$state',
+          tourCount: { $sum: 1 },
+          departures: { $sum: { $size: { $ifNull: ['$departureDates', []] } } },
+          firstPackage: { $first: '$$ROOT' }
+        }
+      },
+      {
+        $project: {
+          state: '$_id',
+          tourCount: 1,
+          departures: 1,
+          guestsCount: { $add: [{ $multiply: ['$tourCount', 150] }, 100] }, // Placeholder calculation
+          image: { $ifNull: ['$firstPackage.cardImage', '$firstPackage.images'] }
+        }
+      },
+      { $sort: { tourCount: -1 } }
+    ]);
     
-    console.log('Total domestic packages found:', domesticPackages.length);
+    // ⚡ Add cache headers
+    res.set('Cache-Control', 'public, max-age=600'); // 10 minutes
     
-    // Group packages by state
-    const stateGroups = {};
-    
-    domesticPackages.forEach(pkg => {
-      const stateName = pkg.state || 'Unknown';
-      
-      if (!stateGroups[stateName]) {
-        stateGroups[stateName] = {
-          state: stateName,
-          packages: [],
-          tourCount: 0,
-          departures: 0,
-          guestsCount: 0
-        };
-      }
-      
-      stateGroups[stateName].packages.push(pkg);
-      stateGroups[stateName].tourCount++;
-      
-      // Calculate departures (count departure dates)
-      if (pkg.departureDates && Array.isArray(pkg.departureDates)) {
-        stateGroups[stateName].departures += pkg.departureDates.length;
-      }
-      
-      // For now, guestsCount can be a placeholder or calculated based on your logic
-      // You can update this based on actual booking data if available
-      stateGroups[stateName].guestsCount += Math.floor(Math.random() * 1000) + 100; // Placeholder
-    });
-    
-    // Convert to array and filter out states with 0 packages
-    const result = Object.values(stateGroups)
-      .filter(group => group.tourCount > 0)
-      .map(group => ({
-        state: group.state,
-        tourCount: group.tourCount,
-        departures: group.departures,
-        guestsCount: group.guestsCount,
-        // Pick a representative image from the first package
-        image: group.packages[0]?.cardImage || group.packages[0]?.images?.[0] || null
-      }))
-      .sort((a, b) => b.tourCount - a.tourCount); // Sort by tour count (highest first)
-    
-    console.log('States with packages:', result.length);
-    console.log('State groups:', result.map(r => `${r.state}: ${r.tourCount} tours`));
+    console.log('States with packages:', stateGroups.length);
     console.log('=== END GROUPED BY STATE ===');
     
-    return res.json(result);
+    return res.json(stateGroups);
   } catch (err) {
     console.error('GROUPED_BY_STATE_ERR:', err);
     return res.status(500).json({ message: err.message });
   }
 };
 
-// Create new package (Updated for Cloudinary)
+// ✅ OPTIMIZED: Get packages grouped by continent
+exports.getPackagesGroupedByContinent = async (req, res) => {
+  try {
+    await ensureConnection();
+    console.log('=== GET PACKAGES GROUPED BY CONTINENT ===');
+    
+    // ⚡ Use aggregation for faster grouping
+    const continentGroups = await Package.aggregate([
+      { $match: { category: 'international', continent: { $exists: true, $ne: null } } },
+      {
+        $group: {
+          _id: '$continent',
+          tourCount: { $sum: 1 },
+          firstPackage: { $first: '$$ROOT' }
+        }
+      },
+      {
+        $project: {
+          continent: '$_id',
+          tourCount: 1,
+          image: { $ifNull: ['$firstPackage.cardImage', '$firstPackage.images'] }
+        }
+      },
+      { $sort: { tourCount: -1 } }
+    ]);
+    
+    // ⚡ Add cache headers
+    res.set('Cache-Control', 'public, max-age=600');
+    
+    console.log('Continents with packages:', continentGroups.length);
+    console.log('=== END GROUPED BY CONTINENT ===');
+    
+    return res.json(continentGroups);
+  } catch (err) {
+    console.error('GROUPED_BY_CONTINENT_ERR:', err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+// ✅ OPTIMIZED: Get packages by category (only essential fields)
+exports.getPackagesByCategory = async (req, res) => {
+  try {
+    await ensureConnection();
+    const { category } = req.params;
+    
+    // ⚡ Only select needed fields
+    const packages = await Package.find({ category })
+      .select('title duration state continent groupType pricePerPerson currency cardImage departureDates description createdAt')
+      .sort({ createdAt: -1 })
+      .lean();
+    
+    // ⚡ Add cache headers
+    res.set('Cache-Control', 'public, max-age=300');
+    
+    return res.json(packages);
+  } catch (err) {
+    console.error('LIST_ERR:', err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+// Get single package (full details)
+exports.getPackage = async (req, res) => {
+  try {
+    await ensureConnection();
+    const pkg = await Package.findById(req.params.id).lean(); // ⚡ Use lean
+    
+    if (!pkg) return res.status(404).json({ message: 'Package not found' });
+    
+    // ⚡ Cache individual package for 5 minutes
+    res.set('Cache-Control', 'public, max-age=300');
+    
+    return res.json(pkg);
+  } catch (err) {
+    console.error('GET_ERR:', err);
+    return res.status(500).json({ message: err.message });
+  }
+};
+
+// Create new package (unchanged logic)
 exports.createPackage = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
+    await ensureConnection();
     const packageData = JSON.parse(req.body.data);
-    // Cloudinary automatically provides the full URL in req.file.path
     const cardImage = req.file ? req.file.path : '';
     
-    // Debug logging
     console.log('=== CREATE PACKAGE DEBUG ===');
     console.log('Received packageData:', packageData);
-    console.log('Category:', packageData.category);
-    console.log('GroupType:', packageData.groupType);
-    console.log('State:', packageData.state);
-    console.log('Continent:', packageData.continent);
-    console.log('Departure Dates:', packageData.departureDates);
     console.log('Cloudinary Image URL:', cardImage);
     
     const newPackage = new Package({
       title: packageData.name,
       category: packageData.category.toLowerCase(),
-      
-      // Location fields
       groupType: packageData.groupType || null,
       state: packageData.state || null,
       continent: packageData.continent || null,
-      
       pricePerPerson: Number(packageData.pricePerPerson),
       currency: packageData.currency,
       priceNote: packageData.priceNote || '',
       duration: packageData.duration,
       pricingMode: packageData.pricingMode,
       priceText: packageData.priceText || '',
-      
       departureDates: packageData.departureDates || [],
-      
-      cardImage: cardImage, // Cloudinary URL
+      cardImage: cardImage,
       images: [],
       description: packageData.description || '',
       itinerary: packageData.itinerary || [],
@@ -175,19 +226,9 @@ exports.createPackage = async (req, res) => {
 
     await newPackage.save();
     
-    // Debug logging
-    console.log('Package saved successfully:');
-    console.log('ID:', newPackage._id);
-    console.log('Title:', newPackage.title);
-    console.log('Category:', newPackage.category);
-    console.log('GroupType:', newPackage.groupType);
-    console.log('State:', newPackage.state);
-    console.log('Continent:', newPackage.continent);
-    console.log('Departure Dates:', newPackage.departureDates);
-    console.log('Image URL:', newPackage.cardImage);
+    console.log('Package created successfully:', newPackage._id);
     console.log('=== END CREATE DEBUG ===');
     
-    console.log('Package created successfully:', newPackage._id, 'at', newPackage.createdAt);
     return res.status(201).json(newPackage);
   } catch (err) {
     console.error('CREATE_ERR:', err);
@@ -195,48 +236,36 @@ exports.createPackage = async (req, res) => {
   }
 };
 
-// Update package (Updated for Cloudinary)
+// Update package (unchanged logic)
 exports.updatePackage = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
+    await ensureConnection();
     console.log('UPDATE REQUEST - Package ID:', req.params.id);
-    console.log('UPDATE REQUEST - Body:', req.body);
-    console.log('UPDATE REQUEST - File:', req.file);
 
     const packageData = JSON.parse(req.body.data);
-    console.log('Parsed package data:', packageData);
-    console.log('Departure Dates in update:', packageData.departureDates);
 
     const updates = {
       title: packageData.name,
       category: packageData.category.toLowerCase(),
-      
-      // Location fields
       groupType: packageData.groupType || null,
       state: packageData.state || null,
       continent: packageData.continent || null,
-      
       duration: packageData.duration,
       pricingMode: packageData.pricingMode,
       pricePerPerson: packageData.pricePerPerson ? Number(packageData.pricePerPerson) : undefined,
       currency: packageData.currency,
       priceNote: packageData.priceNote || '',
       priceText: packageData.priceText || '',
-      
       departureDates: packageData.departureDates || [],
-      
       itinerary: packageData.itinerary || [],
       inclusions: packageData.inclusions || [],
       exclusions: packageData.exclusions || [],
     };
 
-    // If new image uploaded
     if (req.file) {
-      // Get old package to delete old image from Cloudinary
       const oldPackage = await Package.findById(req.params.id);
       
       if (oldPackage && oldPackage.cardImage) {
-        // Delete old image from Cloudinary
         const publicId = getCloudinaryPublicId(oldPackage.cardImage);
         if (publicId) {
           try {
@@ -248,8 +277,7 @@ exports.updatePackage = async (req, res) => {
         }
       }
       
-      updates.cardImage = req.file.path; // New Cloudinary URL
-      console.log('New image uploaded:', req.file.path);
+      updates.cardImage = req.file.path;
     }
 
     Object.keys(updates).forEach(key => {
@@ -258,25 +286,13 @@ exports.updatePackage = async (req, res) => {
       }
     });
 
-    console.log('Final updates object:', updates);
-
     const pkg = await Package.findByIdAndUpdate(req.params.id, updates, { new: true });
     
     if (!pkg) {
-      console.log('Package not found with ID:', req.params.id);
       return res.status(404).json({ message: 'Package not found' });
     }
 
-    // Debug logging
-    console.log('Package updated successfully:');
-    console.log('ID:', pkg._id);
-    console.log('GroupType:', pkg.groupType);
-    console.log('State:', pkg.state);
-    console.log('Continent:', pkg.continent);
-    console.log('Departure Dates:', pkg.departureDates);
-    console.log('Image URL:', pkg.cardImage);
-
-    console.log('Package updated successfully:', pkg._id, 'at', pkg.updatedAt);
+    console.log('Package updated successfully:', pkg._id);
     return res.json(pkg);
   } catch (err) {
     console.error('UPDATE_ERR:', err);
@@ -284,59 +300,28 @@ exports.updatePackage = async (req, res) => {
   }
 };
 
-// Get all by category (latest first)
-exports.getPackagesByCategory = async (req, res) => {
-  try {
-    await ensureConnection(); // ✅ Ensure connection
-    const { category } = req.params;
-    const packages = await Package.find({ category }).sort({ createdAt: -1 });
-    return res.json(packages);
-  } catch (err) {
-    console.error('LIST_ERR:', err);
-    return res.status(500).json({ message: err.message });
-  }
-};
-
-// Get single
-exports.getPackage = async (req, res) => {
-  try {
-    await ensureConnection(); // ✅ Ensure connection
-    const pkg = await Package.findById(req.params.id);
-    if (!pkg) return res.status(404).json({ message: 'Package not found' });
-    return res.json(pkg);
-  } catch (err) {
-    console.error('GET_ERR:', err);
-    return res.status(500).json({ message: err.message });
-  }
-};
-
-// Delete with Cloudinary cleanup
+// Delete with Cloudinary cleanup (unchanged logic)
 exports.deletePackage = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
+    await ensureConnection();
     const { id } = req.params;
     
-    // First, find the package to get image URLs before deletion
     const packageToDelete = await Package.findById(id);
     
     if (!packageToDelete) {
       return res.status(404).json({ message: 'Package not found' });
     }
     
-    // Collect all image URLs from the package
     const imageUrls = [];
     
-    // Add cardImage (main package image)
     if (packageToDelete.cardImage) {
       imageUrls.push(packageToDelete.cardImage);
     }
     
-    // Add images array (gallery images)
     if (packageToDelete.images && Array.isArray(packageToDelete.images)) {
       imageUrls.push(...packageToDelete.images);
     }
     
-    // Add itinerary images if they exist
     if (packageToDelete.itinerary && Array.isArray(packageToDelete.itinerary)) {
       packageToDelete.itinerary.forEach(day => {
         if (day.image) {
@@ -345,10 +330,8 @@ exports.deletePackage = async (req, res) => {
       });
     }
     
-    // Delete package from database first
     const deletedPackage = await Package.findByIdAndDelete(id);
     
-    // Now delete the associated images from Cloudinary
     let deletedFilesCount = 0;
     
     for (const imageUrl of imageUrls) {
@@ -376,39 +359,59 @@ exports.deletePackage = async (req, res) => {
   }
 };
 
-// Stats
+// ✅ OPTIMIZED: Stats with caching
 exports.getPackageStats = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
-    const categories = ['domestic', 'international', 'pilgrimage', 'group'];
-    const stats = {};
-    for (const category of categories) {
-      stats[category] = await Package.countDocuments({ category });
-    }
-    stats.total = await Package.countDocuments({});
-    console.log('Stats generated:', stats);
-    return res.json(stats);
+    await ensureConnection();
+    
+    // ⚡ Use aggregation for faster counting
+    const stats = await Package.aggregate([
+      {
+        $group: {
+          _id: '$category',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    
+    const result = {
+      domestic: 0,
+      international: 0,
+      pilgrimage: 0,
+      group: 0,
+      total: 0
+    };
+    
+    stats.forEach(stat => {
+      result[stat._id] = stat.count;
+      result.total += stat.count;
+    });
+    
+    // ⚡ Cache for 10 minutes
+    res.set('Cache-Control', 'public, max-age=600');
+    
+    console.log('Stats generated:', result);
+    return res.json(result);
   } catch (err) {
     console.error('STATS_ERR:', err);
     return res.status(500).json({ message: err.message });
   }
 };
 
-// Real-time package timeline
+// Timeline (unchanged logic)
 exports.getPackageTimeline = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
+    await ensureConnection();
     console.log('=== PACKAGE TIMELINE DEBUG ===');
     
     const packages = await Package.find({})
       .select('title category createdAt')
-      .sort({ createdAt: 1 });
+      .sort({ createdAt: 1 })
+      .lean(); // ⚡ Use lean
     
     console.log('Total packages found:', packages.length);
-    console.log('Packages:', packages.map(p => ({ title: p.title, created: p.createdAt })));
     
     if (packages.length === 0) {
-      console.log('No packages found - returning empty timeline');
       const emptyTimeline = [];
       for (let i = 6; i >= 0; i--) {
         const d = new Date();
@@ -430,14 +433,12 @@ exports.getPackageTimeline = async (req, res) => {
     const dateGroups = {};
     
     packages.forEach(pkg => {
-      const date = pkg.createdAt.toISOString().slice(0, 10);
+      const date = new Date(pkg.createdAt).toISOString().slice(0, 10);
       if (!dateGroups[date]) {
         dateGroups[date] = 0;
       }
       dateGroups[date]++;
     });
-
-    console.log('Date groups:', dateGroups);
 
     let cumulativeCount = 0;
     const sortedDates = Object.keys(dateGroups).sort();
@@ -489,7 +490,9 @@ exports.getPackageTimeline = async (req, res) => {
       }
     }
 
-    console.log('Final timeline data:', finalTimeline);
+    // ⚡ Cache for 10 minutes
+    res.set('Cache-Control', 'public, max-age=600');
+    
     console.log('=== END PACKAGE TIMELINE DEBUG ===');
     
     return res.json(finalTimeline);
@@ -499,23 +502,14 @@ exports.getPackageTimeline = async (req, res) => {
   }
 };
 
-// Weekly counts for chart (backup)
+// Weekly counts (unchanged logic)
 exports.getWeeklyCounts = async (req, res) => {
   try {
-    await ensureConnection(); // ✅ Ensure connection
+    await ensureConnection();
     const today = new Date();
     const start = new Date(today);
     start.setHours(0,0,0,0);
     start.setDate(start.getDate() - 6);
-
-    console.log('=== WEEKLY CHART DEBUG ===');
-    console.log('Date range for weekly chart:', start, 'to', today);
-
-    const allPackages = await Package.find({}).sort({ createdAt: -1 }).limit(10);
-    console.log('Recent packages in database:');
-    allPackages.forEach(pkg => {
-      console.log(`- ${pkg.title} (${pkg.category}) created: ${pkg.createdAt}`);
-    });
 
     const pipeline = [
       { $match: { createdAt: { $gte: start } } },
@@ -529,7 +523,6 @@ exports.getWeeklyCounts = async (req, res) => {
     ];
 
     const rows = await Package.aggregate(pipeline);
-    console.log('Aggregation results from MongoDB:', rows);
 
     const out = [];
     for (let i = 6; i >= 0; i--) {
@@ -546,63 +539,12 @@ exports.getWeeklyCounts = async (req, res) => {
       });
     }
     
-    console.log('Final weekly chart data:', out);
-    console.log('=== END WEEKLY CHART DEBUG ===');
+    // ⚡ Cache for 10 minutes
+    res.set('Cache-Control', 'public, max-age=600');
     
     return res.json(out);
   } catch (err) {
     console.error('WEEKLY_ERR:', err);
-    return res.status(500).json({ message: err.message });
-  }
-};
-
-// NEW: Get packages grouped by continent with statistics (only continents with packages)
-exports.getPackagesGroupedByContinent = async (req, res) => {
-  try {
-    await ensureConnection(); // ✅ Ensure connection
-    console.log('=== GET PACKAGES GROUPED BY CONTINENT ===');
-    
-    // Get all international packages
-    const internationalPackages = await Package.find({ category: 'international' }).sort({ createdAt: -1 });
-    
-    console.log('Total international packages found:', internationalPackages.length);
-    
-    // Group packages by continent
-    const continentGroups = {};
-    
-    internationalPackages.forEach(pkg => {
-      const continentName = pkg.continent || 'Unknown';
-      
-      if (!continentGroups[continentName]) {
-        continentGroups[continentName] = {
-          continent: continentName,
-          packages: [],
-          tourCount: 0
-        };
-      }
-      
-      continentGroups[continentName].packages.push(pkg);
-      continentGroups[continentName].tourCount++;
-    });
-    
-    // Convert to array and filter out continents with 0 packages
-    const result = Object.values(continentGroups)
-      .filter(group => group.tourCount > 0)
-      .map(group => ({
-        continent: group.continent,
-        tourCount: group.tourCount,
-        // Pick a representative image from the first package
-        image: group.packages[0]?.cardImage || group.packages[0]?.images?.[0] || null
-      }))
-      .sort((a, b) => b.tourCount - a.tourCount); // Sort by tour count (highest first)
-    
-    console.log('Continents with packages:', result.length);
-    console.log('Continent groups:', result.map(r => `${r.continent}: ${r.tourCount} tours`));
-    console.log('=== END GROUPED BY CONTINENT ===');
-    
-    return res.json(result);
-  } catch (err) {
-    console.error('GROUPED_BY_CONTINENT_ERR:', err);
     return res.status(500).json({ message: err.message });
   }
 };

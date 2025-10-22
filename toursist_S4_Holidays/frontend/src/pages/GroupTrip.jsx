@@ -3,11 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import './GroupTrip.css';
 import ContactIcons from '../components/ContactIcons';
+import { fetchWithCache } from '../utils/fetchWithCache';
 
 export default function GroupTrip() {
   const [packages, setPackages] = useState([]);
   const [filteredPackages, setFilteredPackages] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [selectedGroupType, setSelectedGroupType] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [showAllTypes, setShowAllTypes] = useState(false);
@@ -21,60 +23,34 @@ export default function GroupTrip() {
   const groupTypes = ['Domestic', 'International', 'Pilgrimage'];
 
   const pickPrimaryImagePath = (pkg) => {
-    console.log(`Picking image for ${pkg.title}:`, {
-      cardImage: pkg.cardImage,
-      images: pkg.images
-    });
-
     const fromCard = Array.isArray(pkg?.cardImage)
       ? pkg.cardImage.find(p => typeof p === 'string' && p.trim())
       : (typeof pkg?.cardImage === 'string' && pkg.cardImage.trim() ? pkg.cardImage : null);
 
-    if (fromCard) {
-      console.log(`Using cardImage: ${fromCard}`);
-      return fromCard;
-    }
+    if (fromCard) return fromCard;
 
     const imgs = pkg?.images;
     if (Array.isArray(imgs)) {
       const first = imgs.find(p => typeof p === 'string' && p.trim());
-      if (first) {
-        console.log(`Using first image: ${first}`);
-        return first;
-      }
+      if (first) return first;
     } else if (typeof imgs === 'string' && imgs.trim()) {
-      console.log(`Using images string: ${imgs}`);
       return imgs;
     }
 
-    console.log(`No image found for ${pkg.title}, will use fallback`);
     return null;
   };
 
   const getImageUrl = (path) => {
-    console.log(`Constructing URL for path: "${path}"`);
-    console.log(`SERVER_BASE: "${SERVER_BASE}"`);
-    
-    if (typeof path !== 'string' || !path.trim()) {
-      console.log(`Using fallback - invalid path`);
-      return FALLBACK;
-    }
+    if (typeof path !== 'string' || !path.trim()) return FALLBACK;
     
     const fixed = path.replace(/\\/g, '/');
     
-    if (/^https?:\/\//i.test(fixed)) {
-      console.log(`Using external URL: ${fixed}`);
-      return fixed;
-    }
+    if (/^https?:\/\//i.test(fixed)) return fixed;
     
-    const finalUrl = `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
-    console.log(`Final constructed URL: ${finalUrl}`);
-    
-    return finalUrl;
+    return `${SERVER_BASE}/${fixed.startsWith('/') ? fixed.slice(1) : fixed}`;
   };
 
   const applyFallback = (e) => {
-    console.log('Image failed to load:', e.currentTarget.src);
     e.currentTarget.onerror = null;
     e.currentTarget.src = FALLBACK;
   };
@@ -124,43 +100,17 @@ export default function GroupTrip() {
   const fetchPackages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/packages/category/group`);
-      if (response.ok) {
-        const data = await response.json();
-        
-        const sortedData = sortPackagesAlphabetically(data);
-        setPackages(sortedData);
-        
-        console.log('=== DETAILED PACKAGE DEBUG ===');
-        console.log('Total packages fetched:', sortedData.length);
-        console.log('API_URL:', API_URL);
-        console.log('SERVER_BASE:', SERVER_BASE);
-        console.log('Packages sorted alphabetically by title');
-        
-        sortedData.forEach((pkg, index) => {
-          console.log(`\n--- Package ${index + 1}: ${pkg.title} ---`);
-          console.log('Package ID:', pkg._id);
-          console.log('cardImage:', pkg.cardImage);
-          console.log('images:', pkg.images);
-          console.log('category:', pkg.category);
-          console.log('groupType:', pkg.groupType);
-          console.log('pricePerPerson:', pkg.pricePerPerson);
-          console.log('pricingMode:', pkg.pricingMode);
-          console.log('priceText:', pkg.priceText);
-          console.log('departureDates:', pkg.departureDates);
-          
-          const primaryPath = pickPrimaryImagePath(pkg);
-          const imgUrl = getImageUrl(primaryPath);
-          console.log('primaryPath:', primaryPath);
-          console.log('Final imgUrl:', imgUrl);
-        });
-        
-        console.log('=== END DETAILED DEBUG ===');
-      } else {
-        console.error('Failed to fetch group packages - Status:', response.status);
-      }
+      setError(null);
+      
+      const data = await fetchWithCache(`${API_URL}/packages/category/group`);
+      
+      const sortedData = sortPackagesAlphabetically(data);
+      setPackages(sortedData);
+      
+      console.log('Group packages fetched:', sortedData.length);
     } catch (error) {
       console.error('Error fetching group packages:', error);
+      setError('Failed to load packages. Please try again later.');
     } finally {
       setLoading(false);
     }
@@ -335,8 +285,18 @@ export default function GroupTrip() {
                 </h2>
 
                 {loading ? (
-                  <div style={{ textAlign: 'center', padding: '50px', fontSize: '18px' }}>
+                  <div className="loading-spinner">
+                    <div className="spinner"></div>
                     Loading group packages...
+                  </div>
+                ) : error ? (
+                  <div className="error-message">
+                    <div className="error-icon">⚠️</div>
+                    <h3>Oops! Something went wrong</h3>
+                    <p>{error}</p>
+                    <button onClick={fetchPackages} className="retry-button">
+                      Try Again
+                    </button>
                   </div>
                 ) : displayPackages.length === 0 ? (
                   <div className="no-packages">
@@ -382,6 +342,10 @@ export default function GroupTrip() {
                             <img
                               src={imgUrl}
                               alt={pkg.title}
+                              loading="lazy"
+                              decoding="async"
+                              width="400"
+                              height="300"
                               onError={applyFallback}
                               style={{
                                 backgroundColor: '#f8f9fa',
