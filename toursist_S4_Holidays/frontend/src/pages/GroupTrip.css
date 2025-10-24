@@ -455,14 +455,19 @@
   margin: 8px 0;
 }
 
+/* ✅ ENHANCED: Bigger, more visible duration badge */
+/* ✅ ENHANCED: Bigger, more visible duration badge */
 .duration-badge {
-  background: linear-gradient(135deg, #4ecdc4, #38a69b);
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
   color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 25px;
+  font-size: 0.95rem;
+  font-weight: 700;
   flex-shrink: 0;
+  box-shadow: 0 3px 12px rgba(255, 107, 107, 0.4);
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 }
 
 /* Clean price display */

@@ -3,13 +3,14 @@ import { Routes, Route } from "react-router-dom";
 
 // Public site
 import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";  // Import Footer
 import Home from "./pages/Home.jsx";
 import International from "./pages/International.jsx";
 import GroupTrip from "./pages/GroupTrip.jsx";
 import Domestic from "./pages/Domestic.jsx";
 import Pilgrimage from "./pages/Pilgrimage.jsx";
 import StatePackages from "./pages/StatePackages.jsx";
-import ContinentPackages from "./pages/ContinentPackages.jsx"; // NEW: Import ContinentPackages
+import ContinentPackages from "./pages/ContinentPackages.jsx";
 
 // Admin
 import ProtectedRoute from "./components/admin/ProtectedRoute";
@@ -33,6 +34,7 @@ function PublicLayout({ children }) {
     <>
       <Navbar />
       {children}
+      <Footer />  {/* Footer added here */}
     </>
   );
 }
@@ -43,12 +45,12 @@ export default function App() {
       {/* Public routes */}
       <Route path="/" element={<PublicLayout><Home /></PublicLayout>} />
       <Route path="/about" element={<PublicLayout><About /></PublicLayout>} />
-      <Route path="/package/:id" element={<PackageDetail />} />
+      <Route path="/package/:id" element={<PublicLayout><PackageDetail /></PublicLayout>} />
       <Route path="/destination" element={<PublicLayout><Destination /></PublicLayout>} />
       
       {/* International Routes */}
       <Route path="/international" element={<PublicLayout><International /></PublicLayout>} />
-      <Route path="/international/:continentName" element={<PublicLayout><ContinentPackages /></PublicLayout>} /> {/* NEW */}
+      <Route path="/international/:continentName" element={<PublicLayout><ContinentPackages /></PublicLayout>} />
       
       {/* Domestic Routes */}
       <Route path="/domestic" element={<PublicLayout><Domestic /></PublicLayout>} />

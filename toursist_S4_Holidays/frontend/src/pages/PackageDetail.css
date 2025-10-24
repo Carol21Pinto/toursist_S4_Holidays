@@ -1,3 +1,5 @@
+/* src/pages/PackageDetail.css */
+
 /* Package Detail Scoped Styling - NO global conflicts with Admin Panel */
 .package-detail-container * {
   margin: 0;
@@ -11,14 +13,15 @@
   color: #333;
   line-height: 1.6;
   min-height: 100vh;
+  padding-top: 0;
 }
 
-/* Back Button - Fixed on desktop, relative on mobile */
+/* Back Button - Position over hero image */
 .package-detail-container .back-button-container {
-  position: fixed;
-  top: 20px;
+  position: absolute;
+  top: 100px;
   left: 20px;
-  z-index: 1000;
+  z-index: 100;
   display: flex;
   justify-content: flex-start;
 }
@@ -60,20 +63,20 @@
   transform: translateX(-2px);
 }
 
-/* Hero Section with Perfect Auto-Fit Image */
+/* ✅ UPDATED: Half-Page Hero Section (50vh) */
 .package-detail-container header {
   position: relative;
   height: 50vh;
-  width: 80%;
-  margin: 20px auto;
-  border-radius: 15px;
+  width: 100%;
+  margin: 0;
+  border-radius: 0;
   overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
   text-align: center;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  box-shadow: none;
   background-position: center center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
@@ -87,24 +90,27 @@
   left: 0; 
   right: 0; 
   bottom: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0,0,0,0.4);
 }
 
 .package-detail-container header .hero-text {
   position: relative;
   z-index: 1;
+  padding: 0 20px;
 }
 
 .package-detail-container header h1 { 
-  font-size: 2.5rem; 
+  font-size: 2.8rem;
   font-weight: 700; 
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+  text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+  margin-bottom: 15px;
+  letter-spacing: 1px;
 }
 
 .package-detail-container header p { 
-  font-size: 1.1rem; 
+  font-size: 1.2rem;
   font-weight: 500; 
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
 /* Section Styling */
@@ -127,7 +133,7 @@
 
 /* Package Overview - Overlap Effect */
 .package-detail-container .overview-section { 
-  margin-top: -60px; 
+  margin-top: -60px;
   position: relative; 
   z-index: 2; 
 }
@@ -298,7 +304,7 @@
   background: #f44336; 
 }
 
-/* ✅ NEW: Two-Box Split Layout - 50/50 Split */
+/* Two-Box Split Layout */
 .package-detail-container .notes-split-section {
   background: transparent;
   padding: 0;
@@ -322,7 +328,6 @@
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-/* Booking Policy Box - Left (Blue accent) */
 .package-detail-container .booking-box {
   border-left: 5px solid #2196F3;
   background: linear-gradient(135deg, #e3f2fd, #f1f8ff);
@@ -338,7 +343,6 @@
   border-bottom: 2px solid #90caf9;
 }
 
-/* Notes Box - Right (Orange accent) */
 .package-detail-container .notes-box {
   border-left: 5px solid #ff9800;
   background: linear-gradient(135deg, #fff8e1, #fffbf0);
@@ -354,7 +358,6 @@
   border-bottom: 2px solid #ffd54f;
 }
 
-/* Box Content */
 .package-detail-container .box-content {
   display: flex;
   flex-direction: column;
@@ -385,28 +388,45 @@
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
+  /* ✅ NEW: Hide Go Back button on tablets and mobile */
   .package-detail-container .back-button-container {
-    position: relative;
-    top: auto;
-    left: auto;
-    margin: 15px;
-    z-index: auto;
+    display: none !important;
   }
-  
-  .package-detail-container .back-button {
-    padding: 8px 14px;
-    font-size: 0.85rem;
-  }
-  
+
   .package-detail-container header {
-    width: 95%;
-    height: 35vh;
-    margin: 10px auto 20px auto;
+    height: 45vh;
+  }
+  
+  .package-detail-container header h1 {
+    font-size: 2.5rem;
+  }
+  
+  .package-detail-container header p {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  /* ✅ NEW: Ensure Go Back button stays hidden on mobile */
+  .package-detail-container .back-button-container {
+    display: none !important;
+  }
+
+  .package-detail-container header {
+    height: 40vh;
   }
   
   .package-detail-container header h1 {
     font-size: 2rem;
+  }
+  
+  .package-detail-container header p {
+    font-size: 1rem;
+  }
+  
+  .package-detail-container .overview-section {
+    margin-top: -50px;
   }
   
   .package-detail-container .section {
@@ -437,7 +457,6 @@
     margin-bottom: 10px;
   }
 
-  /* Split Boxes Mobile - Stack Vertically */
   .package-detail-container .split-boxes {
     grid-template-columns: 1fr;
     gap: 15px;
@@ -458,32 +477,22 @@
 }
 
 @media (max-width: 480px) {
+  /* ✅ NEW: Ensure Go Back button stays hidden on small mobile */
   .package-detail-container .back-button-container {
-    margin: 10px;
+    display: none !important;
   }
-  
-  .package-detail-container .back-button {
-    padding: 6px 12px;
-    font-size: 0.8rem;
-  }
-  
-  .package-detail-container .back-button .back-arrow {
-    font-size: 1rem;
-  }
-  
+
   .package-detail-container header {
-    width: 100%;
-    margin: 5px auto 15px auto;
-    border-radius: 10px;
-    height: 30vh;
+    height: 35vh;
   }
   
   .package-detail-container header h1 {
     font-size: 1.8rem;
+    margin-bottom: 10px;
   }
   
   .package-detail-container header p {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   
   .package-detail-container .section {
@@ -517,7 +526,6 @@
     font-size: 0.85rem;
   }
 
-  /* Split Boxes Small Mobile */
   .package-detail-container .split-boxes {
     gap: 12px;
   }

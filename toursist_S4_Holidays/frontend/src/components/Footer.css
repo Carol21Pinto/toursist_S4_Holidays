@@ -1,3 +1,5 @@
+/* src/components/Footer.css */
+
 /* Creative Artistic Footer Design */
 .footer {
   background: linear-gradient(135deg, #1a2332 0%, #2c3540 50%, #34495e 100%);
@@ -38,29 +40,6 @@
 @keyframes float {
   0%, 100% { transform: translateY(0px) rotate(0deg); }
   50% { transform: translateY(-20px) rotate(180deg); }
-}
-
-/* Decorative Top Border */
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, 
-    #4ecdc4 0%, 
-    #45b7d1 25%, 
-    #f39c12 50%, 
-    #e74c3c 75%, 
-    #4ecdc4 100%);
-  animation: shimmer 8s ease-in-out infinite;
-  z-index: 2;
-}
-
-@keyframes shimmer {
-  0%, 100% { opacity: 0.8; }
-  50% { opacity: 1; }
 }
 
 .footer-container {
@@ -173,13 +152,14 @@
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  /* transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); */
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   cursor: pointer;
   position: relative;
   overflow: hidden;
+  user-select: none;
 }
 
-/* .social-icon::before {
+.social-icon::before {
   content: '';
   position: absolute;
   top: 0;
@@ -188,9 +168,9 @@
   height: 100%;
   background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
   transition: left 0.5s;
-} */
+}
 
-/* .social-icon:hover::before {
+.social-icon:hover::before {
   left: 100%;
 }
 
@@ -212,11 +192,23 @@
 .social-icon.phone {
   background: linear-gradient(45deg, #34c759, #28a745);
   box-shadow: 0 4px 15px rgba(52, 199, 89, 0.3);
-} */
+}
 
 /* .social-icon:hover {
   transform: translateY(-3px) scale(1.1) rotate(5deg);
   box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+}
+
+.social-icon:active {
+  transform: translateY(-1px) scale(1.05);
+}
+
+.social-icon svg {
+  transition: all 0.3s ease;
+}
+
+.social-icon:hover svg {
+  transform: scale(1.1);
 } */
 
 /* Enhanced Text */
@@ -334,46 +326,7 @@
     padding: 0 20px;
   }
   
-  /* .social-icons {
-    justify-content: center;
-  } */
-  
   .footer-column li {
     white-space: normal;
   }
 }
-/* Update social icons for clickable functionality */
-/* .social-icon {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 16px;
-  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  cursor: pointer; 
-  position: relative;
-  overflow: hidden;
-  user-select: none; 
-} */
-
-/* Add active state for better user feedback */
-/* .social-icon:active {
-  transform: translateY(-1px) scale(1.05);
-} */
-
-/* Keep all your existing social icon styles and add these enhancements */
-/* .social-icon:hover {
-  transform: translateY(-3px) scale(1.1) rotate(5deg);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-} */
-
-/* SVG styling for crisp icons */
-/* .social-icon svg {
-  transition: all 0.3s ease;
-}
-
-.social-icon:hover svg {
-  transform: scale(1.1);
-} */

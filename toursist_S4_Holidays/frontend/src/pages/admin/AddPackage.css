@@ -1,3 +1,4 @@
+/* Base container */
 .add-package-container {
   max-width: 1000px;
   margin: 0 auto;
@@ -245,7 +246,6 @@
   box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
 }
 
-
 /* Remove Button Styles */
 .remove-btn {
   background: #ffebee;
@@ -284,32 +284,14 @@
   background: #e53935;
 }
 
-
 /* Responsive Design */
 @media (max-width: 768px) {
-  .add-package-container {
-    padding: 15px;
-  }
-  
-  .form-row {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-  
-  .add-package-header {
-    padding: 20px;
-  }
-  
-  .form-section {
-    padding: 20px;
-  }
-  
-  .add-package-header h1 {
-    font-size: 1.5rem;
-  }
+  .add-package-container { padding: 15px; }
+  .form-row { grid-template-columns: 1fr; gap: 15px; }
+  .add-package-header { padding: 20px; }
+  .form-section { padding: 20px; }
+  .add-package-header h1 { font-size: 1.5rem; }
 }
-
-/* Add these styles to your existing AddPackage.css file */
 
 /* Location Info Helper Styles */
 .location-info {
@@ -325,9 +307,7 @@
   color: #1565c0;
 }
 
-.info-icon {
-  font-size: 1.2rem;
-}
+.info-icon { font-size: 1.2rem; }
 
 .location-info strong {
   color: #0d47a1;
@@ -361,14 +341,8 @@
 
 /* Responsive adjustments for location fields */
 @media (max-width: 768px) {
-  .location-info {
-    font-size: 0.9rem;
-    padding: 0.8rem;
-  }
-  
-  .info-icon {
-    font-size: 1.1rem;
-  }
+  .location-info { font-size: 0.9rem; padding: 0.8rem; }
+  .info-icon { font-size: 1.1rem; }
 }
 
 /* Departure Dates Section Styling */
@@ -480,22 +454,193 @@
 
 /* Responsive adjustments for departure dates */
 @media (max-width: 768px) {
-  .departure-date-row {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  
-  .remove-date-btn {
-    margin-top: 8px;
-    min-width: auto;
-  }
-  
-  .dates-list {
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .date-tag {
-    text-align: center;
-  }
+  .departure-date-row { flex-direction: column; align-items: stretch; }
+  .remove-date-btn { margin-top: 8px; min-width: auto; }
+  .dates-list { flex-direction: column; gap: 8px; }
+  .date-tag { text-align: center; }
+}
+
+/* ========== Inclusions & Exclusions Section ========== */
+
+.inclusions-exclusions-section {
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  padding: 30px;
+  border-radius: 12px;
+  border: 2px solid #e9ecef;
+  margin-bottom: 20px;
+}
+
+.inclusions-exclusions-section h2 {
+  font-size: 1.5rem;
+  color: #1a1a1a;
+  margin: 0 0 25px 0;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.section-icon { font-size: 1.8rem; }
+
+.inclusions-exclusions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.inclusion-box,
+.exclusion-box {
+  background: white;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border: 2px solid #e1e5e9;
+  transition: all 0.3s ease;
+}
+
+.inclusion-box { border-left: 5px solid #28a745; }
+.exclusion-box { border-left: 5px solid #dc3545; }
+
+.inclusion-box:hover,
+.exclusion-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+}
+
+.inclusion-box h3,
+.exclusion-box h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 0 0 20px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inclusion-box h3 { color: #28a745; }
+.exclusion-box h3 { color: #dc3545; }
+
+.item-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  animation: fadeIn 0.3s ease;
+}
+
+.item-input {
+  flex: 1;
+  padding: 12px 16px;
+  border: 2px solid #e1e5e9;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  background: white;
+}
+
+.item-input:focus {
+  outline: none;
+  border-color: #4285f4;
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.1);
+}
+
+.item-input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
+.remove-item-btn {
+  background: linear-gradient(135deg, #ff6b6b, #ee5a6f);
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.3s ease;
+  min-width: 80px;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.3);
+}
+
+.remove-item-btn:hover {
+  background: linear-gradient(135deg, #ee5a6f, #ff6b6b);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+}
+
+.add-inclusion-btn,
+.add-exclusion-btn {
+  width: 100%;
+  padding: 14px 20px;
+  border: 2px dashed #e1e5e9;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.add-inclusion-btn { color: #28a745; border-color: #28a745; }
+.add-exclusion-btn { color: #dc3545; border-color: #dc3545; }
+
+.add-inclusion-btn:hover {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border-color: #28a745;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.2);
+}
+
+.add-exclusion-btn:hover {
+  background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+  border-color: #dc3545;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.2);
+}
+
+.add-icon { font-size: 1.2rem; font-weight: bold; }
+
+.empty-message {
+  text-align: center;
+  padding: 30px;
+  color: #999;
+  font-style: italic;
+  font-size: 0.95rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 2px dashed #e1e5e9;
+}
+
+.item-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 8px;
+}
+
+/* Responsive for inclusions/exclusions */
+@media (max-width: 768px) {
+  .inclusions-exclusions-grid { grid-template-columns: 1fr; gap: 20px; }
+  .inclusion-box, .exclusion-box { padding: 20px; }
+  .item-row { flex-direction: column; gap: 10px; }
+  .remove-item-btn { width: 100%; min-width: auto; }
+  .inclusions-exclusions-section { padding: 20px; }
+}
+
+/* Smooth item animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
