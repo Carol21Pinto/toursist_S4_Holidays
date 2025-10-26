@@ -78,7 +78,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
       }}
     >
       <CardContent sx={{ padding: '20px', display: 'flex', flexDirection: 'column', height: '100%' }}>
-        {/* Header */}
         <Box sx={{ display: 'flex', gap: 2, marginBottom: '16px' }}>
           <Avatar
             sx={{
@@ -132,7 +131,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           </Box>
         </Box>
 
-        {/* Duration & Price */}
         <Box sx={{ marginBottom: '16px' }}>
           {pkg?.duration && (
             <Typography sx={{ color: '#6b7280', fontSize: '0.875rem', marginBottom: '8px' }}>
@@ -156,7 +154,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           )}
         </Box>
 
-        {/* Stats */}
         <Box sx={{ display: 'flex', gap: 1, marginTop: 'auto', marginBottom: '16px', flexWrap: 'wrap' }}>
           {pkg?.itinerary && pkg.itinerary.length > 0 && (
             <Chip
@@ -176,7 +173,6 @@ function PackageCard({ package: pkg, onEdit, onDelete }) {
           )}
         </Box>
 
-        {/* Action Buttons */}
         <Box sx={{ display: 'flex', gap: 1 }}>
           <Button
             size="small"
@@ -244,15 +240,23 @@ export default function PackagesList() {
   let deletePackageId = null;
   let deletePackageTitle = '';
 
+  // FIXED: Load packages with cache prevention
   const loadPackages = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_URL}/packages`);
+      const response = await fetch(`${API_URL}/packages?_=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       
       if (response.ok) {
         const data = await response.json();
         const packagesArray = Array.isArray(data) ? data : (data.packages || data.data || []);
         setPackages(packagesArray);
+        console.log('Packages loaded:', packagesArray.length);
       } else {
         setPackages([]);
       }
@@ -264,8 +268,30 @@ export default function PackagesList() {
     }
   };
 
+  // Initial load
   useEffect(() => {
     loadPackages();
+  }, []);
+
+  // Auto-refresh when window gets focus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadPackages();
+      }
+    };
+
+    const handleFocus = () => {
+      loadPackages();
+    };
+
+    window.addEventListener('focus', handleFocus);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener('focus', handleFocus);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
   }, []);
 
   const handleEdit = (id) => {
@@ -307,13 +333,23 @@ export default function PackagesList() {
     });
   };
 
+  // FIXED: Immediately reload after delete
   const confirmDelete = async () => {
     try {
       if (!deletePackageId) throw new Error('Package ID is missing');
       
-      const response = await fetch(`${API_URL}/packages/${deletePackageId}`, { method: 'DELETE' });
+      const response = await fetch(`${API_URL}/packages/${deletePackageId}`, { 
+        method: 'DELETE',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       
       if (response.ok) {
+        // Immediately reload packages
+        await loadPackages();
+        
         setSnackbar({
           open: true,
           message: `✅ "${deletePackageTitle}" deleted successfully!`,
@@ -321,7 +357,7 @@ export default function PackagesList() {
           action: null
         });
         
-        loadPackages();
+        // Trigger dashboard refresh
         localStorage.setItem('dashboardRefresh', Date.now().toString());
         window.dispatchEvent(new CustomEvent('dashboardRefresh'));
       } else {
@@ -370,7 +406,6 @@ export default function PackagesList() {
 
   return (
     <Box>
-      {/* Header */}
       <Box sx={{ marginBottom: '32px' }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
           <Typography variant="h4" sx={{ fontWeight: 700, color: '#1f2937' }}>
@@ -393,7 +428,6 @@ export default function PackagesList() {
           </Button>
         </Box>
 
-        {/* Search and Filters */}
         <Stack direction={{ xs: 'column', md: 'row' }} spacing={2}>
           <TextField
             placeholder="Search packages..."
@@ -449,7 +483,6 @@ export default function PackagesList() {
         </Stack>
       </Box>
 
-      {/* Packages Grid */}
       {loading ? (
         <Box sx={{ textAlign: 'center', padding: '40px' }}>
           <Typography>Loading packages...</Typography>
@@ -474,14 +507,13 @@ export default function PackagesList() {
       ) : (
         <Grid container spacing={3}>
           {sortedPackages.map((pkg, index) => (
-            <Grid item xs={12} sm={6} md={4} key={pkg?._id || index}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={pkg?._id || index}>
               <PackageCard package={pkg} onEdit={handleEdit} onDelete={handleDelete} />
             </Grid>
           ))}
         </Grid>
       )}
 
-      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={snackbar.action ? null : 4000}

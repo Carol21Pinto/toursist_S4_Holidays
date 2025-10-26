@@ -7,7 +7,6 @@ import {
   Typography, 
   Grid, 
   Button,
-  Chip,
 } from "@mui/material";
 import { 
   TrendingUp, 
@@ -145,26 +144,36 @@ export default function AdminDashboard() {
   const navigate = useNavigate();
   const [stats, setStats] = useState({ domestic:0, international:0, pilgrimage:0, group:0, total:0 });
   const [chartData, setChartData] = useState([]);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [loading, setLoading] = useState(true);
 
+  // FIXED: Load dashboard data with cache prevention
   const load = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("adminToken");
       
-      // Load stats
-      const statsResponse = await fetch(`${API_URL}/packages/stats`, { 
-        headers: { Authorization: "Bearer " + token }
+      // Load stats with cache prevention
+      const statsResponse = await fetch(`${API_URL}/packages/stats?_=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
       });
       
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStats(statsData || { domestic:0, international:0, pilgrimage:0, group:0, total:0 });
+        console.log('Dashboard stats loaded:', statsData);
       }
 
       // Load timeline data for chart
-      const timelineResponse = await fetch(`${API_URL}/packages/timeline?t=${Date.now()}`);
+      const timelineResponse = await fetch(`${API_URL}/packages/timeline?_=${Date.now()}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache'
+        }
+      });
       
       if (timelineResponse.ok) {
         const timelineData = await timelineResponse.json();
@@ -186,11 +195,12 @@ export default function AdminDashboard() {
     }
   };
 
+  // Initial load
   useEffect(() => {
     load();
-  }, [location.search, refreshTrigger]);
+  }, [location.search]);
 
-  // Enhanced refresh system
+  // Enhanced refresh system - Check every second
   useEffect(() => {
     const checkForRefresh = () => {
       const refreshSignal = localStorage.getItem('dashboardRefresh');
@@ -198,7 +208,6 @@ export default function AdminDashboard() {
         console.log('Dashboard refresh signal received');
         load();
         localStorage.removeItem('dashboardRefresh');
-        setRefreshTrigger(prev => prev + 1);
       }
     };
 
@@ -208,16 +217,20 @@ export default function AdminDashboard() {
     const handleCustomRefresh = () => {
       console.log('Custom refresh event received');
       load();
-      setRefreshTrigger(prev => prev + 1);
+    };
+
+    const handleFocus = () => {
+      console.log('Window focused - reloading dashboard');
+      load();
     };
 
     window.addEventListener('dashboardRefresh', handleCustomRefresh);
-    window.addEventListener('focus', checkForRefresh);
+    window.addEventListener('focus', handleFocus);
 
     return () => {
       clearInterval(refreshInterval);
       window.removeEventListener('dashboardRefresh', handleCustomRefresh);
-      window.removeEventListener('focus', checkForRefresh);
+      window.removeEventListener('focus', handleFocus);
     };
   }, []);
 
@@ -306,17 +319,13 @@ export default function AdminDashboard() {
         >
           📦 Package Categories
         </Typography>
-        <Grid container columns={12} columnSpacing={3} rowSpacing={3}>
-         <Grid container columnSpacing={3} rowSpacing={3}>
-            {categories.map((category, index) => (
-              <Grid key={index} size={{ xs: 12, sm: 6, md: 3 }}>
-                <CleanCategoryCard {...category} />
-              </Grid>
-            ))}
-          </Grid>
-
+        <Grid container spacing={3}>
+          {categories.map((category, index) => (
+            <Grid item xs={12} sm={6} md={3} key={index}>
+              <CleanCategoryCard {...category} />
+            </Grid>
+          ))}
         </Grid>
-
       </Box>
 
       {/* Clean Chart Section */}
