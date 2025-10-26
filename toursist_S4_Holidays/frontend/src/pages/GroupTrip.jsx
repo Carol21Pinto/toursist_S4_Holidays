@@ -89,6 +89,14 @@ export default function GroupTrip() {
   };
 
   useEffect(() => {
+  const savedType = localStorage.getItem('group_filter');
+  if (savedType !== null && savedType !== undefined) {
+    setSelectedGroupType(savedType);
+  }
+}, []);
+
+
+  useEffect(() => {
     window.scrollTo(0, 0);
     fetchPackages();
   }, []);
@@ -128,17 +136,19 @@ export default function GroupTrip() {
   };
 
   const handleGroupTypeSelect = (type) => {
-    setSelectedGroupType(type);
-    console.log(`Selected group type: ${type}`);
-    
-    if (window.innerWidth < 768) {
-      setSidebarOpen(false);
-    }
-  };
+  setSelectedGroupType(type);
+  localStorage.setItem('group_filter', type); // <-- Add this line
+  console.log(`Selected group type: ${type}`);
+  if (window.innerWidth < 768) {
+    setSidebarOpen(false);
+  }
+};
+
 
   const clearFilters = () => {
     setSelectedGroupType('');
     setShowAllTypes(false);
+    localStorage.removeItem('group_filter'); // <-- Add this line
   };
 
   const formatDuration = (pkg) =>

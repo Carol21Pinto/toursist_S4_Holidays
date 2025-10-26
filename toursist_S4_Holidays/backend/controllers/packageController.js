@@ -399,6 +399,7 @@ exports.getPackageStats = async (req, res) => {
 };
 
 // Timeline (unchanged logic)
+// Timeline - FIXED VERSION
 exports.getPackageTimeline = async (req, res) => {
   try {
     await ensureConnection();
@@ -432,12 +433,23 @@ exports.getPackageTimeline = async (req, res) => {
 
     const dateGroups = {};
     
+    // ✅ FIXED: Added safe check for missing createdAt
     packages.forEach(pkg => {
-      const date = new Date(pkg.createdAt).toISOString().slice(0, 10);
-      if (!dateGroups[date]) {
-        dateGroups[date] = 0;
+      // Skip packages without valid createdAt
+      if (!pkg.createdAt) {
+        console.warn('[TIMELINE] Skipping package without createdAt:', pkg._id, pkg.title);
+        return;
       }
-      dateGroups[date]++;
+      
+      try {
+        const date = new Date(pkg.createdAt).toISOString().slice(0, 10);
+        if (!dateGroups[date]) {
+          dateGroups[date] = 0;
+        }
+        dateGroups[date]++;
+      } catch (err) {
+        console.error('[TIMELINE] Invalid date for package:', pkg._id, err.message);
+      }
     });
 
     let cumulativeCount = 0;
@@ -497,54 +509,7 @@ exports.getPackageTimeline = async (req, res) => {
     
     return res.json(finalTimeline);
   } catch (err) {
-    console.error('TIMELINE_ERR:', err);
-    return res.status(500).json({ message: err.message });
-  }
-};
-
-// Weekly counts (unchanged logic)
-exports.getWeeklyCounts = async (req, res) => {
-  try {
-    await ensureConnection();
-    const today = new Date();
-    const start = new Date(today);
-    start.setHours(0,0,0,0);
-    start.setDate(start.getDate() - 6);
-
-    const pipeline = [
-      { $match: { createdAt: { $gte: start } } },
-      { $group: {
-          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
-          count: { $sum: 1 }
-        }
-      },
-      { $project: { _id: 0, date: "$_id", count: 1 } },
-      { $sort: { date: 1 } }
-    ];
-
-    const rows = await Package.aggregate(pipeline);
-
-    const out = [];
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date();
-      d.setHours(0,0,0,0);
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0,10);
-      const found = rows.find(r => r.date === key);
-      const day = d.toLocaleDateString(undefined, { weekday: "short" });
-      out.push({ 
-        name: day, 
-        packages: found ? found.count : 0,
-        date: key
-      });
-    }
-    
-    // ⚡ Cache for 10 minutes
-    res.set('Cache-Control', 'public, max-age=600');
-    
-    return res.json(out);
-  } catch (err) {
-    console.error('WEEKLY_ERR:', err);
-    return res.status(500).json({ message: err.message });
+    console.error('TIMELINE_ERR:', err.stack || err);
+    return res.status(500).json({ error: err.message, stack: process.env.NODE_ENV === 'development' ? err.stack : undefined });
   }
 };

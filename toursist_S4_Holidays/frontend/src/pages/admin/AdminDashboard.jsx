@@ -306,13 +306,17 @@ export default function AdminDashboard() {
         >
           📦 Package Categories
         </Typography>
-        <Grid container spacing={3}>
-          {categories.map((category, index) => (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <CleanCategoryCard {...category} />
-            </Grid>
-          ))}
+        <Grid container columns={12} columnSpacing={3} rowSpacing={3}>
+         <Grid container columnSpacing={3} rowSpacing={3}>
+            {categories.map((category, index) => (
+              <Grid key={index} size={{ xs: 12, sm: 6, md: 3 }}>
+                <CleanCategoryCard {...category} />
+              </Grid>
+            ))}
+          </Grid>
+
         </Grid>
+
       </Box>
 
       {/* Clean Chart Section */}

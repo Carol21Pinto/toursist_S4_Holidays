@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet-async';
 import './PackageDetail.css';
 import ContactIcons from '../components/ContactIcons';
 
+
 const PackageDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -12,6 +13,14 @@ const PackageDetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [imageLoaded, setImageLoaded] = useState(false); // ✅ Track hero image loading
+
+
+  useEffect(() => {
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+  }, 0);
+}, [id]);
+
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
   const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
@@ -202,10 +211,11 @@ const PackageDetail = () => {
     return (
       <div className="package-detail-container">
         <div className="back-button-container">
-          <button className="back-button" onClick={() => navigate('/')}>
+          <button className="back-button" onClick={() => navigate(-1)}>
             <span className="back-arrow">←</span>
             <span>Go Back</span>
           </button>
+
         </div>
         <div style={{ 
           textAlign: 'center', 
