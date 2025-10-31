@@ -62,14 +62,30 @@ function getCloudinaryPublicId(imageUrl) {
 
 
 // ✅ Get all packages (NO CACHE)
+// ✅ Get all packages (NO CACHE) - WITH ERROR HANDLING
+// ✅ Get all packages (NO CACHE)
 exports.getAllPackages = async (req, res) => {
   try {
     await ensureConnection();
     
-    const packages = await Package.find({})
-      .select('title category duration state continent groupType pricePerPerson currency cardImage createdAt')
-      .sort({ createdAt: -1 })
-      .lean();
+    let packages = [];
+    
+    try {
+      packages = await Package.find({})
+        .select('title category duration state continent groupType pricePerPerson currency cardImage createdAt')
+        .sort({ createdAt: -1 })
+        .lean();
+    } catch (leanError) {
+      console.log('Lean error, trying without lean:', leanError.message);
+      try {
+        packages = await Package.find({})
+          .select('title category duration state continent groupType pricePerPerson currency cardImage createdAt')
+          .sort({ createdAt: -1 });
+        packages = packages.map(pkg => pkg.toObject());
+      } catch (err) {
+        packages = [];
+      }
+    }
     
     noCacheHeaders(res);
     console.log('All packages fetched:', packages.length);
@@ -79,6 +95,8 @@ exports.getAllPackages = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
+
 
 
 // ✅ Get packages grouped by state (NO CACHE)
