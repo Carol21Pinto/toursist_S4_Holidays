@@ -15,9 +15,10 @@ app.use(cors({
   origin: ['https://s4holidays.com', 'https://www.s4holidays.com', 'http://localhost:3000', 'http://localhost:5000'],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'cache-control'],
   optionsSuccessStatus: 200
 }));
+
 
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
