@@ -2,6 +2,7 @@ const Package = require('../models/Package');
 const mongoose = require('mongoose');
 const { cloudinary } = require('../config/cloudinary');
 
+
 // ✅ Helper to ensure MongoDB connection before queries
 async function ensureConnection() {
   if (mongoose.connection.readyState !== 1) {
@@ -20,6 +21,16 @@ async function ensureConnection() {
   }
 }
 
+
+// ✅ NO CACHE HEADERS - Apply to ALL GET endpoints
+const noCacheHeaders = (res) => {
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate, max-age=0');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('ETag', undefined);
+};
+
+
 // Safely parse JSON from multipart FormData
 function parseMaybeJSON(value, fallback) {
   if (value == null) return fallback;
@@ -28,6 +39,7 @@ function parseMaybeJSON(value, fallback) {
   }
   return value;
 }
+
 
 // Helper function to extract Cloudinary public_id from URL
 function getCloudinaryPublicId(imageUrl) {
@@ -48,20 +60,18 @@ function getCloudinaryPublicId(imageUrl) {
   }
 }
 
-// ✅ OPTIMIZED: Get all packages (only essential fields)
+
+// ✅ Get all packages (NO CACHE)
 exports.getAllPackages = async (req, res) => {
   try {
     await ensureConnection();
     
-    // ⚡ Only select fields needed for listing
     const packages = await Package.find({})
       .select('title category duration state continent groupType pricePerPerson currency cardImage createdAt')
       .sort({ createdAt: -1 })
-      .lean(); // ⚡ Faster than full Mongoose documents
+      .lean();
     
-    // ⚡ Add cache headers for 5 minutes
-    res.set('Cache-Control', 'public, max-age=300');
-    
+    noCacheHeaders(res);
     console.log('All packages fetched:', packages.length);
     return res.json(packages);
   } catch (err) {
@@ -70,13 +80,13 @@ exports.getAllPackages = async (req, res) => {
   }
 };
 
-// ✅ OPTIMIZED: Get packages grouped by state (only states with packages)
+
+// ✅ Get packages grouped by state (NO CACHE)
 exports.getPackagesGroupedByState = async (req, res) => {
   try {
     await ensureConnection();
     console.log('=== GET PACKAGES GROUPED BY STATE ===');
     
-    // ⚡ Use aggregation for faster grouping
     const stateGroups = await Package.aggregate([
       { $match: { category: 'domestic', state: { $exists: true, $ne: null } } },
       {
@@ -92,16 +102,14 @@ exports.getPackagesGroupedByState = async (req, res) => {
           state: '$_id',
           tourCount: 1,
           departures: 1,
-          guestsCount: { $add: [{ $multiply: ['$tourCount', 150] }, 100] }, // Placeholder calculation
+          guestsCount: { $add: [{ $multiply: ['$tourCount', 150] }, 100] },
           image: { $ifNull: ['$firstPackage.cardImage', '$firstPackage.images'] }
         }
       },
       { $sort: { tourCount: -1 } }
     ]);
     
-    // ⚡ Add cache headers
-    res.set('Cache-Control', 'public, max-age=600'); // 10 minutes
-    
+    noCacheHeaders(res);
     console.log('States with packages:', stateGroups.length);
     console.log('=== END GROUPED BY STATE ===');
     
@@ -112,13 +120,13 @@ exports.getPackagesGroupedByState = async (req, res) => {
   }
 };
 
-// ✅ OPTIMIZED: Get packages grouped by continent
+
+// ✅ Get packages grouped by continent (NO CACHE)
 exports.getPackagesGroupedByContinent = async (req, res) => {
   try {
     await ensureConnection();
     console.log('=== GET PACKAGES GROUPED BY CONTINENT ===');
     
-    // ⚡ Use aggregation for faster grouping
     const continentGroups = await Package.aggregate([
       { $match: { category: 'international', continent: { $exists: true, $ne: null } } },
       {
@@ -138,9 +146,7 @@ exports.getPackagesGroupedByContinent = async (req, res) => {
       { $sort: { tourCount: -1 } }
     ]);
     
-    // ⚡ Add cache headers
-    res.set('Cache-Control', 'public, max-age=600');
-    
+    noCacheHeaders(res);
     console.log('Continents with packages:', continentGroups.length);
     console.log('=== END GROUPED BY CONTINENT ===');
     
@@ -151,21 +157,19 @@ exports.getPackagesGroupedByContinent = async (req, res) => {
   }
 };
 
-// ✅ OPTIMIZED: Get packages by category (only essential fields)
+
+// ✅ Get packages by category (NO CACHE)
 exports.getPackagesByCategory = async (req, res) => {
   try {
     await ensureConnection();
     const { category } = req.params;
     
-    // ⚡ Only select needed fields
     const packages = await Package.find({ category })
       .select('title duration state continent groupType pricePerPerson currency cardImage departureDates description createdAt')
       .sort({ createdAt: -1 })
       .lean();
     
-    // ⚡ Add cache headers
-    res.set('Cache-Control', 'public, max-age=300');
-    
+    noCacheHeaders(res);
     return res.json(packages);
   } catch (err) {
     console.error('LIST_ERR:', err);
@@ -174,12 +178,12 @@ exports.getPackagesByCategory = async (req, res) => {
 };
 
 
-// Get single package (full details) - WITH PROPER ERROR HANDLING
+
+// Get single package (NO CACHE)
 exports.getPackage = async (req, res) => {
   try {
     await ensureConnection();
     
-    // ✅ Validate ObjectId format BEFORE querying
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       console.log('Invalid ObjectId format:', req.params.id);
       return res.status(400).json({ message: 'Invalid package ID format' });
@@ -192,15 +196,12 @@ exports.getPackage = async (req, res) => {
       return res.status(404).json({ message: 'Package not found' });
     }
     
-    // ⚡ Cache individual package for 5 minutes
-    res.set('Cache-Control', 'public, max-age=300');
-    
+    noCacheHeaders(res);
     console.log('Package fetched successfully:', pkg._id);
     return res.json(pkg);
   } catch (err) {
     console.error('GET_PACKAGE_ERROR:', err);
     
-    // ✅ Handle specific Mongoose CastError
     if (err.name === 'CastError') {
       return res.status(400).json({ message: 'Invalid package ID' });
     }
@@ -213,7 +214,8 @@ exports.getPackage = async (req, res) => {
 };
 
 
-// Create new package (unchanged logic)
+
+// Create new package
 exports.createPackage = async (req, res) => {
   try {
     await ensureConnection();
@@ -246,6 +248,7 @@ exports.createPackage = async (req, res) => {
       contactNumbers: [],
     });
 
+
     await newPackage.save();
     
     console.log('Package created successfully:', newPackage._id);
@@ -258,13 +261,16 @@ exports.createPackage = async (req, res) => {
   }
 };
 
-// Update package (unchanged logic)
+
+// Update package
 exports.updatePackage = async (req, res) => {
   try {
     await ensureConnection();
     console.log('UPDATE REQUEST - Package ID:', req.params.id);
 
+
     const packageData = JSON.parse(req.body.data);
+
 
     const updates = {
       title: packageData.name,
@@ -284,6 +290,7 @@ exports.updatePackage = async (req, res) => {
       exclusions: packageData.exclusions || [],
     };
 
+
     if (req.file) {
       const oldPackage = await Package.findById(req.params.id);
       
@@ -302,17 +309,20 @@ exports.updatePackage = async (req, res) => {
       updates.cardImage = req.file.path;
     }
 
+
     Object.keys(updates).forEach(key => {
       if (updates[key] === undefined) {
         delete updates[key];
       }
     });
 
+
     const pkg = await Package.findByIdAndUpdate(req.params.id, updates, { new: true });
     
     if (!pkg) {
       return res.status(404).json({ message: 'Package not found' });
     }
+
 
     console.log('Package updated successfully:', pkg._id);
     return res.json(pkg);
@@ -322,7 +332,8 @@ exports.updatePackage = async (req, res) => {
   }
 };
 
-// Delete with Cloudinary cleanup (unchanged logic)
+
+// Delete with Cloudinary cleanup
 exports.deletePackage = async (req, res) => {
   try {
     await ensureConnection();
@@ -381,12 +392,12 @@ exports.deletePackage = async (req, res) => {
   }
 };
 
-// ✅ OPTIMIZED: Stats with caching
+
+// ✅ Stats (NO CACHE)
 exports.getPackageStats = async (req, res) => {
   try {
     await ensureConnection();
     
-    // ⚡ Use aggregation for faster counting
     const stats = await Package.aggregate([
       {
         $group: {
@@ -409,9 +420,7 @@ exports.getPackageStats = async (req, res) => {
       result.total += stat.count;
     });
     
-    // ⚡ Cache for 10 minutes
-    res.set('Cache-Control', 'public, max-age=600');
-    
+    noCacheHeaders(res);
     console.log('Stats generated:', result);
     return res.json(result);
   } catch (err) {
@@ -420,7 +429,8 @@ exports.getPackageStats = async (req, res) => {
   }
 };
 
-// Timeline (unchanged logic)
+
+// ✅ Timeline (NO CACHE)
 exports.getPackageTimeline = async (req, res) => {
   try {
     await ensureConnection();
@@ -429,7 +439,7 @@ exports.getPackageTimeline = async (req, res) => {
     const packages = await Package.find({})
       .select('title category createdAt')
       .sort({ createdAt: 1 })
-      .lean(); // ⚡ Use lean
+      .lean();
     
     console.log('Total packages found:', packages.length);
     
@@ -449,8 +459,10 @@ exports.getPackageTimeline = async (req, res) => {
           added: 0
         });
       }
+      noCacheHeaders(res);
       return res.json(emptyTimeline);
     }
+
 
     const dateGroups = {};
     
@@ -461,6 +473,7 @@ exports.getPackageTimeline = async (req, res) => {
       }
       dateGroups[date]++;
     });
+
 
     let cumulativeCount = 0;
     const sortedDates = Object.keys(dateGroups).sort();
@@ -481,6 +494,7 @@ exports.getPackageTimeline = async (req, res) => {
         added: dateGroups[date]
       });
     });
+
 
     const finalTimeline = [];
     const today = new Date();
@@ -512,9 +526,7 @@ exports.getPackageTimeline = async (req, res) => {
       }
     }
 
-    // ⚡ Cache for 10 minutes
-    res.set('Cache-Control', 'public, max-age=600');
-    
+    noCacheHeaders(res);
     console.log('=== END PACKAGE TIMELINE DEBUG ===');
     
     return res.json(finalTimeline);
@@ -523,9 +535,11 @@ exports.getPackageTimeline = async (req, res) => {
       return res.status(500).json({ error: err.message, stack: err.stack });
     }
 
+
 };
 
-// Weekly counts (unchanged logic)
+
+// ✅ Weekly counts (NO CACHE)
 exports.getWeeklyCounts = async (req, res) => {
   try {
     await ensureConnection();
@@ -533,6 +547,7 @@ exports.getWeeklyCounts = async (req, res) => {
     const start = new Date(today);
     start.setHours(0,0,0,0);
     start.setDate(start.getDate() - 6);
+
 
     const pipeline = [
       { $match: { createdAt: { $gte: start } } },
@@ -545,7 +560,9 @@ exports.getWeeklyCounts = async (req, res) => {
       { $sort: { date: 1 } }
     ];
 
+
     const rows = await Package.aggregate(pipeline);
+
 
     const out = [];
     for (let i = 6; i >= 0; i--) {
@@ -562,9 +579,7 @@ exports.getWeeklyCounts = async (req, res) => {
       });
     }
     
-    // ⚡ Cache for 10 minutes
-    res.set('Cache-Control', 'public, max-age=600');
-    
+    noCacheHeaders(res);
     return res.json(out);
   } catch (err) {
     console.error('WEEKLY_ERR:', err);

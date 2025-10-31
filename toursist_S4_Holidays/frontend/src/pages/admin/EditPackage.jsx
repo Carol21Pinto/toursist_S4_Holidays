@@ -253,34 +253,34 @@ const EditPackage = () => {
     }
   };
 
-  const updatePackage = async (packageData, cardImage) => {
-    try {
-      setIsSubmitting(true);
-      const formDataToSend = new FormData();
-      if (cardImage) formDataToSend.append("card_image", cardImage);
-      formDataToSend.append("data", JSON.stringify(packageData));
+ const updatePackage = async (packageData, cardImage) => {
+  try {
+    setIsSubmitting(true);
+    const formDataToSend = new FormData();
+    if (cardImage) formDataToSend.append("card_image", cardImage);
+    formDataToSend.append("data", JSON.stringify(packageData));
 
-      const response = await fetch(`${API_URL}/packages/${id}`, { method: "PUT", body: formDataToSend });
+    const response = await fetch(`${API_URL}/packages/${id}`, { method: "PUT", body: formDataToSend });
 
-      if (response.ok) {
-        const updatedPackage = await response.json();
-        showSuccess("✅ Package updated successfully!");
+    if (response.ok) {
+      const updatedPackage = await response.json();
+      showSuccess("✅ Package updated successfully!");
 
-        localStorage.setItem('dashboardRefresh', Date.now().toString());
-        window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+      localStorage.setItem('dashboardRefresh', Date.now().toString());
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
 
-        setTimeout(() => navigate('/admin/packages'), 2000);
-        return updatedPackage;
-      } else {
-        const err = await response.json();
-        throw new Error(err.message || `HTTP ${response.status}`);
-      }
-    } catch (error) {
-      showError(`❌ Failed to update: ${error.message}`);
-    } finally {
-      setIsSubmitting(false);
+      setTimeout(() => navigate('/admin/packages'), 2000);
+      return updatedPackage;
+    } else {
+      const err = await response.json();
+      throw new Error(err.message || `HTTP ${response.status}`);
     }
-  };
+  } catch (error) {
+    showError(`❌ Failed to update: ${error.message}`);
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   const handleSubmit = async (e) => {
     e.preventDefault();
