@@ -173,23 +173,45 @@ exports.getPackagesByCategory = async (req, res) => {
   }
 };
 
-// Get single package (full details)
+
+// Get single package (full details) - WITH PROPER ERROR HANDLING
 exports.getPackage = async (req, res) => {
   try {
     await ensureConnection();
-    const pkg = await Package.findById(req.params.id).lean(); // ⚡ Use lean
     
-    if (!pkg) return res.status(404).json({ message: 'Package not found' });
+    // ✅ Validate ObjectId format BEFORE querying
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      console.log('Invalid ObjectId format:', req.params.id);
+      return res.status(400).json({ message: 'Invalid package ID format' });
+    }
+    
+    const pkg = await Package.findById(req.params.id).lean();
+    
+    if (!pkg) {
+      console.log('Package not found:', req.params.id);
+      return res.status(404).json({ message: 'Package not found' });
+    }
     
     // ⚡ Cache individual package for 5 minutes
     res.set('Cache-Control', 'public, max-age=300');
     
+    console.log('Package fetched successfully:', pkg._id);
     return res.json(pkg);
   } catch (err) {
-    console.error('GET_ERR:', err);
-    return res.status(500).json({ message: err.message });
+    console.error('GET_PACKAGE_ERROR:', err);
+    
+    // ✅ Handle specific Mongoose CastError
+    if (err.name === 'CastError') {
+      return res.status(400).json({ message: 'Invalid package ID' });
+    }
+    
+    return res.status(500).json({ 
+      message: 'Server error fetching package',
+      error: process.env.NODE_ENV === 'development' ? err.message : undefined
+    });
   }
 };
+
 
 // Create new package (unchanged logic)
 exports.createPackage = async (req, res) => {
