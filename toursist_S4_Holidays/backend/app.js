@@ -10,9 +10,24 @@ const app = express();
 // Middleware
 app.use(compression());
 app.use(cors({
-  origin: '*',
-  credentials: true
+  origin: ['https://s4holidays.com', 'https://www.s4holidays.com', 'http://localhost:3000', 'http://localhost:5000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  optionsSuccessStatus: 200
 }));
+
+// Add this line after cors middleware
+app.options('*', cors({
+  origin: ['https://s4holidays.com', 'https://www.s4holidays.com', 'http://localhost:3000', 'http://localhost:5000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
+
+
+
+
 app.use(express.json());
 app.use('/uploads', express.static('uploads'));
 
