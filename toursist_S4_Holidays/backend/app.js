@@ -32,9 +32,9 @@ async function connectDB() {
     }
 
     const opts = {
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 10000,
-      connectTimeoutMS: 5000,
+      serverSelectionTimeoutMS: 10000,
+      socketTimeoutMS: 45000,
+      connectTimeoutMS: 10000,
       maxPoolSize: 1, // ← CRITICAL for Vercel
       minPoolSize: 0,
       maxIdleTimeMS: 10000,
