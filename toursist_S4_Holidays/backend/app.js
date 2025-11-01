@@ -11,13 +11,21 @@ const app = express();
 app.use(compression());
 
 // ✅ FIXED CORS - ALLOW SPECIFIC ORIGINS WITH CREDENTIALS
+// ✅ FIXED CORS - ALLOW SPECIFIC ORIGINS WITH CREDENTIALS
 app.use(cors({
-  origin: ['https://s4holidays.com', 'https://www.s4holidays.com', 'http://localhost:3000', 'http://localhost:5000'],
+  origin: [
+    'https://s4holidays.com', 
+    'https://www.s4holidays.com', 
+    'http://localhost:3000', 
+    'http://localhost:5000',
+    'http://localhost:5173'  // ← ADD THIS
+  ],
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'cache-control'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'cache-control', 'pragma'], // ← ADD pragma
   optionsSuccessStatus: 200
 }));
+
 
 
 app.use(express.json());
