@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './ContinentPackages.css';
 import ContactIcons from '../components/ContactIcons';
+import { getDuration } from '../utils/durationHelper'; // ✅ NEW IMPORT
 
 export default function ContinentPackages() {
   const { continentName } = useParams();
@@ -9,8 +10,8 @@ export default function ContinentPackages() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
 
- const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
+  const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+  const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
 
   const FALLBACK = '/images/placeholder-card.jpg';
 
@@ -147,11 +148,9 @@ const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
                     <div className="package-card-content">
                       <h3>{pkg.title}</h3>
                       <div className="package-card-details">
+                        {/* ✅ FIXED: Dynamic duration */}
                         <div className="duration">
-                          {pkg.itinerary && pkg.itinerary.length > 0
-                            ? `${pkg.itinerary.length} Days`
-                            : '7 Days'
-                          }
+                          {getDuration(pkg.title, pkg.duration)}
                         </div>
                       </div>
 

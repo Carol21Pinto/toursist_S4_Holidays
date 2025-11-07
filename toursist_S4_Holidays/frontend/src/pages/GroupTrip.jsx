@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet-async';
 import './GroupTrip.css';
 import ContactIcons from '../components/ContactIcons';
 import { fetchWithCache } from '../utils/fetchWithCache';
+import { getDuration } from '../utils/durationHelper'; // ✅ NEW IMPORT
 
 export default function GroupTrip() {
   const [packages, setPackages] = useState([]);
@@ -89,12 +90,11 @@ export default function GroupTrip() {
   };
 
   useEffect(() => {
-  const savedType = localStorage.getItem('group_filter');
-  if (savedType !== null && savedType !== undefined) {
-    setSelectedGroupType(savedType);
-  }
-}, []);
-
+    const savedType = localStorage.getItem('group_filter');
+    if (savedType !== null && savedType !== undefined) {
+      setSelectedGroupType(savedType);
+    }
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -136,25 +136,21 @@ export default function GroupTrip() {
   };
 
   const handleGroupTypeSelect = (type) => {
-  setSelectedGroupType(type);
-  localStorage.setItem('group_filter', type); // <-- Add this line
-  console.log(`Selected group type: ${type}`);
-  if (window.innerWidth < 768) {
-    setSidebarOpen(false);
-  }
-};
-
+    setSelectedGroupType(type);
+    localStorage.setItem('group_filter', type);
+    console.log(`Selected group type: ${type}`);
+    if (window.innerWidth < 768) {
+      setSidebarOpen(false);
+    }
+  };
 
   const clearFilters = () => {
     setSelectedGroupType('');
     setShowAllTypes(false);
-    localStorage.removeItem('group_filter'); // <-- Add this line
+    localStorage.removeItem('group_filter');
   };
 
-  const formatDuration = (pkg) =>
-    (pkg.itinerary && pkg.itinerary.length > 0)
-      ? `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}`
-      : '4 Days';
+  // ✅ REMOVED OLD formatDuration - Now using getDuration from helper
 
   const displayPackages = sortPackagesAlphabetically(
     filteredPackages.length > 0 ? filteredPackages : packages
@@ -371,7 +367,8 @@ export default function GroupTrip() {
                             <h3>{pkg.title}</h3>
                             
                             <div className="card-info">
-                              <div className="duration-badge">{formatDuration(pkg)}</div>
+                              {/* ✅ UPDATED: Dynamic duration */}
+                              <div className="duration-badge">{getDuration(pkg.title, pkg.duration)}</div>
                               <div className="price-info">{formatPrice()}</div>
                             </div>
 

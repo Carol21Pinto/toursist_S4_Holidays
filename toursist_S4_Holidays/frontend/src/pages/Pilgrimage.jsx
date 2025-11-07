@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import './Pilgrimage.css';
 import ContactIcons from '../components/ContactIcons';
-import { fetchWithCache } from '../utils/fetchWithCache'; // ⚡ Import cache utility
+import { fetchWithCache } from '../utils/fetchWithCache';
+import { getDuration } from '../utils/durationHelper'; // ✅ NEW IMPORT
 
 export default function Pilgrimage() {
   const [packages, setPackages] = useState([]);
@@ -70,7 +71,6 @@ export default function Pilgrimage() {
       setLoading(true);
       setError(null);
       
-      // ⚡ Use cached fetch
       const data = await fetchWithCache(`${API_URL}/packages/category/pilgrimage`);
       
       setPackages(data);
@@ -83,12 +83,7 @@ export default function Pilgrimage() {
     }
   };
 
-  const formatDuration = (pkg) => {
-    if (pkg.itinerary && pkg.itinerary.length > 0) {
-      return `${pkg.itinerary.length} ${pkg.itinerary.length === 1 ? 'Day' : 'Days'}`;
-    }
-    return '7 Days';
-  };
+  // ✅ REMOVED OLD formatDuration - Now using getDuration from helper
 
   return (
     <>
@@ -177,7 +172,8 @@ export default function Pilgrimage() {
                         <h3 className="destination-name">{pkg.title}</h3>
 
                         <div className="card-details">
-                          <div className="duration">{formatDuration(pkg)}</div>
+                          {/* ✅ FIXED: Dynamic duration */}
+                          <div className="duration">{getDuration(pkg.title, pkg.duration)}</div>
                         </div>
 
                         <button

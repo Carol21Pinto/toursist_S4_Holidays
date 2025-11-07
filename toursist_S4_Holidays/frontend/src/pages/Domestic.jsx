@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
 import ContactIcons from '../components/ContactIcons';
 import { fetchWithCache } from '../utils/fetchWithCache';
+import { getDuration } from '../utils/durationHelper';
 
 // ⚡ Simple cache utility
 

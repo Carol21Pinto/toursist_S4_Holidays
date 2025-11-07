@@ -1,6 +1,7 @@
 // src/components/PackageCard.jsx
 import React from 'react';
 import './PackageCard.css';
+import { getDuration } from '../utils/durationHelper';
 
 const PackageCard = ({ package: pkg, onExplore }) => {
   const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || "http://localhost:5000";
@@ -44,7 +45,7 @@ const PackageCard = ({ package: pkg, onExplore }) => {
         <h3>{pkg.title}</h3>
         <div className="card-details">
           <div className="price">{formatPrice(pkg.pricePerPerson, pkg.currency)}</div>
-          <div className="duration">7 Days</div> {/* You can calculate from itinerary */}
+          <div className="duration">{getDuration(pkg.title, pkg.duration)}</div>
         </div>
         
         {pkg.inclusions && pkg.inclusions.length > 0 && (
