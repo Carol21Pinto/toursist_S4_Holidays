@@ -670,21 +670,39 @@
     padding: 0.25rem 0.5rem;
   }
 
-  .card-info {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-  
-  .price-info {
-    text-align: left;
-    font-size: 0.85rem;
-  }
-  
-  .duration-badge {
-    font-size: 0.75rem;
-    padding: 4px 10px;
-  }
+  /* ✅ FIXED: Stack duration and price vertically */
+.card-info {
+  display: flex;
+  flex-direction: column; /* ✅ Changed from default row to column */
+  gap: 10px;
+  margin: 12px 0;
+  padding: 0;
+}
+
+/* ✅ ENHANCED: Bigger, more visible duration badge */
+.duration-badge {
+  background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+  color: white;
+  padding: 10px 18px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 700;
+  text-align: center;
+  box-shadow: 0 3px 12px rgba(255, 107, 107, 0.4);
+  letter-spacing: 0.5px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  width: 100%; /* ✅ Full width */
+}
+
+/* ✅ FIXED: Clean price display - full width, no truncation */
+.price-info {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #e74c3c;
+  text-align: center; /* ✅ Centered */
+  width: 100%; /* ✅ Full width */
+  padding: 8px 0;
+}
   
   .departure-info {
     padding: 8px 10px;

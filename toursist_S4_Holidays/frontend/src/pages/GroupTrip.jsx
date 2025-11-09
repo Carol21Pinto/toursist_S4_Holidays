@@ -327,61 +327,87 @@ export default function GroupTrip() {
                   </div>
                 ) : (
                   <div className="destinations-grid">
-                    {displayPackages.map((pkg) => {
-                      const primaryPath = pickPrimaryImagePath(pkg);
-                      const imgUrl = getImageUrl(primaryPath);
+                                {displayPackages.map((pkg) => {
+                const primaryPath = pickPrimaryImagePath(pkg);
+                const imgUrl = getImageUrl(primaryPath);
 
-                      const formatPrice = () => {
-                        if (pkg.pricingMode === 'Text' && pkg.priceText) {
-                          return pkg.priceText;
-                        } else if (pkg.pricePerPerson) {
-                          return ` ₹${pkg.pricePerPerson.toLocaleString()}/person`;
-                        } else if (pkg.priceText) {
-                          return pkg.priceText;
-                        }
-                        return 'Price on request';
-                      };
+                const formatPrice = () => {
+                  if (pkg.pricingMode === 'Text' && pkg.priceText) {
+                    return pkg.priceText;
+                  } else if (pkg.pricePerPerson) {
+                    return ` ₹${pkg.pricePerPerson.toLocaleString()}/person`;
+                  } else if (pkg.priceText) {
+                    return pkg.priceText;
+                  }
+                  return 'Price on request';
+                };
 
-                      return (
-                        <div key={pkg._id} className="destination-card">
-                          <div className="card-image">
-                            <img
-                              src={imgUrl}
-                              alt={pkg.title}
-                              loading="lazy"
-                              decoding="async"
-                              width="400"
-                              height="300"
-                              onError={applyFallback}
-                              style={{
-                                backgroundColor: '#f8f9fa',
-                                border: '1px solid #e9ecef'
-                              }}
-                            />
-                            {pkg.groupType && (
-                              <div className="group-type-badge">{pkg.groupType}</div>
-                            )}
-                          </div>
+                return (
+                  <div key={pkg._id} className="destination-card">
+                    <div className="card-image">
+                      <img
+                        src={imgUrl}
+                        alt={pkg.title}
+                        loading="lazy"
+                        decoding="async"
+                        width="400"
+                        height="300"
+                        onError={applyFallback}
+                        style={{
+                          backgroundColor: '#f8f9fa',
+                          border: '1px solid #e9ecef'
+                        }}
+                      />
+                      {pkg.groupType && (
+                        <div className="group-type-badge">{pkg.groupType}</div>
+                      )}
+                    </div>
 
-                          <div className="card-content">
-                            <h3>{pkg.title}</h3>
-                            
-                            <div className="card-info">
-                              {/* ✅ UPDATED: Dynamic duration */}
-                              <div className="duration-badge">{getDuration(pkg.title, pkg.duration)}</div>
-                              <div className="price-info">{formatPrice()}</div>
-                            </div>
-
-                            <button
-                              className="explore-btn"
-                              onClick={() => navigate(`/package/${pkg._id}`)}
-                            >
-                              Explore Package
-                            </button>
-                          </div>
+                    <div className="card-content">
+                      <h3>{pkg.title}</h3>
+                      
+                      {/* ✅ FIXED: Vertical layout with inline styles */}
+                      <div style={{ 
+                        display: 'flex', 
+                        flexDirection: 'column', 
+                        gap: '8px',
+                        margin: '12px 0',
+                        width: '100%'
+                      }}>
+                        {/* Duration badge - full width */}
+                        <div className="duration-badge" style={{
+                          width: '100%',
+                          textAlign: 'center',
+                          display: 'block'
+                        }}>
+                          {getDuration(pkg.title, pkg.duration)}
                         </div>
-                      );
-                    })}
+                        
+                        {/* Price - full width below duration */}
+                        <div className="price-info" style={{
+                          width: '100%',
+                          textAlign: 'center',
+                          display: 'block',
+                          fontSize: '1rem',
+                          fontWeight: '700',
+                          color: '#e74c3c',
+                          padding: '4px 0'
+                        }}>
+                          {formatPrice()}
+                        </div>
+                      </div>
+
+                      <button
+                        className="explore-btn"
+                        onClick={() => navigate(`/package/${pkg._id}`)}
+                      >
+                        Explore Package
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+
                   </div>
                 )}
               </div>
