@@ -329,7 +329,7 @@ export default function AdminDashboard() {
       </Box>
 
       {/* Clean Chart Section */}
-      <Card sx={{
+      {/* <Card sx={{
         background: 'rgba(255, 255, 255, 0.95)',
         backdropFilter: 'blur(10px)',
         borderRadius: '20px',
@@ -446,7 +446,7 @@ export default function AdminDashboard() {
             )}
           </Box>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Recent Packages Section */}
       <Card sx={{
