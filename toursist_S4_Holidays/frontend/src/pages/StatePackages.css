@@ -71,7 +71,7 @@
   content: '';
   position: absolute;
   inset: 0;
-  background-image: url('https://images.unsplash.com/photo-1583413231374-13da65a98bd2?auto=format&fit=crop&w=2400&q=90');
+  background-image: url('/images/dom.jpeg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
