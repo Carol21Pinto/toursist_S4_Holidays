@@ -11,28 +11,32 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   
-  /* ✅ DISABLE TEXT SELECTION */
-  user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
+  /* ✅ ENABLE TEXT SELECTION - Users can copy content */
+  user-select: text;
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
 }
+
 
 a {
   text-decoration: none;
   color: inherit;
 }
 
+
 img {
   max-width: 100%;
   height: auto;
   display: block;
 }
+
 
 button {
   cursor: pointer;
@@ -41,6 +45,23 @@ button {
   outline: none;
   background: none;
 }
+
+
+/* ✅ KEEP BUTTONS AND IMAGES NON-SELECTABLE (Good UX) */
+button,
+img,
+.back-button,
+.contact-icons,
+[role="button"],
+[type="button"],
+[type="submit"],
+[type="reset"] {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
 
 /* ✅ ALLOW TEXT SELECTION IN INPUT FIELDS */
 input,
@@ -53,6 +74,7 @@ select,
   -ms-user-select: text !important;
   cursor: text !important;
 }
+
 
 /* ✅ DEFAULT CURSOR FOR TEXT ELEMENTS (NO I-BEAM) */
 body,
@@ -69,6 +91,7 @@ nav,
 aside {
   cursor: default;
 }
+
 
 /* ✅ POINTER CURSOR FOR INTERACTIVE ELEMENTS */
 button,
