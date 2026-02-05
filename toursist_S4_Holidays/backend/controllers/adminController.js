@@ -57,8 +57,10 @@ exports.register = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+
     const newAdmin = new Admin({ email, password: hashedPassword });
     await newAdmin.save();
+    
     return res.status(201).json({ message: 'Admin registered' });
   } catch (err) {
     return res.status(500).json({ message: err.message });
@@ -215,6 +217,14 @@ exports.forgotPasswordReset = async (req, res) => {
     return res.status(500).json({ message: 'Server error. Please try again.' });
   }
 };
+
+
+
+
+
+
+
+
 
 // KEEP OLD METHOD for backward compatibility (but mark as deprecated)
 exports.forgotPassword = async (req, res) => {

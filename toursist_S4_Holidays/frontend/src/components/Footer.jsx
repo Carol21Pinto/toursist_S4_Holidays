@@ -103,7 +103,7 @@ const Footer = () => {
       {/* Footer Bottom */}
       <div className="footer-bottom">
         <div className="footer-bottom-content">
-          <p>&copy; 2024 S4 Holidays. All Rights Reserved. | Made in India 🇮🇳</p>
+          <p>&copy; 2024 S4 Holidays. All Rights Reserved. | With Love from HexaLegion ❤️ </p>
         </div>
       </div>
     </footer>

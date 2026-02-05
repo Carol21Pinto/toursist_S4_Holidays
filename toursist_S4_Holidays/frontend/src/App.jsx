@@ -39,6 +39,7 @@ function PublicLayout({ children }) {
   );
 }
 
+
 export default function App() {
   return (
     <Routes>
@@ -51,6 +52,7 @@ export default function App() {
       {/* International Routes */}
       <Route path="/international" element={<PublicLayout><International /></PublicLayout>} />
       <Route path="/international/:continentName" element={<PublicLayout><ContinentPackages /></PublicLayout>} />
+      
       
       {/* Domestic Routes */}
       <Route path="/domestic" element={<PublicLayout><Domestic /></PublicLayout>} />

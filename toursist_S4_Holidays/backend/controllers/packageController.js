@@ -41,6 +41,7 @@ function parseMaybeJSON(value, fallback) {
 }
 
 
+
 // Helper function to extract Cloudinary public_id from URL
 function getCloudinaryPublicId(imageUrl) {
   if (!imageUrl || !imageUrl.includes('cloudinary')) return null;
@@ -97,7 +98,7 @@ exports.getAllPackages = async (req, res) => {
 };
 
 
-
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
 // ✅ Get packages grouped by state (NO CACHE)
 exports.getPackagesGroupedByState = async (req, res) => {
@@ -139,6 +140,8 @@ exports.getPackagesGroupedByState = async (req, res) => {
 };
 
 
+//-----------------------------------------------------------------------------------------------------------------------------------------
+
 // ✅ Get packages grouped by continent (NO CACHE)
 exports.getPackagesGroupedByContinent = async (req, res) => {
   try {
@@ -175,6 +178,7 @@ exports.getPackagesGroupedByContinent = async (req, res) => {
   }
 };
 
+//---------------------------------------------------------------------------------------------------------------------------------
 
 // ✅ Get packages by category (NO CACHE)
 exports.getPackagesByCategory = async (req, res) => {

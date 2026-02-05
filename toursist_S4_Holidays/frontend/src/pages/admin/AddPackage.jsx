@@ -172,6 +172,7 @@ const AddPackage = () => {
   const addPackage = async (packageData, cardImage) => {
     try {
       setIsSubmitting(true);
+      
       const formDataToSend = new FormData();
       if (cardImage) formDataToSend.append("card_image", cardImage);
       formDataToSend.append("data", JSON.stringify(packageData));
