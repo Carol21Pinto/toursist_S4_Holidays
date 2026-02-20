@@ -102,10 +102,20 @@ const Footer = () => {
 
       {/* Footer Bottom */}
       <div className="footer-bottom">
-        <div className="footer-bottom-content">
-          <p>&copy; 2024 S4 Holidays. All Rights Reserved. | With Love from HexaLegion ❤️ </p>
-        </div>
+      <div className="footer-bottom-content">
+        <p className="copyright-text">
+  &copy; 2024 S4 Holidays. All Rights Reserved. | 
+  With Love from -
+  <a href="https://www.linkedin.com/in/carol-pinto-83a926290/" target="_blank" rel="noopener noreferrer" className="team-link"> Carol</a> | 
+  <a href="https://www.linkedin.com/in/rahul-m-3b6b28317/" target="_blank" rel="noopener noreferrer" className="team-link"> Rahul</a> | 
+  <a href="https://www.linkedin.com/in/ashith-fernandes-22a0252b3/" target="_blank" rel="noopener noreferrer" className="team-link"> Ashith</a> | 
+  <a href="https://www.linkedin.com/in/rashmitha-maria-dsouza-044a17276/" target="_blank" rel="noopener noreferrer" className="team-link"> Rashmitha</a> | 
+  <a> HexaLegion</a> ❤️
+</p>
+
       </div>
+    </div>
+
     </footer>
   );
 };
