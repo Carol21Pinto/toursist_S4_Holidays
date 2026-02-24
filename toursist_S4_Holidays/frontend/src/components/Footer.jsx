@@ -110,19 +110,19 @@ const Footer = () => {
   Crafted with professionalism by
 
   <a href="https://www.linkedin.com/in/carol-pinto-83a926290/" target="_blank" rel="noopener noreferrer" className="team-link">
-    Carol <span className="external-icon">↗</span>
+    Carol Pinto <span className="external-icon">↗</span>
   </a> |
 
   <a href="https://www.linkedin.com/in/rahul-m-3b6b28317/" target="_blank" rel="noopener noreferrer" className="team-link">
-    Rahul <span className="external-icon">↗</span>
+    Rahul M <span className="external-icon">↗</span>
   </a> |
 
   <a href="https://www.linkedin.com/in/ashith-fernandes-22a0252b3/" target="_blank" rel="noopener noreferrer" className="team-link">
-    Ashith <span className="external-icon">↗</span>
+    Ashith Fernandes <span className="external-icon">↗</span>
   </a> |
 
   <a href="https://www.linkedin.com/in/rashmitha-maria-dsouza-044a17276/" target="_blank" rel="noopener noreferrer" className="team-link">
-    Rashmitha <span className="external-icon">↗</span>
+    Rashmitha D'souza <span className="external-icon">↗</span>
   </a> |
 
   <span className="hexa-brand">HexaLegion</span>
