@@ -50,46 +50,25 @@
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
 }
 
-.package-detail-container .back-button:active {
-  transform: translateY(0);
-}
-
-.package-detail-container .back-button .back-arrow {
-  font-size: 1.1rem;
-  transition: transform 0.2s ease;
-}
-
-.package-detail-container .back-button:hover .back-arrow {
-  transform: translateX(-2px);
-}
-
-/* ✅ UPDATED: Half-Page Hero Section (50vh) */
+/* Hero Section */
 .package-detail-container header {
   position: relative;
   height: 50vh;
   width: 100%;
-  margin: 0;
-  border-radius: 0;
-  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
   color: white;
   text-align: center;
-  box-shadow: none;
   background-position: center center !important;
   background-size: cover !important;
   background-repeat: no-repeat !important;
-  background-attachment: scroll !important;
 }
 
 .package-detail-container header::after {
   content: "";
   position: absolute;
-  top: 0; 
-  left: 0; 
-  right: 0; 
-  bottom: 0;
+  inset: 0;
   background: rgba(0,0,0,0.4);
 }
 
@@ -104,16 +83,14 @@
   font-weight: 700; 
   text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
   margin-bottom: 15px;
-  letter-spacing: 1px;
 }
 
 .package-detail-container header p { 
   font-size: 1.2rem;
   font-weight: 500; 
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
 
-/* Section Styling */
+/* Sections */
 .package-detail-container .section {
   max-width: 1100px;
   margin: 40px auto;
@@ -126,12 +103,11 @@
 .package-detail-container .section h2 {
   margin-bottom: 15px;
   color: #00695c;
-  font-family: "Merriweather", serif;
   border-bottom: 2px solid #eee;
   padding-bottom: 8px;
 }
 
-/* Package Overview - Overlap Effect */
+/* Overview */
 .package-detail-container .overview-section { 
   margin-top: -60px;
   position: relative; 
@@ -146,74 +122,38 @@
   gap: 15px;
 }
 
-.package-detail-container .overview div { 
-  font-size: 1.1rem; 
-  font-weight: 500; 
-}
-
 .package-detail-container .price {
-  background: linear-gradient(135deg, #ffcc00, #ff9900);
+  background: linear-gradient(135deg, #ffffff, #ffffff);
   padding: 8px 15px;
   border-radius: 8px;
   font-weight: bold;
   color: #fff;
 }
 
-/* Departure Dates Section */
-.package-detail-container .departure-section {
-  background: linear-gradient(135deg, #e8f5e8, #f0f8f0);
-  border-left: 4px solid #4caf50;
-}
-
-.package-detail-container .departure-dates {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 15px;
-  margin-bottom: 20px;
-}
-
-.package-detail-container .departure-date {
-  background: #fff;
-  padding: 15px 20px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.package-detail-container .departure-date:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-}
-
-.package-detail-container .departure-date .date-icon {
-  font-size: 1.2rem;
-  background: linear-gradient(135deg, #4caf50, #45a049);
-  color: white;
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.package-detail-container .departure-date .date-text {
+/* ✅ NEW PREMIUM WHATSAPP BUTTON */
+/* Minimal Clean Button - Fixed Contrast */
+.package-detail-container .whatsapp-price-btn {
+  background: #ffffff;
+  color: #00695c;
+  border: 1.5px solid #00695c;
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 0.9rem;
   font-weight: 600;
-  color: #2c3e50;
-  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
 }
 
-.package-detail-container .departure-note {
-  color: #666;
-  font-style: italic;
-  text-align: center;
-  margin-top: 15px;
-  padding: 10px;
-  background: rgba(76, 175, 80, 0.1);
-  border-radius: 8px;
+/* Hover */
+.package-detail-container .whatsapp-price-btn:hover {
+  background: #00695c;
+  color: #ffffff;
+  border-color: #00695c;   /* keep border same */
+}
+
+/* Active */
+.package-detail-container .whatsapp-price-btn:active {
+  transform: scale(0.97);
 }
 
 /* Itinerary */
@@ -230,13 +170,6 @@
   padding: 15px;
   border-radius: 10px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.package-detail-container .day-card:hover { 
-  transform: translateY(-3px); 
-  box-shadow: 0 6px 12px rgba(0,0,0,0.12); 
 }
 
 .package-detail-container .day-card h3 { 
@@ -244,38 +177,28 @@
   margin-bottom: 10px; 
 }
 
-/* Custom bullet points */
+/* Points */
 .package-detail-container .point {
   display: flex;
   align-items: flex-start;
   margin-bottom: 8px;
-  padding-right: 15px;
-  min-height: 25px;
 }
 
 .package-detail-container .point span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 22px;
   height: 22px;
-  min-width: 22px;
   margin-right: 12px;
-  margin-top: 2px;
   border-radius: 50%;
   background: #ff9800;
   color: white;
   font-size: 12px;
   font-weight: bold;
-  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.package-detail-container .point span + * {
-  flex: 1;
-  word-wrap: break-word;
-}
-
-/* Inclusions & Exclusions */
+/* Two Columns */
 .package-detail-container .two-col {
   display: flex;
   gap: 20px;
@@ -287,260 +210,25 @@
   background: #fdfdfd;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
   min-width: 300px;
 }
 
-.package-detail-container .col h3 {
-  margin-bottom: 10px;
-  color: #00796b;
-}
-
-.package-detail-container .col .point span { 
-  background: #4caf50; 
-}
-
-.package-detail-container .col.exclusions .point span { 
-  background: #f44336; 
-}
-
-/* Two-Box Split Layout */
-.package-detail-container .notes-split-section {
-  background: transparent;
-  padding: 0;
-  margin: 40px auto;
-  max-width: 1100px;
-  box-shadow: none;
-  border-radius: 0;
-}
-
-.package-detail-container .split-boxes {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-}
-
-.package-detail-container .split-box {
-  background: linear-gradient(135deg, #fff8e1, #fffbf0);
-  border: 2px solid #ffd54f;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.package-detail-container .booking-box {
-  border-left: 5px solid #2196F3;
-  background: linear-gradient(135deg, #e3f2fd, #f1f8ff);
-  border-color: #90caf9;
-}
-
-.package-detail-container .booking-box h3 {
-  color: #1976D2;
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #90caf9;
-}
-
-.package-detail-container .notes-box {
-  border-left: 5px solid #ff9800;
-  background: linear-gradient(135deg, #fff8e1, #fffbf0);
-  border-color: #ffd54f;
-}
-
-.package-detail-container .notes-box h3 {
-  color: #f57f17;
-  font-size: 1.2rem;
-  font-weight: 700;
-  margin-bottom: 15px;
-  padding-bottom: 10px;
-  border-bottom: 2px solid #ffd54f;
-}
-
-.package-detail-container .box-content {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.package-detail-container .note-line {
-  font-size: 0.95rem;
-  color: #333;
-  line-height: 1.6;
-  padding: 8px 0;
-  border-bottom: 1px dashed #e0e0e0;
-}
-
-.package-detail-container .note-line:last-child {
-  border-bottom: none;
-}
-
-/* Footer */
-.package-detail-container .footer {
-  text-align: center;
-  padding: 20px;
-  background: #00695c;
-  color: white;
-  margin-top: 40px;
-  font-weight: 500;
-  border-radius: 0;
-}
-
-/* Responsive Design */
-@media (max-width: 1024px) {
-  /* ✅ NEW: Hide Go Back button on tablets and mobile */
-  .package-detail-container .back-button-container {
-    display: none !important;
-  }
-
-  .package-detail-container header {
-    height: 45vh;
-  }
-  
-  .package-detail-container header h1 {
-    font-size: 2.5rem;
-  }
-  
-  .package-detail-container header p {
-    font-size: 1.1rem;
-  }
-}
-
+/* Responsive */
 @media (max-width: 768px) {
-  /* ✅ NEW: Ensure Go Back button stays hidden on mobile */
-  .package-detail-container .back-button-container {
-    display: none !important;
+  .package-detail-container .two-col {
+    flex-direction: column;
   }
 
   .package-detail-container header {
     height: 40vh;
   }
-  
+
   .package-detail-container header h1 {
     font-size: 2rem;
   }
-  
-  .package-detail-container header p {
-    font-size: 1rem;
-  }
-  
-  .package-detail-container .overview-section {
-    margin-top: -50px;
-  }
-  
-  .package-detail-container .section {
-    margin: 20px;
-    padding: 15px;
-  }
-  
+
   .package-detail-container .overview {
     flex-direction: column;
-    gap: 10px;
     text-align: center;
-  }
-  
-  .package-detail-container .two-col {
-    flex-direction: column;
-  }
-  
-  .package-detail-container .col {
-    min-width: 100%;
-  }
-  
-  .package-detail-container .departure-dates {
-    grid-template-columns: 1fr;
-  }
-
-  .package-detail-container .point {
-    padding-right: 10px;
-    margin-bottom: 10px;
-  }
-
-  .package-detail-container .split-boxes {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .package-detail-container .split-box {
-    padding: 15px;
-  }
-
-  .package-detail-container .split-box h3 {
-    font-size: 1.1rem;
-  }
-
-  .package-detail-container .note-line {
-    font-size: 0.9rem;
-    padding: 6px 0;
-  }
-}
-
-@media (max-width: 480px) {
-  /* ✅ NEW: Ensure Go Back button stays hidden on small mobile */
-  .package-detail-container .back-button-container {
-    display: none !important;
-  }
-
-  .package-detail-container header {
-    height: 35vh;
-  }
-  
-  .package-detail-container header h1 {
-    font-size: 1.8rem;
-    margin-bottom: 10px;
-  }
-  
-  .package-detail-container header p {
-    font-size: 0.95rem;
-  }
-  
-  .package-detail-container .section {
-    margin: 10px;
-    padding: 12px;
-  }
-  
-  .package-detail-container .day-card {
-    padding: 12px;
-  }
-  
-  .package-detail-container .point {
-    font-size: 0.9rem;
-    padding-right: 8px;
-    margin-bottom: 12px;
-  }
-  
-  .package-detail-container .point span {
-    width: 20px;
-    height: 20px;
-    min-width: 20px;
-    font-size: 11px;
-    margin-right: 10px;
-  }
-  
-  .package-detail-container .departure-date {
-    padding: 12px 15px;
-  }
-  
-  .package-detail-container .departure-date .date-text {
-    font-size: 0.85rem;
-  }
-
-  .package-detail-container .split-boxes {
-    gap: 12px;
-  }
-
-  .package-detail-container .split-box {
-    padding: 12px;
-  }
-
-  .package-detail-container .split-box h3 {
-    font-size: 1rem;
-    margin-bottom: 12px;
-  }
-
-  .package-detail-container .note-line {
-    font-size: 0.85rem;
-    padding: 5px 0;
   }
 }

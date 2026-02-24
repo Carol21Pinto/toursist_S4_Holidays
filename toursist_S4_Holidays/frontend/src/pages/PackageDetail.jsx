@@ -5,7 +5,6 @@ import { Helmet } from 'react-helmet-async';
 import './PackageDetail.css';
 import ContactIcons from '../components/ContactIcons';
 
-
 const PackageDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -14,13 +13,14 @@ const PackageDetail = () => {
   const [error, setError] = useState(null);
   const [imageLoaded, setImageLoaded] = useState(false); // ✅ Track hero image loading
 
+  // ✅ NEW: WhatsApp business number (update with your actual number - India format without +)
+  const WHATSAPP_NUMBER = "8904814416"; // Replace with your actual WhatsApp number
 
   useEffect(() => {
-  setTimeout(() => {
-    window.scrollTo(0, 0);
-  }, 0);
-}, [id]);
-
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 0);
+  }, [id]);
 
   const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
   const SERVER_BASE = import.meta.env.VITE_SERVER_BASE || "http://localhost:5000";
@@ -34,6 +34,14 @@ const PackageDetail = () => {
       return `${SERVER_BASE}/${fixedPath}`;
     };
   }, [SERVER_BASE]);
+
+  // ✅ NEW: WhatsApp click handler - sends package name + duration in pre-filled message
+  const handleWhatsAppClick = () => {
+    const message = `Hi, I'm interested in "${packageData?.title || 'this package'}" (${packageData?.duration || ''}). Please share pricing details!`;
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodedMessage}`;
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer');
+  };
 
   // ✅ FIXED: Smart navigation - goes to category page if no history
   const handleGoBack = () => {
@@ -206,6 +214,9 @@ const PackageDetail = () => {
     return `${packageData.itinerary.length} day itinerary including ${days}`;
   }, [packageData]);
 
+  // ✅ NEW: Check if price display needs WhatsApp link
+  const isContactPricing = renderPriceDisplay === 'Contact for pricing';
+
   // ✅ OPTIMIZED: Show skeleton loader while loading
   if (loading) {
     return (
@@ -215,7 +226,6 @@ const PackageDetail = () => {
             <span className="back-arrow">←</span>
             <span>Go Back</span>
           </button>
-
         </div>
         <div style={{ 
           textAlign: 'center', 
@@ -227,7 +237,7 @@ const PackageDetail = () => {
             width: '50px', 
             height: '50px', 
             border: '4px solid #e0e0e0',
-            borderTop: '4px solid #00695c',
+            borderTop: '4px solid #e81818',
             borderRadius: '50%',
             margin: '0 auto 20px',
             animation: 'spin 1s linear infinite'
@@ -373,7 +383,26 @@ const PackageDetail = () => {
         }}>
           <div className="hero-text">
             <h1>{packageData.title || 'Travel Package'}</h1>
-            <p>{packageData.duration} | {renderHeroPricing}</p>
+            {/* ✅ UPDATED: Hero pricing clickable */}
+            <p>
+              {packageData.duration} |{' '}
+              {isContactPricing ? (
+                <span 
+                className="whatsapp-price-link"
+                style={{
+                  color: '#f1fff6',
+                  fontWeight: 'bold',
+                  textDecoration: 'underline',
+                  cursor: 'pointer'
+                }}
+                onClick={handleWhatsAppClick}
+              >
+                Contact for pricing
+              </span>
+              ) : (
+                renderHeroPricing
+              )}
+            </p>
           </div>
         </header>
 
@@ -381,7 +410,19 @@ const PackageDetail = () => {
           <h2>Package Overview</h2>
           <div className="overview">
             <div><strong>Duration:</strong> {packageData.duration || 'Not specified'}</div>
-            <div className="price">{renderPriceDisplay}</div>
+            <div className="price">
+              {/* ✅ UPDATED: Overview price clickable */}
+              {isContactPricing ? (
+                <button
+                className="whatsapp-price-btn"
+                onClick={handleWhatsAppClick}
+              >
+                Contact for Pricing
+              </button>
+              ) : (
+                renderPriceDisplay
+              )}
+            </div>
           </div>
         </section>
 
@@ -505,6 +546,12 @@ const PackageDetail = () => {
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+        
+        /* ✅ NEW: Hover effect for WhatsApp pricing links */
+        .whatsapp-price-link:hover {
+          color: #128C7E !important;
+          text-decoration: none !important;
         }
       `}</style>
     </>
