@@ -385,7 +385,7 @@ const PackageDetail = () => {
             <h1>{packageData.title || 'Travel Package'}</h1>
             {/* ✅ UPDATED: Hero pricing clickable */}
             <p>
-              {packageData.duration} |{' '}
+              {packageData.duration} {' '}
               {isContactPricing ? (
                 <span 
                 className="whatsapp-price-link"
@@ -397,7 +397,6 @@ const PackageDetail = () => {
                 }}
                 onClick={handleWhatsAppClick}
               >
-                Contact for pricing
               </span>
               ) : (
                 renderHeroPricing
