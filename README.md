@@ -167,10 +167,11 @@ This project is **not open-source**. All rights are reserved by the development 
 ## � Team
 This project was developed by the following team members:
 
-- Rahul M ([GitHub](https://github.com/RahulMGatty))
+- Ashith Joswa Fernandes ([GitHub](https://github.com/spideyashith/spideyashith))
 - Carol Pinto ([GitHub](https://github.com/Carol21Pinto))
 - Rashmitha Maria Dsouza ([GitHub](https://github.com/RashmithaDsouza))
-- Ashith Joswa Fernandes ([GitHub](https://github.com/spideyashith/spideyashith))
+- Rahul M ([GitHub](https://github.com/RahulMGatty))
+
 
 ## �📄 Acknowledgements
 - [Express.js](https://expressjs.com/)
