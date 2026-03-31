@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
+import { Helmet } from "react-helmet-async";
 import "./Hero.css";
 
  const images = [
-   "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format&fit=crop&w=1600&q=80",
+   "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0?auto=format,compress&fm=webp&fit=crop&w=1600&q=50",
  ];
 
 function Hero() {
@@ -25,16 +26,20 @@ function Hero() {
   // };
 
   return (
-    <section
-      className="hero"
-      style={{
-        backgroundImage: `url(${images[currentIndex] || images[0]})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-        minHeight: "100vh" // Ensures it always fills the screen
-      }}
-    >
+    <>
+      <Helmet>
+        <link rel="preload" as="image" href={images[currentIndex] || images[0]} fetchpriority="high" />
+      </Helmet>
+      <section
+        className="hero"
+        style={{
+          backgroundImage: `url(${images[currentIndex] || images[0]})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          minHeight: "100vh" // Ensures it always fills the screen
+        }}
+      >
       <div className="overlay">
         <p className="welcome-text">Explore • Experience • Enjoy</p>
         <h1>S4 HOLIDAYS</h1> 
@@ -53,6 +58,7 @@ function Hero() {
         ❯
       </button> */}
     </section>
+    </>
   );
 }
 

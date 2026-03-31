@@ -123,11 +123,12 @@
 }
 
 .package-detail-container .price {
-  background: linear-gradient(135deg, #ffffff, #ffffff);
+  background: transparent;
   padding: 8px 15px;
   border-radius: 8px;
   font-weight: bold;
-  color: #fff;
+  color: #e81818;
+  font-size: 1.15rem;
 }
 
 /* ✅ NEW PREMIUM WHATSAPP BUTTON */
