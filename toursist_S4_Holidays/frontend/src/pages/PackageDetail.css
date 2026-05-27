@@ -16,7 +16,7 @@
   padding-top: 0;
 }
 
-/* Back Button - Position over hero image */
+/* Back Button */
 .package-detail-container .back-button-container {
   position: absolute;
   top: 100px;
@@ -69,7 +69,7 @@
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.4);
+  background: rgba(0, 0, 0, 0.4);
 }
 
 .package-detail-container header .hero-text {
@@ -78,16 +78,16 @@
   padding: 0 20px;
 }
 
-.package-detail-container header h1 { 
+.package-detail-container header h1 {
   font-size: 2.8rem;
-  font-weight: 700; 
-  text-shadow: 3px 3px 8px rgba(0,0,0,0.8);
+  font-weight: 700;
+  text-shadow: 3px 3px 8px rgba(0, 0, 0, 0.8);
   margin-bottom: 15px;
 }
 
-.package-detail-container header p { 
+.package-detail-container header p {
   font-size: 1.2rem;
-  font-weight: 500; 
+  font-weight: 500;
 }
 
 /* Sections */
@@ -97,7 +97,7 @@
   padding: 20px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
 }
 
 .package-detail-container .section h2 {
@@ -108,10 +108,10 @@
 }
 
 /* Overview */
-.package-detail-container .overview-section { 
+.package-detail-container .overview-section {
   margin-top: -60px;
-  position: relative; 
-  z-index: 2; 
+  position: relative;
+  z-index: 2;
 }
 
 .package-detail-container .overview {
@@ -131,8 +131,7 @@
   font-size: 1.15rem;
 }
 
-/* ✅ NEW PREMIUM WHATSAPP BUTTON */
-/* Minimal Clean Button - Fixed Contrast */
+/* WhatsApp Button */
 .package-detail-container .whatsapp-price-btn {
   background: #ffffff;
   color: #00695c;
@@ -145,14 +144,12 @@
   transition: all 0.25s ease;
 }
 
-/* Hover */
 .package-detail-container .whatsapp-price-btn:hover {
   background: #00695c;
   color: #ffffff;
-  border-color: #00695c;   /* keep border same */
+  border-color: #00695c;
 }
 
-/* Active */
 .package-detail-container .whatsapp-price-btn:active {
   transform: scale(0.97);
 }
@@ -162,41 +159,58 @@
   background: #fdfdfd;
   padding: 20px;
   border-radius: 12px;
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 .package-detail-container .day-card {
   background: #f9fdfc;
-  border: 1px solid #e0f2f1;
-  padding: 15px;
-  border-radius: 10px;
+  border: 1px solid #d9efeb;
+  padding: 18px;
+  border-radius: 14px;
   margin-bottom: 20px;
+  transition: 0.3s ease;
 }
 
-.package-detail-container .day-card h3 { 
-  color: #004d40; 
-  margin-bottom: 10px; 
+.package-detail-container .day-card:hover {
+  box-shadow: 0 6px 20px rgba(0, 105, 92, 0.08);
 }
 
-/* Points */
+.package-detail-container .day-card h3 {
+  color: #004d40;
+  margin-bottom: 16px;
+  font-size: 1.1rem;
+  line-height: 1.4;
+}
+
+/* FIXED BULLET POINTS */
 .package-detail-container .point {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 8px;
+  gap: 12px;
+  margin-bottom: 12px;
+  padding: 8px 0;
+  line-height: 1.6;
+  word-break: break-word;
 }
 
 .package-detail-container .point span {
-  width: 22px;
-  height: 22px;
-  margin-right: 12px;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
   border-radius: 50%;
-  background: #ff9800;
+  background: linear-gradient(135deg, #ff9800, #ffb74d);
   color: white;
-  font-size: 12px;
-  font-weight: bold;
-  display: inline-flex;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
   align-items: center;
   justify-content: center;
+  margin-top: 2px;
+  box-shadow: 0 2px 6px rgba(255, 152, 0, 0.25);
+}
+
+.package-detail-container .point:last-child {
+  margin-bottom: 0;
 }
 
 /* Two Columns */
@@ -231,5 +245,35 @@
   .package-detail-container .overview {
     flex-direction: column;
     text-align: center;
+  }
+
+  .package-detail-container .section {
+    margin: 20px 12px;
+    padding: 16px;
+  }
+
+  .package-detail-container .day-card {
+    padding: 14px;
+  }
+
+  .package-detail-container .day-card h3 {
+    font-size: 1rem;
+  }
+
+  .package-detail-container .point {
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 6px 0;
+    font-size: 0.94rem;
+  }
+
+  .package-detail-container .point span {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+
+  .package-detail-container .col {
+    min-width: 100%;
   }
 }
