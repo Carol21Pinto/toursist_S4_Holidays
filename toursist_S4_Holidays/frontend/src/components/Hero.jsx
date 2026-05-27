@@ -42,7 +42,7 @@ function Hero() {
       >
       <div className="overlay">
         <p className="welcome-text">Explore • Experience • Enjoy</p>
-        <h1>Test Deploy Phase  </h1> 
+        <h1>S4 HOLIDAYS</h1> 
         <p className="tagline">
           Discover breathtaking destinations and unique travel experiences.
         </p>
