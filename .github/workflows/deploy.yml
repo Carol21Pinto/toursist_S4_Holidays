@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: frontend
+        working-directory: toursist_S4_Holidays/frontend
 
     steps:
       - name: Checkout Repository
@@ -34,5 +34,5 @@ jobs:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./frontend/dist/
+          local-dir: ./toursist_S4_Holidays/frontend/dist/
           server-dir: /public_html/
