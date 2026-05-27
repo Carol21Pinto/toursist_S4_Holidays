@@ -11,7 +11,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: toursist_S4_Holidays/frontend
+        working-directory: frontend
 
     steps:
       - name: Checkout Repository
@@ -20,7 +20,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
 
       - name: Install Frontend Dependencies
         run: npm install
@@ -29,10 +29,10 @@ jobs:
         run: npm run build
 
       - name: Deploy to GoDaddy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.6
         with:
           server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: ./toursist_S4_Holidays/frontend/dist/
+          local-dir: ./frontend/dist/
           server-dir: /public_html/
