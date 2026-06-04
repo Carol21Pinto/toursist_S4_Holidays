@@ -1,130 +1,97 @@
-/* Hero Section with Times New Roman */
+/* ─── Base Hero Section ─────────────────────────────────────────── */
 .hero {
   position: relative;
-  height: 100vh;
+  min-height: 100vh;
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
   display: flex;
-  align-items: center;
+  flex-direction: column;
   justify-content: center;
-  padding: 1.5rem;
-  transition: background-image 1s ease-in-out;
-  isolation: isolate;
-  z-index: 0;
-  contain: paint;
-  backface-visibility: hidden;
+  align-items: center;
+  overflow: hidden;
 }
 
-/* Gradient overlay for better text visibility */
-.hero::before {
-  content: "";
+/* ─── Overlay ────────────────────────────────────────────────────── */
+.hero-color-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4));
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.10) 0%,
+    rgba(0, 0, 0, 0.35) 50%,
+    rgba(0, 0, 0, 0.55) 100%
+  );
   z-index: 1;
 }
 
-.overlay {
+/* ─── Content Wrapper ────────────────────────────────────────────── */
+.hero-content {
   position: relative;
   z-index: 2;
   text-align: center;
-  color: white;
-  max-width: 90%;
+  padding: 0 32px;
+  max-width: 900px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
 }
 
-/* Subheading - Times New Roman, Light & Elegant */
-.welcome-text {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: clamp(0.9rem, 2vw, 1.4rem);
+/* ─── EXPLORE • EXPERIENCE • ENJOY ──────────────────────────────── */
+.hero-subtitle {
+  color: rgba(255, 255, 255, 0.90);
+  font-size: 13px;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  margin: 0;
+  opacity: 0;
   font-weight: 400;
+  font-family: Georgia, serif;
+}
+
+/* ─── S4 HOLIDAYS — exact match to screenshot ────────────────────── */
+.hero-brand {
+  color: #ffffff;
+  font-size: 90px;
+  font-weight: 700;
   letter-spacing: 4px;
   text-transform: uppercase;
-  color: #f5f5f5;
-  margin-bottom: 0.5rem;
+  margin: 0;
+  opacity: 0;
+  font-family: Georgia, serif;
+  text-shadow: 0 4px 32px rgba(0, 0, 0, 0.4);
+  line-height: 1;
 }
 
-/* Main Heading - Times New Roman, Bold & Classic */
-h1 {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: clamp(2.5rem, 8vw, 6rem);
-  font-weight: 700;
-  line-height: 1.1;
-  margin: 0.5rem 0;
-  letter-spacing: 2px;
-  text-shadow: 3px 5px 10px rgba(0, 0, 0, 0.4);
+/* ─── Tagline ────────────────────────────────────────────────────── */
+.hero-tagline {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 20px;
+  margin: 0;
+  opacity: 0;
+  max-width: 560px;
+  line-height: 1.7;
+  font-family: Georgia, serif;
 }
 
-/* Tagline - Times New Roman, Clean & Readable */
-.tagline {
-  font-family: 'Times New Roman', Times, serif;
-  font-size: clamp(0.9rem, 1.6vw, 1.2rem);
-  font-weight: 400;
-  margin-top: 8px;
-  letter-spacing: 1px;
-  color: #efefef;
+/* ─── Animation ──────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(22px); }
+  100% { opacity: 1; transform: translateY(0); }
 }
 
-/* Play Button */
-.play-btn {
-  margin-top: 20px;
-  background: white;
-  color: orange;
-  border: none;
-  font-size: clamp(1.1rem, 2vw, 1.4rem);
-  border-radius: 50%;
-  padding: clamp(10px, 2vw, 14px);
-  cursor: pointer;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+/* ─── Tablet ─────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .hero-brand    { font-size: 64px; letter-spacing: 3px; }
+  .hero-subtitle { font-size: 12px; letter-spacing: 5px; }
+  .hero-tagline  { font-size: 14px; }
 }
 
-.play-btn:hover {
-  transform: scale(1.15);
-  box-shadow: 0 6px 20px rgba(255, 140, 0, 0.5);
-}
-
-/* Tablet */
-@media (min-width: 769px) and (max-width: 1200px) {
-  .overlay {
-    max-width: 80%;
-  }
-  
-  .welcome-text {
-    letter-spacing: 5px;
-  }
-  
-  h1 {
-    letter-spacing: 3px;
-  }
-}
-
-/* Desktop */
-@media (min-width: 1201px) {
-  .overlay {
-    max-width: 60%;
-  }
-  
-  .welcome-text {
-    letter-spacing: 6px;
-  }
-  
-  h1 {
-    letter-spacing: 4px;
-  }
-}
-
-/* Mobile Adjustments */
-@media (max-width: 768px) {
-  .welcome-text {
-    letter-spacing: 2px;
-  }
-  
-  h1 {
-    letter-spacing: 1px;
-  }
-  
-  .tagline {
-    letter-spacing: 0.5px;
-  }
+/* ─── Mobile ─────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .hero-brand    { font-size: 38px; letter-spacing: 2px; }
+  .hero-subtitle { font-size: 10px; letter-spacing: 4px; }
+  .hero-tagline  { font-size: 13px; }
 }
